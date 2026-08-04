@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI AutoTech — South Africa's AI Automation Company</title>
+  <meta name="description" content="AI AutoTech builds AI Employee platforms, business automation, websites, CRM integrations and WhatsApp automation for South African SMBs." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #080C18; --bg2: #0C1120; --surface: #111827; --border: rgba(255,255,255,0.07); --blue: #2563EB; --blue-light: #3B82F6; --blue-dim: rgba(37,99,235,0.15); --text: #F1F5F9; --muted: #64748B; --sub: #94A3B8; --mono: 'JetBrains Mono', monospace; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 68px; background: rgba(8,12,24,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
+    .logo { font-weight: 800; font-size: 1.1rem; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .logo-dot { width: 8px; height: 8px; background: var(--blue); border-radius: 50%; animation: pulse 2s infinite; }
+    .nav-links { display: flex; gap: 28px; list-style: none; }
+    .nav-links a { color: var(--sub); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--text); }
+    .nav-cta { padding: 9px 22px; background: var(--blue); color: #fff; border-radius: 6px; font-size: 0.875rem; font-weight: 600; text-decoration: none; }
+    @media (max-width: 768px) { .nav-links { display: none; } }
+    .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 5% 80px; position: relative; overflow: hidden; }
+    .hero-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -60%); width: 700px; height: 700px; background: radial-gradient(ellipse at center, rgba(37,99,235,0.18) 0%, transparent 70%); pointer-events: none; animation: breathe 6s ease-in-out infinite; }
+    @keyframes breathe { 0%, 100% { opacity: 0.6; transform: translate(-50%, -60%) scale(1); } 50% { opacity: 1; transform: translate(-50%, -60%) scale(1.12); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border: 1px solid var(--blue-dim); background: var(--blue-dim); border-radius: 100px; font-size: 0.78rem; font-weight: 600; color: var(--blue-light); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 28px; }
+    .hero h1 { font-size: clamp(2.4rem, 6vw, 5rem); font-weight: 900; letter-spacing: -0.04em; line-height: 1.05; max-width: 820px; margin: 0 auto 24px; }
+    .hero h1 span { color: var(--blue-light); }
+    .hero p { font-size: clamp(1rem, 2vw, 1.2rem); color: var(--sub); max-width: 560px; margin: 0 auto 44px; line-height: 1.7; }
+    .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+    .btn-primary { padding: 14px 32px; background: var(--blue); color: #fff; border-radius: 7px; font-weight: 700; font-size: 0.95rem; text-decoration: none; transition: transform 0.15s; }
+    .btn-primary:hover { transform: translateY(-1px); }
+    .btn-ghost { padding: 14px 32px; border: 1px solid var(--border); color: var(--sub); border-radius: 7px; font-weight: 600; font-size: 0.95rem; text-decoration: none; }
+    .hero-stat-row { display: flex; gap: 48px; justify-content: center; flex-wrap: wrap; margin-top: 64px; padding-top: 48px; border-top: 1px solid var(--border); }
+    .hero-stat strong { display: block; font-size: 2rem; font-weight: 900; color: var(--text); letter-spacing: -0.04em; }
+    .hero-stat span { font-size: 0.82rem; color: var(--muted); font-weight: 500; }
+    section { padding: 100px 5%; }
+    .section-label { font-family: var(--mono); font-size: 0.72rem; font-weight: 500; letter-spacing: 0.15em; text-transform: uppercase; color: var(--blue-light); margin-bottom: 16px; }
+    .section-title { font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; max-width: 620px; margin-bottom: 16px; }
+    .section-sub { color: var(--sub); max-width: 520px; line-height: 1.75; margin-bottom: 56px; }
+    #services { background: var(--bg2); }
+    .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .service-card { background: var(--surface); padding: 36px 32px; transition: background 0.2s; }
+    .service-card:hover { background: #161f30; }
+    .service-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--blue-dim); border: 1px solid rgba(37,99,235,0.2); display: flex; align-items: center; justify-content: center; margin-bottom: 20px; font-size: 1.3rem; }
+    .service-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+    .service-card p { font-size: 0.875rem; color: var(--sub); line-height: 1.65; }
+    #ai-employees { background: var(--bg); }
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .pricing-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 36px 28px; position: relative; transition: transform 0.2s; }
+    .pricing-card:hover { transform: translateY(-3px); }
+    .pricing-card.featured { border-color: var(--blue); background: linear-gradient(160deg, #111827 0%, #0f1d36 100%); }
+    .featured-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: var(--blue); color: #fff; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 14px; border-radius: 100px; }
+    .pricing-tier { font-size: 0.78rem; font-weight: 700; color: var(--blue-light); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 12px; }
+    .pricing-price { font-size: 2rem; font-weight: 900; color: var(--text); margin-bottom: 4px; }
+    .pricing-price span { font-size: 0.9rem; font-weight: 500; color: var(--muted); }
+    .pricing-note { font-size: 0.78rem; color: var(--muted); margin-bottom: 24px; }
+    .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .pricing-features li { font-size: 0.875rem; color: var(--sub); display: flex; gap: 10px; }
+    .pricing-features li::before { content: "✓"; color: var(--blue-light); font-weight: 700; flex-shrink: 0; }
+    .setup-note { margin-top: 32px; padding: 20px 24px; background: var(--blue-dim); border: 1px solid rgba(37,99,235,0.2); border-radius: 8px; font-size: 0.875rem; color: var(--sub); line-height: 1.65; }
+    .setup-note strong { color: var(--text); }
+    .compare-row { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; margin: 48px 0; padding: 32px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+    .compare-col { flex: 1; min-width: 200px; }
+    .compare-col.vs { text-align: center; flex: 0; }
+    .vs-circle { width: 52px; height: 52px; border-radius: 50%; background: var(--blue-dim); border: 1px solid rgba(37,99,235,0.3); display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800; color: var(--blue-light); }
+    .compare-label { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; }
+    .compare-val { font-size: 1.8rem; font-weight: 900; }
+    .compare-val.bad { color: #F87171; }
+    .compare-val.good { color: #4ADE80; }
+    .compare-sub { font-size: 0.82rem; color: var(--muted); margin-top: 4px; }
+    #websites { background: var(--bg2); }
+    .web-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+    .web-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 32px 24px; transition: transform 0.2s; }
+    .web-card:hover { transform: translateY(-3px); }
+    .web-price { font-size: 1.8rem; font-weight: 900; color: var(--text); margin-bottom: 4px; }
+    .web-type { font-size: 0.82rem; font-weight: 700; color: var(--blue-light); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 16px; }
+    .web-features { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .web-features li { font-size: 0.82rem; color: var(--sub); display: flex; gap: 8px; }
+    .web-features li::before { content: "—"; color: var(--muted); }
+    #why { background: var(--bg); }
+    .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; }
+    .why-card { padding: 28px 24px; border: 1px solid var(--border); border-radius: 10px; }
+    .why-num { font-family: var(--mono); font-size: 0.72rem; font-weight: 500; color: var(--blue-light); letter-spacing: 0.1em; margin-bottom: 16px; }
+    .why-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 10px; }
+    .why-card p { font-size: 0.875rem; color: var(--sub); line-height: 1.65; }
+    #contact { background: var(--bg2); }
+    .contact-box { max-width: 620px; margin: 0 auto; text-align: center; padding: 64px 48px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; position: relative; overflow: hidden; }
+    .contact-glow { position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 300px; height: 300px; background: radial-gradient(ellipse, rgba(37,99,235,0.2) 0%, transparent 70%); pointer-events: none; }
+    .contact-box h2 { font-size: 2rem; font-weight: 800; margin-bottom: 12px; position: relative; }
+    .contact-box p { color: var(--sub); margin-bottom: 36px; position: relative; }
+    .contact-details { display: flex; flex-direction: column; gap: 16px; margin-bottom: 36px; position: relative; }
+    .contact-item { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 14px 20px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; }
+    .contact-item a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+    .contact-item a:hover { color: var(--blue-light); }
+    .contact-cta { display: block; width: 100%; padding: 15px; background: var(--blue); color: #fff; border: none; border-radius: 7px; font-weight: 700; font-size: 1rem; cursor: pointer; text-decoration: none; position: relative; }
+    footer { padding: 40px 5%; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
+    footer p { font-size: 0.8rem; color: var(--muted); }
+    .footer-links { display: flex; gap: 20px; }
+    .footer-links a { font-size: 0.8rem; color: var(--muted); text-decoration: none; }
+    .divider { height: 1px; background: var(--border); margin: 0 5%; }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo"><div class="logo-dot"></div>AI AutoTech</div>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#ai-employees">AI Employees</a></li>
+      <li><a href="#websites">Websites</a></li>
+      <li><a href="#why">Why Us</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Get Started</a>
+  </nav>
+  <section class="hero">
+    <div class="hero-glow"></div>
+    <div class="hero-badge"><div class="logo-dot"></div>Benoni · Gauteng · South Africa</div>
+    <h1>Your Business, Powered by<br /><span>AI Employees</span></h1>
+    <p>AI AutoTech builds AI automation systems, AI Employees, and digital infrastructure for South African businesses — so you can scale without hiring.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary">Talk to Us</a>
+      <a href="#ai-employees" class="btn-ghost">See AI Employee Pricing</a>
+    </div>
+    <div class="hero-stat-row">
+      <div class="hero-stat"><strong>R8,999</strong><span>AI Employee starting price / month</span></div>
+      <div class="hero-stat"><strong>24/7</strong><span>Always-on automation</span></div>
+      <div class="hero-stat"><strong>10×</strong><span>cheaper than a human hire</span></div>
+    </div>
+  </section>
+  <div class="divider"></div>
+  <section id="services">
+    <div class="section-label">What We Build</div>
+    <h2 class="section-title">Full-Stack AI Automation for SMBs</h2>
+    <p class="section-sub">From AI Employees to WhatsApp automations — we build and manage every layer of your digital operation.</p>
+    <div class="services-grid">
+      <div class="service-card"><div class="service-icon">🤖</div><h3>AI Employees</h3><p>Fully autonomous AI agents that handle client inquiries, follow-ups, scheduling, and admin — 24 hours a day, 7 days a week.</p></div>
+      <div class="service-card"><div class="service-icon">💬</div><h3>WhatsApp Automation</h3><p>Automate your WhatsApp Business inbox — instant replies, lead capture, qualification flows, and CRM integration.</p></div>
+      <div class="service-card"><div class="service-icon">🌐</div><h3>Business Websites</h3><p>Fast, mobile-optimised websites built to convert. Starter to full-featured — delivered in days, not weeks.</p></div>
+      <div class="service-card"><div class="service-icon">⚙️</div><h3>Business Automation</h3><p>Eliminate manual tasks — automated invoicing, client onboarding, data pipelines, and reporting workflows.</p></div>
+      <div class="service-card"><div class="service-icon">📊</div><h3>CRM Integration</h3><p>Connect your leads, contacts, and deals into a single automated CRM system. Stop losing opportunities.</p></div>
+      <div class="service-card"><div class="service-icon">🔗</div><h3>Digital Transformation</h3><p>End-to-end digital overhaul — from strategy to implementation. We turn paper-based businesses into automated operations.</p></div>
+    </div>
+  </section>
+  <section id="ai-employees">
+    <div class="section-label">AI Employees</div>
+    <h2 class="section-title">Hire an AI — Not a Person</h2>
+    <p class="section-sub">An AI Employee works every hour of every day, never calls in sick, and costs a fraction of a full-time hire.</p>
+    <div class="compare-row">
+      <div class="compare-col"><div class="compare-label">Cost of a Human Employee</div><div class="compare-val bad">R25,000+</div><div class="compare-sub">salary + UIF + leave + risk</div></div>
+      <div class="compare-col vs"><div class="vs-circle">VS</div></div>
+      <div class="compare-col"><div class="compare-label">AI AutoTech AI Employee</div><div class="compare-val good">R8,999</div><div class="compare-sub">flat monthly — no hidden costs</div></div>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card"><div class="pricing-tier">AI Starter</div><div class="pricing-price">R8,999 <span>/ month</span></div><div class="pricing-note">+ R9,999 setup fee</div><ul class="pricing-features"><li>1 AI agent deployment</li><li>WhatsApp or email automation</li><li>Lead capture &amp; basic CRM</li><li>Monthly performance report</li><li>Email support</li></ul></div>
+      <div class="pricing-card featured"><div class="featured-badge">Most Popular</div><div class="pricing-tier">AI Growth</div><div class="pricing-price">R16,999 <span>/ month</span></div><div class="pricing-note">+ R14,999 setup fee</div><ul class="pricing-features"><li>2 AI agents deployed</li><li>WhatsApp + email + CRM</li><li>Advanced automation workflows</li><li>Weekly performance reporting</li><li>Priority support</li><li>Monthly strategy review</li></ul></div>
+      <div class="pricing-card"><div class="pricing-tier">AI Pro</div><div class="pricing-price">R29,999 <span>/ month</span></div><div class="pricing-note">+ R19,999 setup fee</div><ul class="pricing-features"><li>Up to 4 AI agents</li><li>Full automation stack</li><li>Custom integrations</li><li>Dedicated account manager</li><li>Daily monitoring</li><li>Quarterly business review</li></ul></div>
+      <div class="pricing-card"><div class="pricing-tier">AI Enterprise</div><div class="pricing-price">R59,999+ <span>/ month</span></div><div class="pricing-note">+ R29,999 setup fee</div><ul class="pricing-features"><li>Unlimited AI agents</li><li>Custom AI Employee builds</li><li>Full digital transformation</li><li>On-site support available</li><li>SLA guarantees</li><li>Executive strategy sessions</li></ul></div>
+    </div>
+    <div class="setup-note"><strong>Every AI Employee includes:</strong> custom onboarding, workflow design, integration setup, and ongoing monitoring. No lock-in contracts after the first 3 months. All pricing in ZAR, VAT exclusive.</div>
+  </section>
+  <section id="websites">
+    <div class="section-label">Website Packages</div>
+    <h2 class="section-title">Websites That Work — Fast</h2>
+    <p class="section-sub">Professional business websites delivered in days. Once-off pricing — no subscriptions, no surprises.</p>
+    <div class="web-grid">
+      <div class="web-card"><div class="web-type">Starter</div><div class="web-price">R2,500</div><ul class="web-features"><li>Single-page design</li><li>Mobile responsive</li><li>Contact form</li><li>WhatsApp button</li><li>Hosting setup</li></ul></div>
+      <div class="web-card"><div class="web-type">Business</div><div class="web-price">R5,500</div><ul class="web-features"><li>Up to 5 pages</li><li>Services / portfolio</li><li>Google Maps integration</li><li>Basic SEO setup</li><li>WhatsApp automation</li><li>Custom domain</li></ul></div>
+      <div class="web-card"><div class="web-type">Premium</div><div class="web-price">R9,500</div><ul class="web-features"><li>Unlimited pages</li><li>Booking or e-commerce</li><li>CRM integration</li><li>Full SEO optimisation</li><li>AI chatbot included</li><li>Priority 30-day support</li></ul></div>
+    </div>
+  </section>
+  <section id="why">
+    <div class="section-label">Why AI AutoTech</div>
+    <h2 class="section-title">Built for South African Businesses</h2>
+    <p class="section-sub">We understand the local market, the local challenges, and the local opportunity.</p>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-num">01</div><h3>Local First</h3><p>Based in Benoni, Gauteng. We know South African business realities — load shedding, data costs, cash flow pressure.</p></div>
+      <div class="why-card"><div class="why-num">02</div><h3>ZAR Pricing. No Surprises.</h3><p>All pricing in Rand. No dollar-denominated subscriptions eating into your margins.</p></div>
+      <div class="why-card"><div class="why-num">03</div><h3>Done-For-You</h3><p>We build, deploy, and manage the entire system so you can focus on running your business.</p></div>
+      <div class="why-card"><div class="why-num">04</div><h3>Scale Without Hiring</h3><p>Add AI Employees as your business grows — no HR, no contracts, no risk.</p></div>
+    </div>
+  </section>
+  <section id="contact">
+    <div class="contact-box">
+      <div class="contact-glow"></div>
+      <h2>Ready to Automate?</h2>
+      <p>Talk to us — no hard sell, no jargon. Just a straight conversation about what AI can do for your business.</p>
+      <div class="contact-details">
+        <div class="contact-item"><span>📞</span><a href="tel:0646863803">064 686 3803</a></div>
+        <div class="contact-item"><span>📧</span><a href="mailto:Aiautotechza@gmail.com">Aiautotechza@gmail.com</a></div>
+        <div class="contact-item"><span>💬</span><a href="https://wa.me/27646863803">WhatsApp Us</a></div>
+      </div>
+      <a href="mailto:Aiautotechza@gmail.com" class="contact-cta">Send Us a Message</a>
+    </div>
+  </section>
+  <footer>
+    <div class="logo"><div class="logo-dot"></div>AI AutoTech</div>
+    <p>© 2025 AI AutoTech. Benoni, Gauteng, South Africa.</p>
+    <div class="footer-links"><a href="#services">Services</a><a href="#ai-employees">AI Employees</a><a href="#contact">Contact</a></div>
+  </footer>
+</body>
+</html>
