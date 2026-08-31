@@ -5,6 +5,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI AutoTech — South Africa's AI Automation Company</title>
   <meta name="description" content="AI AutoTech builds AI Employee platforms, business automation, websites, CRM integrations and WhatsApp automation for South African SMBs." />
+  <link rel="canonical" href="https://aiautotech.co.za/" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="/assets/favicon-32.png" type="image/png" sizes="32x32" />
+  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://aiautotech.co.za/" />
+  <meta property="og:title" content="AI AutoTech — AI Employees for South African SMBs" />
+  <meta property="og:description" content="AI automation, WhatsApp, websites and CRM — built in Benoni, priced in Rand." />
+  <meta property="og:image" content="https://aiautotech.co.za/assets/og.png" />
+  <meta property="og:locale" content="en_ZA" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="AI AutoTech — AI Employees for South African SMBs" />
+  <meta name="twitter:description" content="AI automation, WhatsApp, websites and CRM — built in Benoni, priced in Rand." />
+  <meta name="twitter:image" content="https://aiautotech.co.za/assets/og.png" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "AI AutoTech",
+    "url": "https://aiautotech.co.za/",
+    "logo": "https://aiautotech.co.za/assets/logo.png",
+    "image": "https://aiautotech.co.za/assets/og.png",
+    "email": "willem@aiautotech.co.za",
+    "telephone": "+27646863803",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Benoni",
+      "addressRegion": "Gauteng",
+      "addressCountry": "ZA"
+    },
+    "areaServed": "ZA",
+    "priceRange": "ZAR",
+    "description": "AI AutoTech builds AI Employees, WhatsApp automation, websites and CRM systems for South African SMBs."
+  }
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
@@ -14,7 +49,8 @@
     html { scroll-behavior: smooth; }
     body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; overflow-x: hidden; }
     nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 68px; background: rgba(8,12,24,0.85); backdrop-filter: blur(20px); border-bottom: 1px solid var(--border); }
-    .logo { font-weight: 800; font-size: 1.1rem; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .logo { font-weight: 800; font-size: 1.1rem; color: var(--text); display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .logo img { width: 28px; height: 28px; border-radius: 6px; object-fit: cover; }
     .logo-dot { width: 8px; height: 8px; background: var(--blue); border-radius: 50%; animation: pulse 2s infinite; }
     .nav-links { display: flex; gap: 28px; list-style: none; }
     .nav-links a { color: var(--sub); text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: color 0.2s; }
@@ -96,6 +132,15 @@
     .contact-item a { color: var(--text); text-decoration: none; font-weight: 600; font-size: 0.95rem; }
     .contact-item a:hover { color: var(--blue-light); }
     .contact-cta { display: block; width: 100%; padding: 15px; background: var(--blue); color: #fff; border: none; border-radius: 7px; font-weight: 700; font-size: 1rem; cursor: pointer; text-decoration: none; position: relative; }
+    .contact-form { position: relative; text-align: left; display: flex; flex-direction: column; gap: 12px; margin-top: 8px; }
+    .contact-form label { font-size: 0.78rem; font-weight: 600; color: var(--sub); }
+    .contact-form input, .contact-form textarea { width: 100%; padding: 12px 14px; background: var(--bg2); border: 1px solid var(--border); border-radius: 7px; color: var(--text); font-family: inherit; font-size: 0.95rem; }
+    .contact-form textarea { min-height: 110px; resize: vertical; }
+    .proof-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
+    .proof-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px 24px; }
+    .proof-card a { color: var(--blue-light); font-size: 0.85rem; text-decoration: none; font-weight: 600; }
+    .proof-card h3 { font-size: 1rem; margin-bottom: 8px; }
+    .proof-card p { font-size: 0.875rem; color: var(--sub); margin-bottom: 12px; }
     footer { padding: 40px 5%; border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }
     footer p { font-size: 0.8rem; color: var(--muted); }
     .footer-links { display: flex; gap: 20px; }
@@ -105,12 +150,13 @@
 </head>
 <body>
   <nav>
-    <div class="logo"><div class="logo-dot"></div>AI AutoTech</div>
+    <a href="/" class="logo"><img src="/assets/logo.png" alt="AI AutoTech" />AI AutoTech</a>
     <ul class="nav-links">
       <li><a href="#services">Services</a></li>
       <li><a href="#ai-employees">AI Employees</a></li>
       <li><a href="#websites">Websites</a></li>
       <li><a href="#why">Why Us</a></li>
+      <li><a href="#work">Work</a></li>
     </ul>
     <a href="#contact" class="nav-cta">Get Started</a>
   </nav>
@@ -126,7 +172,7 @@
     <div class="hero-stat-row">
       <div class="hero-stat"><strong>R8,999</strong><span>AI Employee starting price / month</span></div>
       <div class="hero-stat"><strong>24/7</strong><span>Always-on automation</span></div>
-      <div class="hero-stat"><strong>10×</strong><span>cheaper than a human hire</span></div>
+      <div class="hero-stat"><strong>~3×</strong><span>lower than a typical R25k+ salary</span></div>
     </div>
   </section>
   <div class="divider"></div>
@@ -181,6 +227,28 @@
       <div class="why-card"><div class="why-num">04</div><h3>Scale Without Hiring</h3><p>Add AI Employees as your business grows — no HR, no contracts, no risk.</p></div>
     </div>
   </section>
+  <section id="work">
+    <div class="section-label">Recent work</div>
+    <h2 class="section-title">Live sites we shipped</h2>
+    <p class="section-sub">Public .co.za properties for EASTC Holdings — HTTPS live, built for the CEO to open and review.</p>
+    <div class="proof-grid">
+      <div class="proof-card">
+        <h3>EASTC Holdings</h3>
+        <p>Hub plus Technical School, Artisanal College and Varsity (NATED N3–N6).</p>
+        <a href="https://eastech.co.za/" target="_blank" rel="noopener">eastech.co.za</a>
+      </div>
+      <div class="proof-card">
+        <h3>EASTC Foundation NPC</h3>
+        <p>Scholarships, programmes and campus story for the foundation.</p>
+        <a href="https://eastechfoundation.co.za/" target="_blank" rel="noopener">eastechfoundation.co.za</a>
+      </div>
+      <div class="proof-card">
+        <h3>EASTECH Institute</h3>
+        <p>Higher-education site — programmes, admissions, quality, research.</p>
+        <a href="https://eastech-institute.co.za/" target="_blank" rel="noopener">eastech-institute.co.za</a>
+      </div>
+    </div>
+  </section>
   <section id="contact">
     <div class="contact-box">
       <div class="contact-glow"></div>
@@ -188,16 +256,31 @@
       <p>Talk to us — no hard sell, no jargon. Just a straight conversation about what AI can do for your business.</p>
       <div class="contact-details">
         <div class="contact-item"><span>📞</span><a href="tel:0646863803">064 686 3803</a></div>
-        <div class="contact-item"><span>📧</span><a href="mailto:Aiautotechza@gmail.com">Aiautotechza@gmail.com</a></div>
+        <div class="contact-item"><span>📧</span><a href="mailto:willem@aiautotech.co.za">willem@aiautotech.co.za</a></div>
         <div class="contact-item"><span>💬</span><a href="https://wa.me/27646863803">WhatsApp Us</a></div>
       </div>
-      <a href="mailto:Aiautotechza@gmail.com" class="contact-cta">Send Us a Message</a>
+      <form class="contact-form" action="https://formsubmit.co/willem@aiautotech.co.za" method="POST">
+        <input type="hidden" name="_next" value="https://aiautotech.co.za/thanks.html" />
+        <input type="hidden" name="_subject" value="New enquiry from aiautotech.co.za" />
+        <input type="hidden" name="_template" value="table" />
+        <input type="hidden" name="_captcha" value="false" />
+        <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" />
+        <label for="name">Name</label>
+        <input id="name" name="name" type="text" required placeholder="Your name" />
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" required placeholder="you@company.co.za" />
+        <label for="phone">Phone</label>
+        <input id="phone" name="phone" type="tel" placeholder="0XX XXX XXXX" />
+        <label for="message">Message</label>
+        <textarea id="message" name="message" required placeholder="What do you need automated?"></textarea>
+        <button class="contact-cta" type="submit">Send us a message</button>
+      </form>
     </div>
   </section>
   <footer>
-    <div class="logo"><div class="logo-dot"></div>AI AutoTech</div>
-    <p>© 2025 AI AutoTech. Benoni, Gauteng, South Africa.</p>
-    <div class="footer-links"><a href="#services">Services</a><a href="#ai-employees">AI Employees</a><a href="#contact">Contact</a></div>
+    <a href="/" class="logo"><img src="/assets/logo.png" alt="" />AI AutoTech</a>
+    <p>© 2026 AI AutoTech · Benoni, Gauteng, South Africa · <a href="mailto:willem@aiautotech.co.za" style="color:inherit">willem@aiautotech.co.za</a></p>
+    <div class="footer-links"><a href="#services">Services</a><a href="#work">Work</a><a href="#contact">Contact</a><a href="/privacy.html">Privacy</a></div>
   </footer>
 </body>
 </html>
