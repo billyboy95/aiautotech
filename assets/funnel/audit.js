@@ -6,15 +6,24 @@
   var CONSENT_TEXT = "I agree that AI AutoTech Pty Ltd may contact me by phone, WhatsApp or email about my AI business audit and recommendations. I can ask to be removed at any time.";
 
   /* ---------- tracking ----------
-     Event leads: /connect (HighLevel QR) saves the event defaults and links here WITHOUT params,
-     so a stored /connect session with no URL params is kept exactly as-is.
+     Event leads: the printed QR opens /connect, which instantly forwards here with its query string
+     plus the event UTM defaults and via=connect. Those visits always get the event attribution
+     (eventDefaults, then any real URL params on top), exactly as /connect used to store it.
      Website leads: any visit carrying its own tracking params (website nav/hero/banner/footer links,
      ads, shares) or with no stored session starts a fresh attribution with source=website
-     (or source derived from utm_source), so website visitors are never tagged highlevel_event. */
+     (or source derived from utm_source), so website visitors are never tagged highlevel_event.
+     A return visit without params keeps the stored attribution. */
   var qs = new URLSearchParams(location.search);
+  var viaConnect = qs.get("via") === "connect";
   var urlHasTracking = A.TRACK_KEYS.some(function (k) { return !!qs.get(k); });
   var tracking = A.readTracking();
-  if (!tracking || urlHasTracking) {
+  if (viaConnect) {
+    tracking = A.applyUrlParams(Object.assign({ utm_term: "", utm_content: "" }, CFG.eventDefaults || {})).tracking;
+    var cref = ""; try { cref = sessionStorage.getItem("aat_connect_ref") || ""; } catch (e) {}
+    tracking.referrer = cref.slice(0, 400);
+    tracking.landing = "/connect";
+    tracking.captured_at = new Date().toISOString();
+  } else if (!tracking || urlHasTracking) {
     var ev = CFG.eventDefaults || {};
     var isEventUrl = !!ev.utm_source && qs.get("utm_source") === ev.utm_source;
     var base = isEventUrl
@@ -30,10 +39,18 @@
     tracking.captured_at = new Date().toISOString();
   }
   A.saveTracking(tracking);
-  // Brand link: event sessions go back to the event landing, everyone else to the homepage.
+  // Tidy the address bar after a QR hop (attribution is stored; a refresh keeps it).
+  if (viaConnect && window.history && history.replaceState) {
+    try { history.replaceState(null, "", location.pathname + (/[?&]new=1/.test(location.search) ? "?new=1" : "") + location.hash); } catch (e) {}
+  }
+  var isEvent = tracking.landing === "/connect" || (!!tracking.event && tracking.event === (CFG.eventDefaults || {}).event);
+  // "Rather chat on WhatsApp?" link in the top bar (keeps the WhatsApp option /connect used to offer).
   (function () {
-    var brand = document.querySelector("#topbar .brand");
-    if (brand && tracking.landing === "/connect") brand.setAttribute("href", "/connect/");
+    var link = document.getElementById("wa-alt");
+    if (!link) return;
+    link.href = A.wa(isEvent
+      ? "Hi Billy, we met at the HighLevel event. I scanned the AI AutoTech QR code and I'd rather chat on WhatsApp about AI for my business."
+      : "Hi Billy, I'd rather chat on WhatsApp than fill in the AI audit. Can you help?");
   })();
 
   /* ---------- helpers ---------- */
@@ -55,76 +72,46 @@
       { id: "email", type: "text", label: "Email", input: "email", auto: "email", mode: "email", check: function (v) { return EMAIL_RE.test(v) || "Please enter a valid email address."; } },
       { id: "phone", type: "text", label: "Mobile / WhatsApp number", input: "tel", auto: "tel", mode: "tel", placeholder: "e.g. 082 123 4567", check: function (v) { return (PHONE_RE.test(v) && v.replace(/\D/g, "").length >= 9) || "Please enter a valid mobile number."; } },
       { id: "role", type: "single", label: "Your role", opts: ["Owner / Founder", "MD / CEO", "Manager", "Sales / Marketing", "Operations / Admin", "Other"] },
-      { id: "website", type: "text", label: "Website", optional: true, mode: "url", auto: "url", placeholder: "yourbusiness.co.za (optional)" },
       { id: "consent", type: "consent" }
     ] },
     { name: "Business profile", kicker: "Stage 2 · Your business", title: "Tell us about your business", intro: "Tap the answers that fit best.", qs: [
       { id: "industry", type: "single", label: "Industry", opts: ["Professional services", "Real estate", "Automotive", "Healthcare / medical", "Beauty & wellness", "Retail / e-commerce", "Construction / trades", "Hospitality / food", "Education / training", "Finance / insurance", "Logistics / transport", "Manufacturing", "Marketing / agency", "Other"] },
-      { id: "business_type", type: "single", label: "Business type", opts: ["Service business", "Products / retail", "Services + products", "Online / e-commerce"] },
       { id: "employees", type: "single", label: "How many people work in the business?", opts: ["Just me", "2–5", "6–20", "21–50", "51–200", "200+"] },
-      { id: "monthly_leads", type: "single", label: "New enquiries / leads per month", opts: ["0–20", "21–50", "51–150", "151–500", "500+"] },
-      { id: "monthly_customers", type: "single", label: "New customers per month", opts: ["0–10", "11–50", "51–200", "201–1,000", "1,000+"] },
-      { id: "locations", type: "single", label: "Locations / branches", opts: ["1", "2–3", "4–10", "10+", "Online only"] },
-      { id: "products", type: "text", label: "Main products or services", placeholder: "e.g. car servicing, accounting, solar installs" },
-      { id: "customer_type", type: "single", label: "Who are your customers?", opts: ["Businesses (B2B)", "Consumers (B2C)", "Both"] },
-      { id: "growth_stage", type: "single", label: "Growth stage", opts: ["Just starting", "Growing", "Established & scaling", "Mature — optimising"] }
+      { id: "products", type: "text", label: "Main products or services", placeholder: "e.g. car servicing, accounting, solar installs" }
     ] },
-    { name: "Sales", kicker: "Stage 3 · Sales", title: "How leads become customers", intro: "This is where AI usually finds the fastest wins.", qs: [
+    { name: "Leads & sales", kicker: "Stage 3 · Leads & sales", title: "How leads become customers", intro: "This is where AI usually finds the fastest wins.", qs: [
+      { id: "monthly_leads", type: "single", label: "New enquiries / leads per month", opts: ["0–20", "21–50", "51–150", "151–500", "500+"] },
       { id: "lead_sources", type: "multi", label: "Where do your leads come from?", hint: "Select all that apply", opts: LEAD_SRC },
-      { id: "sales_team", type: "single", label: "Do you have a sales team?", opts: ["No — I handle sales myself", "Yes, 1–2 people", "Yes, 3+ people"] },
-      { id: "who_responds", type: "single", label: "Who responds to new leads first?", opts: ["Owner", "Salesperson", "Admin / reception", "Whoever is available"], show: function (a) { return a.sales_team && a.sales_team.indexOf("Yes") === 0; } },
       { id: "response_time", type: "single", label: "How quickly do new leads get a reply?", opts: ["Under 5 minutes", "Within an hour", "Same day", "Next day", "Longer / inconsistent"] },
       { id: "follow_up", type: "single", label: "How do you follow up leads who don't buy immediately?", opts: ["Automated sequence", "Manual and consistent", "Manual, when we remember", "We rarely follow up"] },
-      { id: "has_crm", type: "single", label: "Do you use a CRM?", opts: ["Yes", "No"] },
-      { id: "lead_tracking", type: "single", label: "How are leads tracked today?", opts: ["Spreadsheet", "WhatsApp chats", "Email inbox", "Notebook / memory", "Not really tracked"], show: function (a) { return a.has_crm === "No"; } },
-      { id: "crm_name", type: "single", label: "Which CRM?", opts: ["HighLevel", "HubSpot", "Zoho", "Salesforce", "Pipedrive", "Other"], show: function (a) { return a.has_crm === "Yes"; } },
-      { id: "crm_fails", type: "multi", label: "Where does your CRM fall short?", hint: "Select all that apply", opts: ["Data isn't kept up to date", "Team doesn't use it properly", "No automation set up", "No useful reporting", "Not connected to WhatsApp", "It works well"], exclusive: ["It works well"], show: function (a) { return a.has_crm === "Yes"; } },
       { id: "lost_leads", type: "multi", label: "Why do leads get lost?", hint: "Select all that apply", opts: ["Slow response", "No follow-up", "After-hours enquiries missed", "Price shoppers", "Unqualified leads", "Don't know"] },
-      { id: "quoting", type: "single", label: "How do you quote?", opts: ["Standard pricing / instant", "Manual — within a day", "Manual — takes a few days", "Complex proposals", "We don't quote"] },
-      { id: "booking", type: "single", label: "How are appointments / calls booked?", opts: ["Online booking link", "Phone / WhatsApp back-and-forth", "Email", "We don't book appointments"] },
-      { id: "sales_bottleneck", type: "single", label: "Biggest sales bottleneck?", opts: ["Not enough leads", "Leads don't convert", "Too slow to respond", "No time to follow up", "Quoting takes too long", "No visibility of the pipeline"] }
+      { id: "booking", type: "single", label: "How are appointments / calls booked?", opts: ["Online booking link", "Phone / WhatsApp back-and-forth", "Email", "We don't book appointments"] }
     ] },
-    { name: "Marketing", kicker: "Stage 4 · Marketing", title: "How you attract customers", intro: "Quick taps — no right or wrong answers.", qs: [
+    { name: "Marketing", kicker: "Stage 4 · Marketing", title: "How you attract customers", intro: "Quick taps, no right or wrong answers.", qs: [
       { id: "channels", type: "multi", label: "Active marketing channels", hint: "Select all that apply", opts: ["Facebook", "Instagram", "LinkedIn", "TikTok", "Google Business Profile", "Website / SEO", "Email", "WhatsApp", "Print / radio", "None"], exclusive: ["None"] },
-      { id: "social_frequency", type: "single", label: "How often do you post on social media?", opts: ["Daily", "A few times a week", "Weekly", "Rarely", "Never"] },
       { id: "content_creation", type: "single", label: "Who creates your content?", opts: ["Me personally", "A team member", "Agency / freelancer", "Nobody"] },
-      { id: "paid_ads", type: "single", label: "Do you run paid ads?", opts: ["No", "Meta (Facebook/Instagram)", "Google", "Both / multiple"] },
-      { id: "ad_spend", type: "single", label: "Monthly ad spend", opts: ["Under R5k", "R5k–R20k", "R20k–R50k", "R50k+"], show: function (a) { return a.paid_ads && a.paid_ads !== "No"; } },
-      { id: "ad_tracking", type: "single", label: "Do you know which ads bring paying customers?", opts: ["Yes, clearly", "Somewhat", "No idea"], show: function (a) { return a.paid_ads && a.paid_ads !== "No"; } },
-      { id: "email_marketing", type: "single", label: "Email marketing", opts: ["Regular newsletters / automations", "Occasionally", "No"] },
-      { id: "whatsapp_marketing", type: "single", label: "WhatsApp marketing", opts: ["Broadcasts / catalogue", "Only 1-to-1 chats", "Not used"] },
-      { id: "marketing_consistency", type: "single", label: "How consistent is your marketing?", opts: ["Very consistent", "Inconsistent", "Only when things are quiet"] },
-      { id: "marketing_reporting", type: "multi", label: "Marketing reporting problems", hint: "Select all that apply", opts: ["We don't know what works", "No time to check results", "Data is spread across platforms", "We get clear reports"], exclusive: ["We get clear reports"] }
+      { id: "paid_ads", type: "single", label: "Do you run paid ads?", opts: ["No", "Meta (Facebook/Instagram)", "Google", "Both / multiple"] }
     ] },
-    { name: "Customer service", kicker: "Stage 5 · Customer service", title: "How customers get help", intro: "", qs: [
+    { name: "Customer service", kicker: "Stage 5 · Customer service", title: "How customers reach you", intro: "", qs: [
+      { id: "support_channels", type: "multi", label: "Main channels customers use to contact you", hint: "Select all that apply", opts: ["Phone calls", "WhatsApp", "Email", "Website chat", "Social media DMs", "In person"] },
       { id: "repeat_questions", type: "single", label: "How many repeat / common questions do you get?", opts: ["Very few", "A handful daily", "Dozens daily", "It never stops"] },
-      { id: "support_channels", type: "multi", label: "Where do customers contact you?", hint: "Select all that apply", opts: ["Phone", "WhatsApp", "Email", "Website chat", "Social media DMs", "In person"] },
-      { id: "support_response", type: "single", label: "Typical response time to customers", opts: ["Minutes", "Hours", "Next day", "Inconsistent"] },
-      { id: "after_hours", type: "single", label: "What happens to after-hours messages?", opts: ["We answer them", "Missed until the next day", "Auto-reply only"] },
-      { id: "booking_enquiries", type: "single", label: "Booking / appointment enquiries", opts: ["None", "A few a week", "Many daily"] },
-      { id: "complaints", type: "single", label: "Complaint volume", opts: ["Rare", "Occasional", "Frequent"] }
+      { id: "after_hours", type: "single", label: "What happens to after-hours messages and calls?", opts: ["We answer them", "Missed until the next day", "Auto-reply only"] }
     ] },
     { name: "Operations", kicker: "Stage 6 · Operations", title: "Where the time goes", intro: "Think about the whole team, not just you.", qs: [
       { id: "admin_hours", type: "single", label: "Hours per week spent on repetitive admin (whole team)", opts: ["Under 5 hrs", "5–10 hrs", "10–20 hrs", "20–40 hrs", "40+ hrs"] },
-      { id: "manual_entry", type: "single", label: "Manual data entry / copy-paste between systems", opts: ["Rarely", "Some", "A lot"] },
-      { id: "documents", type: "multi", label: "Documents you create manually", hint: "Select all that apply", opts: ["Quotes", "Invoices", "Contracts / proposals", "Job cards / reports", "None"], exclusive: ["None"] },
-      { id: "scheduling", type: "single", label: "Scheduling (staff, jobs, appointments)", opts: ["Automated", "Manual calendar", "Chaotic / double-bookings"] },
-      { id: "reporting", type: "single", label: "Business reporting", opts: ["Automated dashboards", "Manual spreadsheets", "No regular reporting"] },
-      { id: "internal_comms", type: "single", label: "Internal communication", opts: ["Organised tools (Teams/Slack etc.)", "WhatsApp groups", "Email and meetings"] },
-      { id: "onboarding", type: "single", label: "Customer / staff onboarding", opts: ["Documented & automated", "Manual but documented", "Ad hoc"] },
-      { id: "time_drain", type: "single", label: "Biggest time drain", opts: ["Replying to enquiries", "Following up leads", "Quotes & invoices", "Scheduling", "Reporting", "Data entry", "Marketing / content", "Staff management"] }
+      { id: "time_drain", type: "multi", label: "Biggest time-wasters", hint: "Pick up to 3", max: 3, opts: ["Replying to enquiries", "Following up leads", "Quotes & invoices", "Scheduling", "Reporting", "Data entry", "Marketing / content", "Staff management"] },
+      { id: "reporting", type: "single", label: "Business reporting", opts: ["Automated dashboards", "Manual spreadsheets", "No regular reporting"] }
     ] },
-    { name: "AI readiness", kicker: "Stage 7 · AI readiness", title: "Where you are with AI", intro: "Last step — then we build your AI plan.", qs: [
-      { id: "ai_use", type: "single", label: "Current AI use", opts: ["Not yet", "ChatGPT personally", "Some AI tools in the business", "AI built into our workflows"] },
-      { id: "automation", type: "single", label: "Existing automation", opts: ["None", "A few (Zapier, templates…)", "Significant"] },
+    { name: "Tools & next steps", kicker: "Stage 7 · Tools & next steps", title: "Your tools, budget and timing", intro: "Last step, then we build your AI plan.", qs: [
+      { id: "tools", type: "multi", label: "Tools you use today", hint: "Select all that apply", opts: ["Google Workspace", "Microsoft 365", "HighLevel", "Other CRM (HubSpot, Zoho…)", "Spreadsheets for leads", "Xero / Sage / QuickBooks", "Shopify / WooCommerce", "Booking software", "Zapier / Make", "None of these"], exclusive: ["None of these"] },
       { id: "wa_business", type: "single", label: "WhatsApp setup", opts: ["WhatsApp Business app", "WhatsApp API / automation", "Personal WhatsApp", "Don't use WhatsApp"] },
-      { id: "tools", type: "multi", label: "Tools you use", hint: "Select all that apply", opts: ["Google Workspace", "Microsoft 365", "Xero / Sage / QuickBooks", "Shopify / WooCommerce", "Booking software", "CRM", "None of these"], exclusive: ["None of these"] },
-      { id: "automate_areas", type: "multi", label: "What would you most like to automate?", hint: "Select all that apply", opts: ["Enquiries & WhatsApp", "Lead follow-up", "Bookings", "Quotes / proposals", "Customer support", "Marketing content", "Reporting", "Admin / data entry"] },
-      { id: "frustration", type: "textarea", label: "Biggest frustration in the business right now", optional: true, placeholder: "Optional — one line is plenty" },
-      { id: "goal_12m", type: "single", label: "Main goal for the next 12 months", opts: ["More leads", "Higher conversion", "Save time / reduce costs", "Better customer experience", "Scale without hiring", "Better visibility & reporting"] }
+      { id: "ai_use", type: "single", label: "Current AI use", opts: ["Not yet", "ChatGPT personally", "Some AI tools in the business", "AI built into our workflows"] },
+      { id: "goal_12m", type: "single", label: "Main goal for the next 12 months", opts: ["More leads", "Higher conversion", "Save time / reduce costs", "Better customer experience", "Scale without hiring", "Better visibility & reporting"] },
+      { id: "budget", type: "single", label: "Monthly budget range for AI & automation", opts: ["Under R5,000", "R5,000–R10,000", "R10,000–R20,000", "R20,000–R50,000", "R50,000+", "Not sure yet"] },
+      { id: "timeline", type: "single", label: "When would you like to start?", opts: ["As soon as possible", "Within a month", "1–3 months", "3–6 months", "Just exploring"] }
     ] }
   ];
-  var CONTACT_IDS = ["firstName", "lastName", "company", "email", "phone", "role", "website", "consent"];
+  var CONTACT_IDS = ["firstName", "lastName", "company", "email", "phone", "role", "consent"];
 
   /* ---------- state ---------- */
   function load() { try { return JSON.parse(localStorage.getItem(STORE) || "null"); } catch (e) { return null; } }
@@ -174,7 +161,9 @@
         html += '<div class="grid2">' + qHtml(qs[i]) + qHtml(qs[i + 1]) + "</div>"; i += 2;
       } else { html += qHtml(qs[i]); i++; }
     }
-    app.innerHTML = '<section class="fade-in"><div class="stage-head"><p class="kicker">' + esc(s.kicker) + "</p><h2>" + esc(s.title) + "</h2>" + (s.intro ? "<p>" + esc(s.intro) + "</p>" : "") + '</div><div id="qs">' + html + "</div></section>";
+    var intro = s.intro;
+    if (state.stage === 0 && isEvent) intro = "Great to meet you at HighLevel! " + intro;
+    app.innerHTML = '<section class="fade-in"><div class="stage-head"><p class="kicker">' + esc(s.kicker) + "</p><h2>" + esc(s.title) + "</h2>" + (intro ? "<p>" + esc(intro) + "</p>" : "") + '</div><div id="qs">' + html + "</div></section>";
     $("stage-name").textContent = s.name;
     $("stage-count").textContent = "Stage " + (state.stage + 1) + " of " + STAGES.length;
     setProgress((state.stage / STAGES.length) * 100);
@@ -204,6 +193,7 @@
         if (q.exclusive && q.exclusive.indexOf(val) >= 0) cur = [];
         else if (q.exclusive) cur = cur.filter(function (v) { return q.exclusive.indexOf(v) < 0; });
         cur.push(val);
+        if (q.max && cur.length > q.max) cur.shift();
       }
       state.answers[q.id] = cur;
     }
@@ -256,25 +246,31 @@
     if (state.stage > 0) { state.stage--; persist(); renderStage(); window.scrollTo(0, 0); }
   });
 
-  /* ---------- rules engine (deterministic, no AI calls) ---------- */
+  /* ---------- rules engine (deterministic, no AI calls) ----------
+     v5 (short audit, 30 questions): scores only use questions that are still asked.
+     Answers from older saved sessions are tolerated (single values are treated as 1-item lists). */
   var LEADS = { "0–20": 10, "21–50": 35, "51–150": 100, "151–500": 300, "500+": 650 };
-  var CUST = { "0–10": 5, "11–50": 30, "51–200": 125, "201–1,000": 600, "1,000+": 1500 };
   var EMP = { "Just me": 1, "2–5": 3.5, "6–20": 13, "21–50": 35, "51–200": 125, "200+": 250 };
   var ADMIN = { "Under 5 hrs": 3, "5–10 hrs": 7.5, "10–20 hrs": 15, "20–40 hrs": 30, "40+ hrs": 45 };
   var REPEAT = { "Very few": 3, "A handful daily": 8, "Dozens daily": 30, "It never stops": 60 };
-  var POSTS = { "Daily": 7, "A few times a week": 3, "Weekly": 1, "Rarely": 3, "Never": 3 };
+  var CRM_TOOLS = ["HighLevel", "Other CRM (HubSpot, Zoho…)", "CRM"];
 
   function analyse(a) {
     function has(id, v) { return arr(a[id]).indexOf(v) >= 0; }
     function is(id, v) { return a[id] === v; }
     function q(v) { return "“" + v + "”"; }
-    var L = LEADS[a.monthly_leads] || 0, C = CUST[a.monthly_customers] || 0, E = EMP[a.employees] || 1;
+    function drain(v) { return has("time_drain", v); }
+    var L = LEADS[a.monthly_leads] || 0, E = EMP[a.employees] || 1;
     var adminH = ADMIN[a.admin_hours] || 0, rep = REPEAT[a.repeat_questions] || 3;
     var slowReply = is("response_time", "Next day") || is("response_time", "Longer / inconsistent");
+    var afterMissed = is("after_hours", "Missed until the next day");
     var waUsed = has("lead_sources", "WhatsApp") || has("support_channels", "WhatsApp") || (a.wa_business && a.wa_business !== "Don't use WhatsApp");
-    var phoneUsed = has("support_channels", "Phone") || has("lead_sources", "Phone calls");
+    var phoneUsed = has("support_channels", "Phone calls") || has("support_channels", "Phone") || has("lead_sources", "Phone calls");
+    var hasCrm = arr(a.tools).some(function (t) { return CRM_TOOLS.indexOf(t) >= 0; });
+    var crmName = has("tools", "HighLevel") ? "HighLevel" : "your CRM";
     var lostKnown = arr(a.lost_leads).filter(function (v) { return v !== "Don't know"; });
     var leadAssump = a.monthly_leads ? " (your answer: " + a.monthly_leads + " leads/month)" : "";
+    var leader = ["Owner / Founder", "MD / CEO"].indexOf(a.role) >= 0;
 
     function leadRecovery(lo, hi, why) {
       if (L < 21 || !lostKnown.length) return "";
@@ -290,18 +286,18 @@
       var s = 0, p = [];
       if (has("lead_sources", "WhatsApp")) { s += 2; p.push("WhatsApp is one of your lead sources"); }
       if (has("support_channels", "WhatsApp")) { s += 2; p.push("customers contact you on WhatsApp"); }
-      if (is("after_hours", "Missed until the next day") && waUsed) { s += 3; p.push("after-hours messages wait until the next day"); }
+      if (afterMissed && waUsed) { s += 3; p.push("after-hours messages wait until the next day"); }
       if (rep >= 30 && waUsed) { s += 2; p.push("you get " + q(a.repeat_questions) + " repeat questions"); }
       if ((is("wa_business", "Personal WhatsApp") || is("wa_business", "WhatsApp Business app")) && waUsed) { s += 1; p.push("WhatsApp runs manually from a phone (" + a.wa_business + ")"); }
       if (slowReply && waUsed) { s += 1; p.push("leads usually get a reply " + q(a.response_time)); }
-      if (has("automate_areas", "Enquiries & WhatsApp")) s += 1;
+      if (drain("Replying to enquiries")) { s += 1; p.push("replying to enquiries is one of your biggest time-wasters"); }
       agent({ id: "wa", agent: "WhatsApp AI Employee", department: "Customer Service", score: s, p: p,
         solution: "A trained WhatsApp AI Employee on your business number that answers enquiries instantly, 24/7, qualifies them and hands hot leads to your team.",
         how: "Connects to WhatsApp Business (API), learns your services, prices and FAQs, replies in seconds, captures details into your CRM and escalates anything it can't answer.",
         benefit: "No more missed or late WhatsApp enquiries; your team only handles conversations that need a human.",
         h: [rep * 5 * 2 * 0.4 / 60, rep * 5 * 4 * 0.7 / 60],
         ha: "Assumes ~" + rep + " repeat messages a day (your answer: " + q(a.repeat_questions || "Very few") + "), 2–4 min each, 40–70% handled automatically, 5 working days.",
-        rev: is("after_hours", "Missed until the next day") ? leadRecovery(0.02, 0.05, "instant 24/7 replies") : "" });
+        rev: afterMissed ? leadRecovery(0.02, 0.05, "instant 24/7 replies") : "" });
     })();
 
     // AI Receptionist
@@ -309,8 +305,8 @@
       var s = 0, p = [];
       if (phoneUsed) {
         s += 2; p.push("phone calls are a key channel for you");
-        if (is("after_hours", "Missed until the next day")) { s += 2; p.push("after-hours calls are missed until the next day"); }
-        if (is("support_response", "Next day") || is("support_response", "Inconsistent")) { s += 1; p.push("customer response time is " + q(a.support_response)); }
+        if (afterMissed) { s += 2; p.push("after-hours calls are missed until the next day"); }
+        if (slowReply) { s += 1; p.push("enquiries usually get a reply " + q(a.response_time)); }
         if (is("booking", "Phone / WhatsApp back-and-forth")) { s += 1; p.push("bookings happen by phone back-and-forth"); }
         if (E <= 5) { s += 1; p.push("with a small team, calls interrupt billable work"); }
       }
@@ -331,8 +327,8 @@
       if (L >= 151) s += 1;
       if (has("lost_leads", "Unqualified leads")) { s += 3; p.push("time is lost on unqualified leads"); }
       if (has("lost_leads", "Price shoppers")) { s += 2; p.push("price shoppers take up sales time"); }
-      if (is("sales_bottleneck", "Leads don't convert")) { s += 2; p.push("your biggest bottleneck is leads not converting"); }
-      if (is("who_responds", "Owner") || is("sales_team", "No — I handle sales myself")) { s += 1; p.push("the owner qualifies every lead personally"); }
+      if (is("goal_12m", "Higher conversion")) { s += 2; p.push("your 12-month goal is higher conversion"); }
+      if (leader && E <= 5 && L >= 21) { s += 1; p.push("the owner qualifies every lead personally"); }
       agent({ id: "lq", agent: "Lead Qualification Agent", department: "Sales", score: s, p: p,
         solution: "An AI agent that asks every new lead the right questions (budget, need, timeline, location) and scores them before a human gets involved.",
         how: "Runs on WhatsApp, web forms and email; tags each lead hot/warm/cold in your CRM and routes hot leads to the right person immediately.",
@@ -350,7 +346,7 @@
       if (is("follow_up", "Manual and consistent")) { s += 1; p.push("follow-up is consistent but manual"); }
       if (has("lost_leads", "No follow-up")) { s += 3; p.push("you lose leads through no follow-up"); }
       if (has("lost_leads", "Slow response")) { s += 1; p.push("slow responses cost you leads"); }
-      if (is("sales_bottleneck", "No time to follow up") || is("sales_bottleneck", "Too slow to respond")) { s += 3; p.push("your biggest bottleneck is " + q(a.sales_bottleneck)); }
+      if (drain("Following up leads")) { s += 3; p.push("following up leads is one of your biggest time-wasters"); }
       if (slowReply) { s += 2; p.push("new leads get a reply " + q(a.response_time)); }
       var auto = is("follow_up", "Automated sequence");
       agent({ id: "fu", agent: "Sales Follow-Up Agent", department: "Sales", score: s, p: p,
@@ -365,22 +361,19 @@
     // Appointment Booking Agent
     (function () {
       var s = 0, p = [];
-      var noBook = is("booking", "We don't book appointments") && is("booking_enquiries", "None");
-      if (!noBook) {
+      if (!is("booking", "We don't book appointments")) {
         if (is("booking", "Phone / WhatsApp back-and-forth")) { s += 3; p.push("appointments are booked through back-and-forth messages"); }
         if (is("booking", "Email")) { s += 2; p.push("bookings are arranged by email"); }
-        if (is("booking_enquiries", "Many daily")) { s += 3; p.push("you get many booking enquiries every day"); }
-        if (is("booking_enquiries", "A few a week")) { s += 1; p.push("you get booking enquiries every week"); }
-        if (is("scheduling", "Chaotic / double-bookings")) { s += 2; p.push("scheduling is " + q("chaotic / double-bookings")); }
-        if (is("scheduling", "Manual calendar")) { s += 1; }
+        if (drain("Scheduling")) { s += 2; p.push("scheduling is one of your biggest time-wasters"); }
+        if (L >= 51 && !is("booking", "Online booking link")) s += 1;
       }
-      var bw = is("booking_enquiries", "Many daily") ? 40 : is("booking_enquiries", "A few a week") ? 5 : 3;
+      var bw = is("booking", "We don't book appointments") ? 3 : Math.max(3, Math.round(L * 0.3 / 4.33));
       agent({ id: "book", agent: "Appointment Booking Agent", department: "Sales", score: s, p: p,
         solution: "An AI agent that books, confirms, reschedules and reminds — straight into your calendar.",
         how: "Offers available slots on WhatsApp/web, syncs with Google or Outlook Calendar, sends reminders and handles reschedules.",
         benefit: "Fewer no-shows and no more message ping-pong to find a time.",
         h: [bw * 5 / 60, bw * 10 / 60],
-        ha: "Assumes ~" + bw + " bookings a week (your answer: " + q(a.booking_enquiries || "None") + ") and 5–10 min of back-and-forth per booking.",
+        ha: "Assumes ~" + bw + " bookings a week (about 30% of your leads" + leadAssump + ") and 5–10 min of back-and-forth per booking.",
         rev: "" });
     })();
 
@@ -389,11 +382,11 @@
       var s = 0, p = [];
       if (rep >= 8) { s += 1; p.push("you answer " + q(a.repeat_questions) + " repeat questions"); }
       if (rep >= 30) s += 2;
-      if (is("support_response", "Next day") || is("support_response", "Inconsistent")) { s += 2; p.push("customer response time is " + q(a.support_response)); }
-      if (is("complaints", "Frequent")) { s += 2; p.push("complaints are frequent"); } else if (is("complaints", "Occasional")) s += 1;
+      if (slowReply) { s += 1; p.push("replies usually take " + q(a.response_time)); }
+      if (afterMissed) s += 1;
       var n = arr(a.support_channels).length;
       if (n >= 3) { s += 1; p.push("enquiries arrive across " + n + " channels"); }
-      if (has("automate_areas", "Customer support")) s += 1;
+      if (is("goal_12m", "Better customer experience")) { s += 2; p.push("your 12-month goal is a better customer experience"); }
       agent({ id: "cs", agent: "Customer Support Agent", department: "Customer Service", score: s, p: p,
         solution: "An AI support agent trained on your FAQs, policies and order/job status that resolves routine questions on every channel.",
         how: "Answers on WhatsApp, web chat, email and social DMs from one knowledge base; logs every conversation and escalates complaints to a person.",
@@ -406,32 +399,29 @@
     // Marketing Agent
     (function () {
       var s = 0, p = [];
-      if (is("marketing_consistency", "Inconsistent") || is("marketing_consistency", "Only when things are quiet")) { s += 2; p.push("marketing is " + q(a.marketing_consistency)); }
-      if (has("marketing_reporting", "We don't know what works")) { s += 2; p.push("you don't know which marketing works"); }
-      if (has("marketing_reporting", "Data is spread across platforms")) { s += 1; p.push("marketing data is spread across platforms"); }
-      if (a.paid_ads && a.paid_ads !== "No" && (is("ad_tracking", "No idea") || is("ad_tracking", "Somewhat"))) { s += 2; p.push("you spend " + (a.ad_spend || "money") + " a month on ads without clear tracking to paying customers"); }
-      if (is("sales_bottleneck", "Not enough leads")) { s += 2; p.push("your biggest bottleneck is not enough leads"); }
-      if (is("goal_12m", "More leads")) s += 1;
-      if (is("email_marketing", "No") && is("whatsapp_marketing", "Not used")) { s += 1; p.push("there is no email or WhatsApp nurturing"); }
-      var ch = arr(a.channels).filter(function (c) { return c !== "None"; }).length || 1;
+      var ch = arr(a.channels).filter(function (c) { return c !== "None"; }).length;
+      if (has("channels", "None")) { s += 2; p.push("there is no active marketing channel yet"); }
+      if (a.paid_ads && a.paid_ads !== "No") { s += 1; p.push("you run paid ads (" + a.paid_ads + ") that need tracking back to paying customers"); }
+      if (ch >= 4) { s += 1; p.push("you market on " + ch + " channels"); }
+      if (is("goal_12m", "More leads")) { s += 2; p.push("your 12-month goal is more leads"); }
+      if (L > 0 && L <= 20) { s += 1; p.push("you get " + a.monthly_leads + " leads a month"); }
       agent({ id: "mkt", agent: "Marketing Agent", department: "Marketing", score: s, p: p,
         solution: "An AI marketing agent that plans campaigns, runs email/WhatsApp nurture sequences and reports what's actually bringing customers.",
         how: "Connects your channels and CRM, schedules campaigns, tracks leads back to their source and sends you a plain-English weekly summary.",
         benefit: "Consistent marketing and clear evidence of what works.",
-        h: [ch * 0.5, ch * 1],
-        ha: "Assumes 30–60 min a week of planning, sending and checking results per active channel (" + ch + " selected).",
+        h: [(ch || 1) * 0.5, (ch || 1) * 1],
+        ha: "Assumes 30–60 min a week of planning, sending and checking results per active channel (" + (ch || 1) + " selected).",
         rev: "" });
     })();
 
     // Content Agent
     (function () {
       var s = 0, p = [];
-      if (is("social_frequency", "Rarely") || is("social_frequency", "Never")) { s += 2; p.push("you post on social media " + q(a.social_frequency).toLowerCase()); }
       if (is("content_creation", "Me personally")) { s += 2; p.push("you create the content yourself"); }
       if (is("content_creation", "Nobody")) { s += 2; p.push("nobody owns content creation"); }
-      if (has("automate_areas", "Marketing content")) s += 1;
+      if (drain("Marketing / content")) { s += 2; p.push("marketing and content is one of your biggest time-wasters"); }
       if (arr(a.channels).some(function (c) { return ["Facebook", "Instagram", "LinkedIn", "TikTok"].indexOf(c) >= 0; })) s += 1;
-      var posts = POSTS[a.social_frequency] || 3;
+      var posts = 3;
       agent({ id: "content", agent: "Content Agent", department: "Marketing", score: s, p: p,
         solution: "An AI content agent that drafts on-brand posts, captions, emails and short-video scripts for you to approve.",
         how: "Learns your brand voice and offers, produces a weekly content calendar, and queues approved posts to your channels.",
@@ -444,14 +434,11 @@
     // CRM Automation Agent
     (function () {
       var s = 0, p = [];
-      if (is("has_crm", "No")) { s += 3; p.push("there is no CRM" + (a.lead_tracking ? " — leads live in " + q(a.lead_tracking) : "")); }
-      if (["Notebook / memory", "Not really tracked", "WhatsApp chats"].indexOf(a.lead_tracking) >= 0) s += 2;
-      if (is("lead_tracking", "Spreadsheet")) s += 1;
-      if (has("crm_fails", "Data isn't kept up to date")) { s += 2; p.push("CRM data isn't kept up to date"); }
-      if (has("crm_fails", "No automation set up")) { s += 2; p.push("your CRM (" + (a.crm_name || "current") + ") has no automation"); }
-      if (has("crm_fails", "Not connected to WhatsApp")) { s += 1; p.push("the CRM isn't connected to WhatsApp"); }
-      if (has("crm_fails", "Team doesn't use it properly")) { s += 1; p.push("the team doesn't use the CRM properly"); }
-      if (is("manual_entry", "A lot")) { s += 1; p.push("there's a lot of manual data entry"); }
+      if (!hasCrm && arr(a.tools).length) { s += 3; p.push("there is no CRM" + (has("tools", "Spreadsheets for leads") ? " — leads live in spreadsheets" : "")); }
+      if (has("tools", "Spreadsheets for leads")) s += 1;
+      if (hasCrm && !has("tools", "Zapier / Make")) { s += 1; p.push(crmName + " isn't connected to other tools with automation yet"); }
+      if (drain("Data entry")) { s += 2; p.push("data entry is one of your biggest time-wasters"); }
+      if (L >= 51) s += 1;
       agent({ id: "crm", agent: "CRM Automation Agent", department: "Sales", score: s, p: p,
         solution: "An AI agent that captures every lead from WhatsApp, calls, forms and email into one CRM and keeps it updated automatically.",
         how: "Logs conversations, updates deal stages, creates tasks and reminders, and removes copy-paste between systems.",
@@ -464,15 +451,8 @@
     // Quote / Proposal Agent
     (function () {
       var s = 0, p = [];
-      if (!is("quoting", "We don't quote")) {
-        if (is("quoting", "Manual — takes a few days")) { s += 3; p.push("quotes take a few days to go out"); }
-        if (is("quoting", "Complex proposals")) { s += 3; p.push("you prepare complex proposals"); }
-        if (is("quoting", "Manual — within a day")) { s += 1; p.push("quotes are built manually"); }
-        if (has("documents", "Quotes")) s += 1;
-        if (has("documents", "Contracts / proposals")) s += 1;
-        if (is("time_drain", "Quotes & invoices")) { s += 2; p.push("quotes & invoices are your biggest time drain"); }
-        if (is("sales_bottleneck", "Quoting takes too long")) { s += 2; p.push("quoting is your biggest sales bottleneck"); }
-      }
+      if (drain("Quotes & invoices")) { s += 4; p.push("quotes & invoices are one of your biggest time-wasters"); }
+      if (has("tools", "Xero / Sage / QuickBooks") && drain("Quotes & invoices")) s += 1;
       var qw = Math.max(2, Math.round(L * 0.4 / 4.33));
       agent({ id: "quote", agent: "Quote / Proposal Agent", department: "Sales", score: s, p: p,
         solution: "An AI agent that turns an enquiry or call notes into a branded quote or proposal in minutes, ready for your approval.",
@@ -488,11 +468,8 @@
       var s = 0, p = [];
       if (adminH >= 10) { s += 2; p.push("the team spends " + a.admin_hours + " a week on repetitive admin"); }
       if (adminH >= 20) s += 1;
-      if (is("manual_entry", "A lot")) { s += 2; p.push("there's a lot of copy-paste between systems"); } else if (is("manual_entry", "Some")) s += 1;
-      if (is("onboarding", "Ad hoc")) { s += 1; p.push("onboarding is ad hoc"); }
-      if (is("internal_comms", "WhatsApp groups")) { s += 1; p.push("internal comms run through WhatsApp groups"); }
-      if (["Data entry", "Scheduling", "Staff management"].indexOf(a.time_drain) >= 0) { s += 2; p.push("your biggest time drain is " + q(a.time_drain)); }
-      if (has("automate_areas", "Admin / data entry")) s += 1;
+      ["Data entry", "Scheduling", "Staff management"].forEach(function (d) { if (drain(d)) { s += 1; p.push(d.toLowerCase() + " is one of your biggest time-wasters"); } });
+      if (is("goal_12m", "Save time / reduce costs")) s += 1;
       agent({ id: "ops", agent: "Operations Agent", department: "Operations", score: s, p: p,
         solution: "An AI operations agent that handles repetitive admin: data entry, job cards, document generation, onboarding checklists and task routing.",
         how: "Connects your email, forms, accounting and job tools; moves data between them and creates the documents and tasks your team does by hand today.",
@@ -507,11 +484,8 @@
       var s = 0, p = [];
       if (is("reporting", "Manual spreadsheets")) { s += 2; p.push("reports are built manually in spreadsheets"); }
       if (is("reporting", "No regular reporting")) { s += 3; p.push("there is no regular business reporting"); }
-      if (has("marketing_reporting", "Data is spread across platforms")) s += 1;
-      if (has("crm_fails", "No useful reporting")) { s += 2; p.push("your CRM gives no useful reporting"); }
-      if (is("sales_bottleneck", "No visibility of the pipeline")) { s += 2; p.push("you have no visibility of the pipeline"); }
+      if (drain("Reporting")) { s += 2; p.push("reporting is one of your biggest time-wasters"); }
       if (is("goal_12m", "Better visibility & reporting")) s += 2;
-      if (has("automate_areas", "Reporting")) s += 1;
       var man = is("reporting", "Manual spreadsheets");
       agent({ id: "rep", agent: "Reporting Agent", department: "Management", score: s, p: p,
         solution: "An AI reporting agent that pulls numbers from your CRM, accounts, ads and WhatsApp into one automatic dashboard and weekly summary.",
@@ -525,10 +499,10 @@
     // QA Agent
     (function () {
       var s = 0, p = [];
-      if (is("complaints", "Frequent")) { s += 3; p.push("complaints are frequent"); } else if (is("complaints", "Occasional")) { s += 1; p.push("complaints happen occasionally"); }
       if (E >= 6) { s += 1; p.push("a team of " + a.employees + " is hard to quality-check manually"); }
-      if (is("support_response", "Inconsistent")) { s += 1; p.push("service response is inconsistent"); }
-      if (is("sales_team", "Yes, 3+ people")) { s += 1; p.push("3+ salespeople handle customer conversations"); }
+      if (E >= 21) s += 1;
+      if (is("response_time", "Longer / inconsistent")) { s += 1; p.push("response times are inconsistent"); }
+      if (is("goal_12m", "Better customer experience")) s += 1;
       agent({ id: "qa", agent: "QA Agent", department: "Operations", score: s, p: p,
         solution: "An AI QA agent that reviews calls, chats and job reports against your standards and flags issues early.",
         how: "Scores every conversation or job record, highlights complaints and missed steps, and sends a daily exceptions list.",
@@ -541,13 +515,11 @@
     // Management / CEO Brief Agent
     (function () {
       var s = 0, p = [];
-      var leader = ["Owner / Founder", "MD / CEO"].indexOf(a.role) >= 0;
       if (leader && E >= 6) { s += 2; p.push("as " + a.role + " of a " + a.employees + " team you chase updates across people and systems"); }
       if (is("reporting", "No regular reporting")) s += 1;
-      if (is("sales_bottleneck", "No visibility of the pipeline")) { s += 2; p.push("pipeline visibility is your biggest bottleneck"); }
+      if (drain("Staff management")) { s += 1; p.push("staff management takes up a lot of your time"); }
       if (is("goal_12m", "Scale without hiring")) { s += 1; p.push("your goal is to scale without hiring"); }
       if (is("goal_12m", "Better visibility & reporting")) { s += 2; p.push("your 12-month goal is better visibility"); }
-      if (["2–3", "4–10", "10+"].indexOf(a.locations) >= 0) { s += 1; p.push("you run " + a.locations + " locations"); }
       agent({ id: "ceo", agent: "Management / CEO Brief Agent", department: "Management", score: s, p: p,
         solution: "A daily AI CEO brief: leads, sales, cash, service issues and team tasks in one WhatsApp message every morning.",
         how: "Reads from your CRM, accounting, inbox and other agents, then summarises what needs your attention today.",
@@ -582,10 +554,11 @@
     ["Sales", "Marketing", "Customer Service", "Operations", "Management"].forEach(function (d) {
       (depts[d] || []).forEach(function (ag) { team.push({ department: d, agent: ag, count: 1 }); });
     });
-    var readiness = (is("ai_use", "AI built into our workflows") || is("automation", "Significant")) ? "Advanced" :
-      (is("ai_use", "Some AI tools in the business") || is("automation", "A few (Zapier, templates…)") || is("wa_business", "WhatsApp API / automation")) ? "Developing" : "Early";
+    var readiness = (is("ai_use", "AI built into our workflows")) ? "Advanced" :
+      (is("ai_use", "Some AI tools in the business") || has("tools", "Zapier / Make") || is("wa_business", "WhatsApp API / automation")) ? "Developing" : "Early";
     var totalTop = picked.reduce(function (s, x) { return s + x.score; }, 0);
-    var score = { opportunityIndex: Math.min(100, Math.round(25 + totalTop * 1.6)), readiness: readiness, hoursLow: round5(lo), hoursHigh: round5(hi), opportunities: recs.length };
+    var score = { opportunityIndex: Math.min(100, Math.round(25 + totalTop * 1.6)), readiness: readiness, hoursLow: round5(lo), hoursHigh: round5(hi), opportunities: recs.length,
+      budget: a.budget || "", timeline: a.timeline || "", auditVersion: "short-30" };
     A.forEach(function (x) { score["agent_" + x.id] = x.score; });
     return { recommendations: recs, team: team, score: score };
   }

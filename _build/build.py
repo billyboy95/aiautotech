@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from content import SERVICES, STACK, ORCH_NODES, WHO_KEYS, BOOK
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V = "20260925"
+V = "20260925b"
 SITE = "https://aiautotech.co.za"
 WA_NUM = "27646863803"
 BYSLUG = {s["slug"]: s for s in SERVICES}
@@ -26,6 +26,9 @@ def founder_photo():
         <img src="/assets/redesign/billy-faber-portrait.webp" alt="Billy Faber, founder of AI Auto Tech" width="620" height="691" loading="lazy" decoding="async" />
         <figcaption class="glass"><b>Billy Faber</b>Founder &amp; Managing Director, AI Auto Tech</figcaption>
       </figure>"""
+
+MAP_EMBED = "https://www.google.com/maps?q=Benoni,+Gauteng,+South+Africa&z=11&output=embed"
+MAP_LINK = "https://www.google.com/maps?q=Benoni,+Gauteng,+South+Africa"
 
 def audit(p):
     return f"/audit/?utm_source=website&amp;utm_medium={p}&amp;utm_campaign=free_ai_audit"
@@ -481,6 +484,19 @@ def home():
           <button class="btn btn-primary" type="submit">Send us a message {ic("arrow")}</button>
           <p class="form-status" role="status" aria-live="polite" hidden></p>
         </form>
+      </div>
+      <div class="map-card glass reveal">
+        <div class="map-head">
+          <span class="map-pin">{ic("pin")}</span>
+          <div>
+            <h3>Based in Benoni, serving Ekurhuleni, Johannesburg &amp; Gauteng</h3>
+            <p>Service-area business with no walk-in office. Talk to us on Google Meet, WhatsApp or phone.</p>
+          </div>
+        </div>
+        <div class="map-frame">
+          <iframe src="{MAP_EMBED}" title="Map of Benoni, Gauteng, South Africa: AI AutoTech's home base" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+        </div>
+        <a class="map-link" href="{MAP_LINK}" target="_blank" rel="noopener">Open Benoni in Google Maps ↗</a>
       </div>
     </div>
   </section>
