@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from content import SERVICES, STACK, ORCH_NODES, WHO_KEYS, BOOK, TEAMS, TEAM_PRICE, TEAM_PRICE_NOTE
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V = "20260925b"
+V = "20260925c"
 SITE = "https://aiautotech.co.za"
 WA_NUM = "27646863803"
 BYSLUG = {s["slug"]: s for s in SERVICES}
