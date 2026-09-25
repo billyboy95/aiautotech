@@ -662,6 +662,10 @@
     $("stage-name").textContent = "Your AI audit"; $("stage-count").textContent = "Complete ✓";
     var discuss = A.wa("Hi Billy. I'm " + first + " from " + company + ". I've completed the AI AutoTech Business Audit (ref " + ref + ") and I'd like to discuss my recommended AI team.");
     var book = CFG.bookingUrl ? CFG.bookingUrl : A.wa("Hi Billy. I'm " + first + " from " + company + ". I'd like to book my AI strategy session. My AI audit reference is " + ref + ".");
+    // Our own /book/ page shows the audit reference to copy into the Google booking form.
+    if (CFG.bookingUrl && /^(https:\/\/aiautotech\.co\.za)?\/book\/?(?:[?#]|$)/.test(CFG.bookingUrl) && ref) {
+      book = CFG.bookingUrl.split("#")[0] + (CFG.bookingUrl.indexOf("?") >= 0 ? "&" : "?") + "ref=" + encodeURIComponent(ref);
+    }
     var s = r.score;
     var opps = r.recommendations.map(function (x, i) {
       return '<article class="opp"><div class="opp-head"><span class="opp-rank">' + (i + 1) + '</span><div><span class="tiny">Priority ' + x.priority + " · " + esc(x.department) + "</span><h3>" + esc(x.agent) + "</h3></div></div><dl>" +
