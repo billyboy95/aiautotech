@@ -6,7 +6,7 @@ import json, math, os, sys
 from html import escape
 from urllib.parse import quote
 sys.path.insert(0, os.path.dirname(__file__))
-from content import SERVICES, STACK, ORCH_NODES, WHO_KEYS
+from content import SERVICES, STACK, ORCH_NODES, WHO_KEYS, BOOK
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 V = "20260925"
@@ -16,6 +16,9 @@ BYSLUG = {s["slug"]: s for s in SERVICES}
 
 def audit(p):
     return f"/audit/?utm_source=website&amp;utm_medium={p}&amp;utm_campaign=free_ai_audit"
+
+def book(p):
+    return f"/book/?utm_source=website&amp;utm_medium={p}&amp;utm_campaign=book_call"
 
 def wa(text):
     return f"https://wa.me/{WA_NUM}?text={quote(text)}"
@@ -51,6 +54,8 @@ I = {
  "service": '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.8-3.8a6 6 0 0 1-7.9 7.9l-6.9 6.9a2.1 2.1 0 0 1-3-3l6.9-6.9a6 6 0 0 1 7.9-7.9z"/>',
  "menu": '<path d="M4 7h16M4 12h16M4 17h16"/>',
  "close": '<path d="M6 6l12 12M18 6L6 18"/>',
+ "meet": '<rect x="2" y="6" width="13" height="12" rx="2"/><path d="M15 10l6-4v12l-6-4z"/>',
+ "clock": '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
  "mic": '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/>',
 }
 
@@ -115,6 +120,7 @@ def nav(active_slug=None):
       <a href="/" class="brand" aria-label="AI AutoTech home"><img src="/assets/nav-logo.png" alt="" width="34" height="34" /><span>AI <b>AutoTech</b></span></a>
       <nav aria-label="Main"><ul class="nav-links">{links}</ul></nav>
       <div class="nav-right">
+        <a href="{book("nav")}" class="btn-book-nav"{' aria-current="page"' if active_slug == "book" else ""}>{ic("calendar")}{BOOK["label"]}</a>
         <a href="{audit("nav")}" class="btn-audit-nav"><span class="pulse-dot" aria-hidden="true"></span>Free AI Audit</a>
         <button type="button" class="nav-toggle" id="nav-toggle" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">{ic("menu","i-open")}{ic("close","i-close")}</button>
       </div>
@@ -125,6 +131,7 @@ def nav(active_slug=None):
     <p class="mm-label">Services</p>
     <div class="mm-services">{mm_svcs}</div>
     <a href="{audit("mobile_menu")}" class="mm-audit"><span class="pulse-dot" aria-hidden="true"></span>Get my free AI audit</a>
+    <a href="{book("mobile_menu")}" class="mm-book">{ic("calendar")}Book a 30-min call</a>
     <a href="{wa("Hi Billy, I saw the AI AutoTech website and would like to chat about AI for my business.")}" class="mm-wa" target="_blank" rel="noopener">Talk to us on WhatsApp</a>
   </div>
 '''
@@ -143,6 +150,7 @@ def footer():
       <div><h3 class="blank" aria-hidden="true">&nbsp;</h3><ul>{li(SERVICES[half:])}</ul></div>
       <div><h3>Company</h3><ul>
         <li><a class="f-audit" href="{audit("footer")}">Free AI Audit</a></li>
+        <li><a href="{book("footer")}">Book a call</a></li>
         <li><a href="/about.html">About</a></li>
         <li><a href="/#work">Work</a></li>
         <li><a href="/#contact">Contact</a></li>
@@ -291,6 +299,7 @@ def home():
           <a class="btn btn-ghost" href="{wa(wa_home)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Talk to us on WhatsApp</a>
         </div>
         <p class="cta-note">Free AI Business Audit · about 5 minutes · no obligation</p>
+        <a class="book-link" href="{book("hero")}">{ic("calendar")}<span>Prefer to talk first? <b>Book a 30-min call</b></span>{ic("arrow")}</a>
         <div class="founder-chip glass"><img src="/assets/redesign/billy-faber.webp" alt="Billy Faber, founder of AI AutoTech" width="48" height="48" /><p><b>Built by Billy Faber</b>, founder<br>Local team in Benoni, priced in Rand</p></div>
       </div>
       <nav class="outcomes" aria-label="Outcomes we deliver">{oc}</nav>
@@ -350,6 +359,7 @@ def home():
           <p>Answer a few quick questions about your business and get your personalised AI plan in about 5 minutes. No card, no obligation.</p>
           <a class="btn btn-primary" href="{audit("banner")}">Start my free AI audit {ic("arrow")}</a>
           <p class="cta-note">POPIA-aware · your answers are only used to prepare your plan</p>
+          <a class="book-link" href="{book("banner")}">{ic("calendar")}<span>Done the audit? <b>Book your results call</b></span>{ic("arrow")}</a>
         </div>
         <ul class="audit-list" style="position:relative">
           <li><span class="num">01</span><div><b>Your top AI opportunities</b><span class="d">Where AI agents and automation fit your sales, marketing, service and operations.</span></div></li>
@@ -434,6 +444,7 @@ def home():
         <h2 class="section-title" id="contact-title">Let's build your AI team</h2>
         <p style="color:var(--sub)">No hard sell and no jargon. Just a straight conversation about what AI can do for your business.</p>
         <ul class="contact-list">
+          <li><a href="{book("contact")}">{ic("calendar")}Book a 30-min Google Meet</a></li>
           <li><a href="tel:0646863803">{ic("phone")}064 686 3803</a></li>
           <li><a href="mailto:billyfaber06@gmail.com">{ic("mail")}billyfaber06@gmail.com</a></li>
           <li><a href="{wa(wa_home)}" target="_blank" rel="noopener">{ic("whatsapp")}WhatsApp us</a></li>
@@ -494,6 +505,7 @@ def service_page(s):
           <a class="btn btn-ghost" href="{wa(wa_t)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Talk to us on WhatsApp</a>
         </div>
         <p class="cta-note">Free AI Business Audit · about 5 minutes · no obligation</p>
+        <a class="book-link" href="{book(pl)}">{ic("calendar")}<span>Prefer to talk first? <b>Book a 30-min call</b></span>{ic("arrow")}</a>
       </div>
       <div class="mock glass reveal">{mock(s["mock"], s)}</div>
     </div>
@@ -524,6 +536,7 @@ def service_page(s):
           <a class="btn btn-primary" href="{audit(pl)}">Get my free AI audit {ic("arrow")}</a>
           <a class="btn btn-ghost" href="{wa(wa_t)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Talk to us on WhatsApp</a>
         </div>
+        <a class="book-link" href="{book(pl)}" style="margin-top:16px">{ic("calendar")}<span>Or <b>book a 30-min Google Meet</b> with Billy</span>{ic("arrow")}</a>
       </div>
     </div>
   </section>
@@ -540,6 +553,63 @@ def service_page(s):
   </main>
 ''' + footer() + sticky(pl, wa_t) + TAIL
 
+def book_page():
+    wa_default = "Hi Billy, I'd like to book my AI Audit Results & Next Steps call."
+    return head("Book your AI Audit Results & Next Steps call — AI AutoTech",
+                "Book a free 30-minute Google Meet with Billy Faber to go through your AI business audit results, your recommended AI team and your Priority 1-2-3 plan.",
+                "/book/", og_title="Book your AI Audit Results & Next Steps call — AI AutoTech") + nav("book") + f"""  <main id="main">
+  <section class="book-hero" aria-labelledby="book-title">
+    <div class="wrap">
+      <div class="book-intro glass reveal">
+        <p class="eyebrow">Free {BOOK["length"]} {BOOK["where"]}</p>
+        <h1 id="book-title">Book your AI Audit Results &amp; <span class="grad">Next Steps</span> call</h1>
+        <p class="lead">Free 30-minute Google Meet with Billy Faber. We'll go through your audit results, your recommended AI team and your Priority 1-2-3 plan, and agree next steps. Not done the audit yet? You can still book, or <a href="{audit("book")}">take the free AI audit first</a> (about 5 minutes).</p>
+        <ul class="book-facts">
+          <li>{ic("clock")}<span><b>30 minutes</b></span></li>
+          <li>{ic("meet")}<span><b>Google Meet</b> link in your invite</span></li>
+          <li>{ic("pin")}<span>Times in <b>{BOOK["tz"]}</b></span></li>
+        </ul>
+        <p class="ref-note" id="ref-note" hidden></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="book-cal" aria-label="Choose a time">
+    <div class="wrap">
+      <p class="tz-line">{ic("clock")}<span>Times are shown in <b>SAST (Johannesburg, UTC+2)</b>. Every call is <b>30 minutes on Google Meet</b>; Google emails you the confirmation and Meet link. Outside South Africa? Check the time zone shown in the calendar.</span></p>
+      <div class="cal-card">
+        <div class="cal-inner">
+          <div class="cal-loading" id="cal-loading">Loading available times…</div>
+          <iframe id="cal-frame" title="Book your AI Audit Results &amp; Next Steps call with Billy Faber" src="{BOOK["embed"]}" loading="eager"></iframe>
+        </div>
+      </div>
+      <div class="book-fallback glass violet">
+        <p>Calendar not loading? <a href="{BOOK["google_page"]}" target="_blank" rel="noopener">Open the booking page &rarr;</a></p>
+        <a id="wa" class="btn btn-ghost" href="https://wa.me/{WA_NUM}" target="_blank" rel="noopener" aria-label="Message AI AutoTech on WhatsApp to book"><span class="wa">{ic("whatsapp")}</span>Prefer WhatsApp? Message Billy</a>
+      </div>
+    </div>
+  </section>
+  </main>
+""" + footer() + f"""  <script>
+    (function () {{
+      var frame = document.getElementById("cal-frame"), loading = document.getElementById("cal-loading");
+      frame.addEventListener("load", function () {{ loading.hidden = true; }});
+      var raw = (new URLSearchParams(location.search).get("ref") || "").trim().toUpperCase();
+      var ref = /^AAT-[A-Z0-9]{{4,10}}$/.test(raw) ? raw : "";
+      var msg = "{wa_default}";
+      if (ref) {{
+        var note = document.getElementById("ref-note");
+        note.appendChild(document.createTextNode("Your audit reference: "));
+        var b = document.createElement("b"); b.textContent = ref; note.appendChild(b);
+        note.appendChild(document.createTextNode(", please enter it in the booking form."));
+        note.hidden = false;
+        msg += " My audit reference is " + ref + ".";
+      }}
+      document.getElementById("wa").href = "https://wa.me/{WA_NUM}?text=" + encodeURIComponent(msg);
+    }})();
+  </script>
+""" + TAIL
+
 def main():
     with open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8") as f:
         f.write(home())
@@ -547,7 +617,10 @@ def main():
         d = os.path.join(ROOT, "services", s["slug"]); os.makedirs(d, exist_ok=True)
         with open(os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
             f.write(service_page(s))
-    print("built", 1 + len(SERVICES), "pages")
+    os.makedirs(os.path.join(ROOT, "book"), exist_ok=True)
+    with open(os.path.join(ROOT, "book", "index.html"), "w", encoding="utf-8") as f:
+        f.write(book_page())
+    print("built", 2 + len(SERVICES), "pages")
 
 if __name__ == "__main__":
     main()

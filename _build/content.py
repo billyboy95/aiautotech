@@ -297,3 +297,13 @@ ORCH_NODES = [
   ("Hunter", "Grok", "t"), ("Scout", "Perplexity", "v"), ("Keeper", "Hermes", "t"), ("Architect", "Claude Code", "v"),
   ("Builder", "Codex", "t"), ("Shipper", "Cursor", "v"), ("Vault", "Supabase", "t"), ("Edge Runner", "Vercel", "v"),
 ]
+
+# Google Calendar booking (30-min Google Meet with Billy). /book/ embeds the appointment schedule.
+BOOK = dict(
+    label="Book a call",
+    embed="https://calendar.google.com/calendar/appointments/schedules/AcZssZ380rFZVjLLzJxygU1WcJYYwIsbZDYcq8rg-tRx3LvJu8GVFKYYHmFEsAQZTwJzNRyMpZXFZ5UN?gv=true",
+    google_page="https://calendar.app.google/CRRWqhvumHBbkwjFA",
+    length="30 min",
+    where="Google Meet",
+    tz="SAST (Johannesburg)",
+)
