@@ -4,7 +4,8 @@ window.AAT_CONFIG = {
   whatsappNumber: "27646863803",
   // Set to a booking page (e.g. Calendly / Google Calendar appointment link) when ready.
   // While empty, "Book my AI strategy session" opens WhatsApp with a pre-filled booking message.
-  bookingUrl: "https://calendar.app.google/CRRWqhvumHBbkwjFA",
+  // Branded booking page that embeds the Google Calendar appointment schedule; audit adds ?ref=<reference>.
+  bookingUrl: "https://aiautotech.co.za/book/",
   siteUrl: "https://aiautotech.co.za/",
   eventDefaults: {
     source: "highlevel_event",
