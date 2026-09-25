@@ -129,3 +129,9 @@ h3 { font-size: 1.02rem; font-weight: 700; }
 .pill { white-space: nowrap; flex-shrink: 0; }
 .brand small { font-size: .56rem; letter-spacing: .1em; }
 body.is-results #saved-note { visibility: hidden; }
+/* "Rather chat on WhatsApp?" link in the audit top bar */
+.wa-alt { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; max-width: 150px; min-height: 44px; padding: 6px 12px; border-radius: 12px; border: 1px solid rgba(37,211,102,.45); background: rgba(37,211,102,.1); color: #d7fbe5; font-size: .74rem; font-weight: 700; line-height: 1.2; text-decoration: none; }
+.wa-alt svg { width: 18px; height: 18px; flex-shrink: 0; color: #25D366; }
+.wa-alt:hover { background: rgba(37,211,102,.18); }
+.wa-alt:focus-visible { outline: 2px solid #25D366; outline-offset: 2px; }
+body.is-results .wa-alt { display: none; }

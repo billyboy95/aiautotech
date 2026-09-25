@@ -4,106 +4,58 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Free AI Business Audit — AI AutoTech</title>
-  <meta name="description" content="Complete your free AI business audit and AI AutoTech will identify where AI agents, automation and intelligent systems could save time, reduce costs and increase revenue." />
+  <meta name="description" content="Opening your free AI business audit from AI AutoTech." />
+  <meta name="robots" content="noindex, follow" />
   <meta name="theme-color" content="#080C18" />
-  <link rel="canonical" href="https://aiautotech.co.za/connect/" />
+  <link rel="canonical" href="https://aiautotech.co.za/audit/" />
   <link rel="icon" href="/favicon.ico" sizes="any" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://aiautotech.co.za/connect/" />
   <meta property="og:title" content="Discover What AI Could Do for Your Business — Free AI Audit" />
-  <meta property="og:description" content="A free, 5-minute AI business audit from AI AutoTech. Get your recommended AI team and a priority plan." />
+  <meta property="og:description" content="A free AI business audit from AI AutoTech. Get your recommended AI team and a priority plan." />
   <meta property="og:image" content="https://aiautotech.co.za/assets/og.png" />
-  <meta property="og:locale" content="en_ZA" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/assets/funnel/funnel.css?v=1" />
-  <script src="/assets/funnel/config.js?v=3"></script>
+  <!--
+    Printed QR codes point here. Forward straight into the Free AI Audit, keeping attribution:
+    the original query string is carried through, the event UTM defaults are added where missing
+    (same values /connect always stored: utm_source=highlevel, utm_medium=qr, utm_campaign=highlevel_event_2026),
+    and via=connect tells audit.js to apply the full event attribution (source/event/qr_source).
+    Keep DEFAULTS in sync with eventDefaults in /assets/funnel/config.js.
+  -->
   <script>
     (function () {
-      // /connect is the QR target: apply event defaults, let real URL params override, persist for /audit.
-      var cfg = window.AAT_CONFIG, A = window.AAT;
-      var base = Object.assign({ utm_term: "", utm_content: "" }, cfg.eventDefaults);
-      var merged = A.applyUrlParams(base).tracking;
-      merged.referrer = (document.referrer || "").slice(0, 400);
-      merged.landing = "/connect";
-      merged.captured_at = new Date().toISOString();
-      A.saveTracking(merged);
+      var FALLBACK = "/audit/?utm_source=highlevel&utm_medium=qr&utm_campaign=highlevel_event_2026&via=connect";
+      var next = FALLBACK;
+      try {
+        var DEFAULTS = { utm_source: "highlevel", utm_medium: "qr", utm_campaign: "highlevel_event_2026" };
+        var p = new URLSearchParams(location.search);
+        for (var k in DEFAULTS) if (!p.get(k)) p.set(k, DEFAULTS[k]);
+        p.set("via", "connect");
+        next = "/audit/?" + p.toString() + location.hash;
+        try { sessionStorage.setItem("aat_connect_ref", (document.referrer || "").slice(0, 400)); } catch (e) {}
+      } catch (e) { next = FALLBACK; }
+      window.__AAT_NEXT__ = next;
+      location.replace(next);
     })();
   </script>
+  <noscript><meta http-equiv="refresh" content="0; url=/audit/?utm_source=highlevel&amp;utm_medium=qr&amp;utm_campaign=highlevel_event_2026&amp;via=connect" /></noscript>
+  <style>
+    body{margin:0;min-height:100vh;display:grid;place-items:center;background:#050814;color:#eef4ff;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;text-align:center;padding:24px}
+    .box{max-width:360px}
+    h1{font-size:1.3rem;margin:0 0 10px}
+    p{color:#b3c0dc;margin:0 0 18px;line-height:1.5}
+    a.go{display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:14px;background:linear-gradient(90deg,#2ee6d6,#14c8d8);color:#041018;font-weight:800;text-decoration:none;margin-bottom:12px}
+    a.wa{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:14px;border:1px solid rgba(37,211,102,.45);color:#d7fbe5;text-decoration:none;font-weight:700}
+    a:focus-visible{outline:2px solid #2ee6d6;outline-offset:3px}
+  </style>
 </head>
 <body>
-  <div class="glow" aria-hidden="true"></div>
-  <header class="wrap">
-    <div class="brandbar">
-      <a class="brand" href="/" aria-label="AI AutoTech home">
-        <img src="/assets/nav-logo.png" alt="" width="34" height="34" />
-        <span>AI AutoTech<small>Automate • Innovate • Elevate</small></span>
-      </a>
-      <span class="pill"><span class="dot"></span>Free audit</span>
-    </div>
-  </header>
-
-  <main class="wrap">
-    <section class="fade-in" style="padding: 26px 0 8px;">
-      <p class="tagline" style="margin-bottom:14px;">Great to meet you at HighLevel</p>
-      <h1>Discover What <span>AI</span> Could Do for Your Business</h1>
-      <p class="lead" style="margin-top:16px;">Complete your free AI business audit and AI AutoTech will identify where AI agents, automation and intelligent systems could save time, reduce costs and increase revenue.</p>
-    </section>
-
-    <section class="fade-in" style="padding: 22px 0 6px; animation-delay:.08s;">
-      <div class="cta-stack">
-        <a id="start" class="btn btn-primary" href="/audit/">
-          Start my free AI audit
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-        </a>
-        <a id="wa" class="btn btn-wa" href="https://wa.me/27646863803" target="_blank" rel="noopener" aria-label="Talk to AI AutoTech on WhatsApp">
-          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.5 3.5A11.8 11.8 0 0 0 12 0C5.4 0 .1 5.3.1 11.9c0 2.1.6 4.1 1.6 5.9L0 24l6.4-1.7a11.9 11.9 0 0 0 5.6 1.4h.1c6.6 0 11.9-5.3 11.9-11.9 0-3.2-1.2-6.2-3.5-8.3zM12 21.7c-1.8 0-3.5-.5-5-1.4l-.4-.2-3.8 1 1-3.7-.2-.4a9.8 9.8 0 0 1-1.5-5.2c0-5.4 4.4-9.9 9.9-9.9 2.6 0 5.1 1 7 2.9a9.8 9.8 0 0 1 2.9 7c0 5.5-4.4 9.9-9.9 9.9zm5.4-7.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1l-.9 1.2c-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5.3-.5v-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5 2.5 1 3 .8 3.6.8.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.2-.3-.3-.6-.4z"/></svg>
-          Connect on WhatsApp
-        </a>
-        <p class="small muted" style="text-align:center;">Takes about 5 minutes · Tap-to-answer · No obligation</p>
-      </div>
-    </section>
-
-    <section class="card fade-in" style="margin-top:22px; animation-delay:.14s;">
-      <p class="tagline" style="margin-bottom:14px;">What you get</p>
-      <ul class="checklist">
-        <li><span class="ic">1</span><div><b>Your highest-priority AI opportunities</b><span>Where AI agents and automation fit your sales, marketing, service and operations.</span></div></li>
-        <li><span class="ic">2</span><div><b>Your recommended AI team</b><span>Which AI agents we'd deploy, grouped by department.</span></div></li>
-        <li><span class="ic">3</span><div><b>A Priority 1–2–3 implementation plan</b><span>What to automate first, with time-saving estimates based on your own answers.</span></div></li>
-      </ul>
-    </section>
-
-    <section class="fade-in" style="margin-top:14px; animation-delay:.2s;">
-      <div class="trust">
-        <div><b>🇿🇦 Local</b>South African business, Benoni</div>
-        <div><b>POPIA-aware</b>Your info is used only for your audit</div>
-        <div><b>Free</b>No card, no obligation</div>
-      </div>
-    </section>
-
-    <section class="card fade-in" style="margin-top:14px; display:flex; gap:14px; align-items:center; animation-delay:.24s;">
-      <img src="/assets/nav-logo.png" alt="" width="52" height="52" style="width:52px;height:52px;border-radius:12px;background:#0C1120;border:1px solid var(--border);padding:6px;" />
-      <div>
-        <b>Willem Frederik “Billy” Faber</b>
-        <div class="small sub">Founder &amp; MD — AI AutoTech Pty Ltd</div>
-        <div class="tiny muted" style="margin-top:2px;">AI agents · WhatsApp automation · CRM · websites</div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="wrap site-foot">
-    <p class="tagline" style="margin-bottom:8px;">Automate • Innovate • Elevate</p>
-    <p>© 2026 AI AutoTech Pty Ltd · <a href="/privacy.html">Privacy</a> · <a href="/">aiautotech.co.za</a></p>
-  </footer>
-
-  <script>
-    (function () {
-      var msg = "Hi Billy, we met at the HighLevel event. I scanned the AI AutoTech QR code and I'd like my free AI business audit.";
-      document.getElementById("wa").href = window.AAT.wa(msg);
-    })();
-  </script>
+  <div class="box">
+    <h1>Opening your free AI audit…</h1>
+    <p>If nothing happens, tap the button below.</p>
+    <a class="go" id="go" href="/audit/?utm_source=highlevel&amp;utm_medium=qr&amp;utm_campaign=highlevel_event_2026&amp;via=connect">Start my free AI audit</a>
+    <a class="wa" href="https://wa.me/27646863803?text=Hi%20Billy%2C%20we%20met%20at%20the%20HighLevel%20event.%20I%20scanned%20the%20AI%20AutoTech%20QR%20code%20and%20I%27d%20like%20my%20free%20AI%20business%20audit." target="_blank" rel="noopener">Rather chat on WhatsApp?</a>
+  </div>
+  <script>try { document.getElementById("go").href = window.__AAT_NEXT__ || document.getElementById("go").href; } catch (e) {}</script>
 </body>
 </html>
