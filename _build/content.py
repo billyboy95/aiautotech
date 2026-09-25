@@ -307,3 +307,89 @@ BOOK = dict(
     where="Google Meet",
     tz="SAST (Johannesburg)",
 )
+
+# ---------------- "Pick your AI team" (second front door next to the audit) ----------------
+# Only known price: AI employees from R8,999/month. No invented prices, stats, testimonials or results.
+TEAM_PRICE = "From R8,999/month"
+TEAM_PRICE_NOTE = "excl. VAT. Final price depends on how many AI employees you start with and your setup; confirmed before any work starts."
+
+TEAMS = [
+  dict(slug="dental-front-desk", name="Dental Front Desk Team", short="Dental practices", icon="clinic", tone="t",
+    title="Dental Front Desk AI Team | WhatsApp bookings, reminders & reviews | AI AutoTech",
+    desc="An AI front desk for dental practices: answers patient WhatsApps 24/7, books appointments, sends reminders, chases no-shows and collects Google reviews. From R8,999/month.",
+    pitch="Answers WhatsApps 24/7, books patients, sends reminders, chases no-shows and collects reviews.",
+    lead="Your reception team stays focused on the patients in front of them. The AI team handles the messages, bookings, reminders and follow-ups around them, day and night, using your practice's own information and diary.",
+    members=[
+      ("whatsapp", "WhatsApp Receptionist", "Answers patient WhatsApps 24/7: hours, services, directions and common questions, using the information you approve."),
+      ("calendar", "Booking Agent", "Offers open slots and books, moves or cancels appointments in your practice diary."),
+      ("clock", "Reminder Agent", "Sends appointment confirmations and reminders so patients know when to arrive."),
+      ("leads", "No-show Follow-up Agent", "Messages patients who missed or cancelled an appointment and offers a new time."),
+      ("star", "Reviews Agent", "Asks patients for a Google review after their visit, with a direct link."),
+    ],
+    day=[
+      ("21:40", "A patient WhatsApps about a sore tooth. The WhatsApp Receptionist replies straight away and the Booking Agent offers the first morning slot. Booked."),
+      ("07:30", "The Reminder Agent sends today's reminders. One patient asks to move to the afternoon and gets rebooked."),
+      ("10:15", "A patient doesn't arrive. The No-show Follow-up Agent messages them and offers two new times."),
+      ("17:00", "The Reviews Agent sends a review link to patients seen today. A question about a medical aid claim is handed to your reception team."),
+    ],
+    fit=["General and family dental practices", "Practices with one or more chairs and a busy WhatsApp line", "Teams losing time to reminders and rebooking calls"],
+    note="Review requests and patient messages are set up to fit your practice's policies and your professional body's rules.",
+    wa="Hi Billy, I'd like to start with the Dental Front Desk Team for my practice."),
+  dict(slug="estate-agent-leads", name="Estate Agent Lead Team", short="Estate agents", icon="estate", tone="v",
+    title="Estate Agent AI Lead Team | Instant replies, qualified buyers & viewings | AI AutoTech",
+    desc="An AI lead team for estate agents: replies to every property enquiry in seconds, qualifies buyers and renters, books viewings and follows up. From R8,999/month.",
+    pitch="Replies to every property enquiry in seconds, qualifies buyers and renters, books viewings and follows up.",
+    lead="Property enquiries arrive from portals, your website and WhatsApp at all hours. The AI team replies to every one in seconds, works out who is serious and gets viewings into your agents' calendars.",
+    members=[
+      ("chat", "Enquiry Responder", "Replies to portal, website and WhatsApp enquiries within seconds, with the listing details you've loaded."),
+      ("leads", "Buyer & Renter Qualifier", "Asks the right questions (budget, area, bond pre-approval or move-in date) and tags each lead hot, warm or cold."),
+      ("calendar", "Viewing Scheduler", "Books viewings into the right agent's calendar and sends the address and a reminder."),
+      ("trend", "Follow-up Agent", "Follows up after viewings and keeps colder leads warm with new listings that match what they asked for."),
+    ],
+    day=[
+      ("06:55", "A portal enquiry comes in for a 3-bedroom listing. The Enquiry Responder replies within seconds with the details and asks a few questions."),
+      ("07:05", "The Buyer & Renter Qualifier learns the buyer has bond pre-approval and wants to move within three months, and tags them hot."),
+      ("07:10", "The Viewing Scheduler books a Saturday 10:00 viewing in the listing agent's calendar and sends a reminder on Friday."),
+      ("Monday", "The Follow-up Agent asks how the viewing went and shares two similar listings. The agent takes over for the offer."),
+    ],
+    fit=["Residential sales and rental agencies", "Agents getting leads from portals, social media and WhatsApp", "Teams where enquiries wait until an agent is free"],
+    wa="Hi Billy, I'd like to start with the Estate Agent Lead Team for my agency."),
+  dict(slug="college-admissions", name="College Admissions Team", short="Colleges & training", icon="school", tone="t",
+    title="College Admissions AI Team | Course questions, applications & campus visits | AI AutoTech",
+    desc="An AI admissions team for colleges and training providers: answers course and fee questions, collects applications and documents, follows up with applicants and books campus visits. From R8,999/month.",
+    pitch="Answers course and fee questions, collects applications and documents, follows up with applicants and books campus visits.",
+    lead="During intake season your admissions office gets the same questions hundreds of ways. The AI team answers them from your approved course information, guides applicants through the paperwork and keeps them moving to registration.",
+    members=[
+      ("chat", "Admissions Assistant", "Answers course, entry requirement and fee questions on WhatsApp and your website, from your approved information."),
+      ("layers", "Application Collector", "Guides applicants through the application and collects documents such as ID copies and results."),
+      ("leads", "Applicant Follow-up Agent", "Follows up incomplete applications and upcoming deadlines so applicants don't drop off."),
+      ("calendar", "Campus Visit Scheduler", "Books campus visits and open-day slots and sends reminders."),
+    ],
+    day=[
+      ("20:15", "A parent asks on WhatsApp about entry requirements and fees for a course. The Admissions Assistant answers from your approved course information."),
+      ("20:20", "The applicant starts the application. The Application Collector asks for an ID copy and latest results."),
+      ("Two days later", "The application is still missing one document. The Applicant Follow-up Agent sends a friendly reminder with the deadline."),
+      ("Saturday", "The Campus Visit Scheduler books the family onto the open day. Anything about bursaries or exceptions goes to your admissions staff."),
+    ],
+    fit=["Private colleges, TVET-style and short-course providers", "Training academies with intakes and deadlines", "Admissions teams buried in repeat questions"],
+    wa="Hi Billy, I'd like to start with the College Admissions Team for my college."),
+  dict(slug="broker-client", name="Broker Client Team", short="Insurance & finance brokers", icon="broker", tone="v",
+    title="Broker AI Client Team | Quote requests, documents & renewals | AI AutoTech",
+    desc="An AI client team for insurance and financial brokers: handles quote requests, collects documents, sends renewal reminders and answers policy questions. From R8,999/month.",
+    pitch="Handles quote requests, collects documents, sends renewal reminders and answers policy questions.",
+    lead="Your brokers should spend their time advising clients, not chasing forms. The AI team handles the admin around every quote, renewal and policy question, and hands anything that needs advice to a licensed person.",
+    members=[
+      ("leads", "Quote Request Agent", "Captures quote requests with all the details your team needs and sends them to the right broker."),
+      ("layers", "Document Collector", "Requests and chases documents such as ID copies, vehicle or property details and current schedules."),
+      ("clock", "Renewal Reminder Agent", "Sends renewal reminders ahead of the date and books a review call with the broker."),
+      ("chat", "Policy Q&A Assistant", "Answers common policy questions from wording you approve. It never gives advice; advice and claims questions go to your licensed staff."),
+    ],
+    day=[
+      ("08:10", "A client asks on WhatsApp for a car insurance quote. The Quote Request Agent collects the vehicle, driver and cover details."),
+      ("08:20", "The Document Collector asks for the ID copy and current schedule, and sends a reminder the next day for the missing one."),
+      ("11:00", "The Renewal Reminder Agent contacts clients whose policies renew next month and books review calls with the broker."),
+      ("15:30", "A client asks what their policy covers for a burst geyser. The Policy Q&A Assistant shares the approved wording and hands the claim to a broker."),
+    ],
+    fit=["Short-term insurance brokers", "Financial advisers and brokerages", "Practices with lots of renewals and document chasing"],
+    wa="Hi Billy, I'd like to start with the Broker Client Team for my brokerage."),
+]

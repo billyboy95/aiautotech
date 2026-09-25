@@ -6,10 +6,10 @@ import json, math, os, sys
 from html import escape
 from urllib.parse import quote
 sys.path.insert(0, os.path.dirname(__file__))
-from content import SERVICES, STACK, ORCH_NODES, WHO_KEYS, BOOK
+from content import SERVICES, STACK, ORCH_NODES, WHO_KEYS, BOOK, TEAMS, TEAM_PRICE, TEAM_PRICE_NOTE
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V = "20260925b"
+V = "20260925c"
 SITE = "https://aiautotech.co.za"
 WA_NUM = "27646863803"
 BYSLUG = {s["slug"]: s for s in SERVICES}
@@ -131,6 +131,7 @@ def nav(active_slug=None):
     links = "".join(f'<li><a href="{h}"{" aria-current=\"page\"" if active_slug == "ai-employees" and h.endswith("ai-employees/") else ""}>{t}</a></li>' for h, t in NAV_LINKS)
     mm_main = "".join(f'<a href="{h}">{t}</a>' for h, t in NAV_LINKS)
     mm_svcs = "".join(f'<a href="/services/{s["slug"]}/"{" aria-current=\"page\"" if s["slug"] == active_slug else ""}>{escape(s["name"])}</a>' for s in SERVICES)
+    mm_teams = "".join(f'<a href="/teams/{t["slug"]}/"{" aria-current=\"page\"" if t["slug"] == active_slug else ""}>{escape(t["name"])}</a>' for t in TEAMS)
     return f'''  <header class="nav">
     <div class="wrap">
       <a href="/" class="brand" aria-label="AI AutoTech home"><img src="/assets/nav-logo.png" alt="" width="34" height="34" /><span>AI <b>AutoTech</b></span></a>
@@ -146,6 +147,8 @@ def nav(active_slug=None):
     {mm_main}
     <p class="mm-label">Services</p>
     <div class="mm-services">{mm_svcs}</div>
+    <p class="mm-label">AI teams</p>
+    <div class="mm-services">{mm_teams}</div>
     <a href="{audit("mobile_menu")}" class="mm-audit"><span class="pulse-dot" aria-hidden="true"></span>Get my free AI audit</a>
     <a href="{book("mobile_menu")}" class="mm-book">{ic("calendar")}Book a 30-min call</a>
     <a href="{wa("Hi Billy, I saw the AI AutoTech website and would like to chat about AI for my business.")}" class="mm-wa" target="_blank" rel="noopener">Talk to us on WhatsApp</a>
@@ -351,7 +354,7 @@ def home():
     </div>
   </section>
 
-  <section class="section" id="services" aria-labelledby="svc-title">
+''' + teams_section() + f'''  <section class="section" id="services" aria-labelledby="svc-title">
     <div class="wrap">
       <div class="center reveal">
         <p class="eyebrow">What we build</p>
@@ -581,6 +584,133 @@ def service_page(s):
   </main>
 ''' + footer() + sticky(pl, wa_t) + TAIL
 
+
+# ---------------- "Pick your AI team" ----------------
+def team_buttons(t, placement):
+    return (f'<a class="btn btn-team" href="{wa(t["wa"])}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Start with this team</a>'
+            f'<a class="btn btn-ghost" href="{book(placement)}">{ic("calendar")}Book a call</a>')
+
+def team_card(t):
+    v = " violet" if t["tone"] == "v" else ""
+    mem = "".join(f'<li>{ic(i)}<span><b>{escape(n)}</b>{escape(d)}</span></li>' for i, n, d in t["members"])
+    when, what = t["day"][0]
+    return f'''<article class="team-card glass{v} reveal" aria-labelledby="tm-{t["slug"]}">
+          <div class="team-top"><span class="ico">{ic(t["icon"])}</span><div><span class="tag{" teal" if not v else ""}">{escape(t["short"])}</span><h3 id="tm-{t["slug"]}"><a href="/teams/{t["slug"]}/">{escape(t["name"])}</a></h3></div></div>
+          <p class="team-pitch">{escape(t["pitch"])}</p>
+          <p class="team-sub">{len(t["members"])} AI employees in this team</p>
+          <ul class="team-members">{mem}</ul>
+          <div class="team-day"><span class="tag">Illustrative example</span><p><b>{escape(when)}</b> {escape(what)}</p><a href="/teams/{t["slug"]}/">See the full day and team {ic("arrow")}</a></div>
+          <p class="team-price">{ic("price")}<span><b>{TEAM_PRICE}</b> excl. VAT</span></p>
+          <div class="team-cta">{team_buttons(t, "team_card_" + t["slug"].replace("-", "_"))}</div>
+        </article>'''
+
+def teams_section():
+    cards = "".join(team_card(t) for t in TEAMS)
+    return f'''
+  <section class="section teams-sec" id="teams" aria-labelledby="teams-title">
+    <div class="wrap">
+      <div class="center reveal">
+        <p class="eyebrow">Ready-made AI teams</p>
+        <h2 class="section-title" id="teams-title">Pick your <span class="grad">AI team</span></h2>
+        <p class="section-sub">Know your industry? Start with a ready-made team of AI employees, set up around your business. Not sure yet? The free AI audit tells you which team fits.</p>
+      </div>
+      <p class="swipe-hint" aria-hidden="true">Swipe to see all 4 teams {ic("arrow")}</p>
+      <div class="teams-grid" role="region" aria-label="AI teams" tabindex="0">
+        {cards}
+        <article class="team-card team-choose glass reveal" aria-labelledby="tm-choose">
+          <div>
+            <p class="eyebrow">Option 3</p>
+            <h3 id="tm-choose">Not sure? Get the free AI audit</h3>
+            <p>Answer a few quick questions and get your recommended AI team and a Priority 1-2-3 plan. Or just talk to us.</p>
+          </div>
+          <div class="team-cta">
+            <a class="btn btn-primary" href="{audit("teams_section")}">Get my free AI audit {ic("arrow")}</a>
+            <a class="btn btn-ghost" href="{wa("Hi Billy, I saw the AI teams on your website. Can we chat about which one fits my business?")}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Just talk to us</a>
+            <a class="btn btn-ghost" href="{book("teams_section")}">{ic("calendar")}Book a call</a>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+'''
+
+def team_page(t):
+    slug = t["slug"]; pl = "team_" + slug.replace("-", "_")
+    ld = {"@context":"https://schema.org","@type":"Service","name":t["name"],"serviceType":"AI employees","description":t["desc"],"url":f"{SITE}/teams/{slug}/",
+          "areaServed":{"@type":"Country","name":"South Africa"},
+          "provider":{"@type":"ProfessionalService","name":"AI AutoTech","url":SITE+"/","telephone":"+27646863803","email":"billyfaber06@gmail.com",
+                      "address":{"@type":"PostalAddress","addressLocality":"Benoni","addressRegion":"Gauteng","addressCountry":"ZA"}},
+          "offers":{"@type":"Offer","priceCurrency":"ZAR","price":"8999","description":"From R8,999/month (excl. VAT)"}}
+    mem = "".join(f'<li class="member glass{" violet" if k % 2 else ""} reveal"><span class="ico">{ic(i)}</span><div><h3>{escape(n)}</h3><p>{escape(d)}</p></div></li>' for k, (i, n, d) in enumerate(t["members"]))
+    day = "".join(f'<li><span class="when">{escape(w)}</span><p>{escape(x)}</p></li>' for w, x in t["day"])
+    fit = "".join(f'<li>{ic("check")}<span>{escape(f)}</span></li>' for f in t["fit"])
+    others = "".join(f'<li><a class="svc-tab" href="/teams/{o["slug"]}/"{" aria-current=\"page\"" if o["slug"]==slug else ""}>{ic(o["icon"])}{escape(o["name"])}</a></li>' for o in TEAMS)
+    note = f'<p class="team-note">{escape(t["note"])}</p>' if t.get("note") else ""
+    return head(t["title"], t["desc"], f"/teams/{slug}/", jsonld=ld) + nav(slug) + f'''  <main id="main">
+  <section class="svc-hero team-hero" aria-labelledby="team-h1">
+    <div class="wrap">
+      <div>
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/#teams">AI teams</a> / <span>{escape(t["name"])}</span></nav>
+        <span class="tag teal" style="margin-bottom:14px">AI team · {escape(t["short"])}</span>
+        <h1 id="team-h1" style="margin-top:12px"><span class="grad">{escape(t["name"])}</span></h1>
+        <p class="sub">{escape(t["pitch"])}</p>
+        <p class="lead">{escape(t["lead"])}</p>
+        <div class="price-pill glass">{ic("price")}<span>{TEAM_PRICE} <small>({escape(TEAM_PRICE_NOTE)})</small></span></div>
+        <div class="cta-row">{team_buttons(t, pl)}</div>
+        <a class="book-link" href="{audit(pl)}">{ic("star")}<span>Not sure this is the right team? <b>Get the free AI audit</b></span>{ic("arrow")}</a>
+      </div>
+      <div class="mock glass reveal">
+        <div class="mock-label"><b>Your {escape(t["name"])}</b><span class="tag">Illustrative example</span></div>
+        {"".join(f'<div class="row"><span class="av">{ic(i)}</span><span><b>{escape(n)}</b><br>{escape(d.split(".")[0])}</span><span class="st{" v" if k % 2 else ""}">On duty</span></div>' for k, (i, n, d) in enumerate(t["members"]))}
+        <p class="note">Sample team. Roles and tasks are set up around your business.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:34px" aria-labelledby="mem-title">
+    <div class="wrap">
+      <h2 class="section-title reveal" id="mem-title" style="font-size:clamp(1.5rem,4.6vw,2.2rem)">Meet your AI employees</h2>
+      <p class="section-sub reveal" style="margin-bottom:22px">Each AI employee has one clear job. Together they cover the whole front desk, and hand anything sensitive to your people.</p>
+      <ul class="member-grid">{mem}</ul>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px" aria-labelledby="day-title">
+    <div class="wrap two">
+      <div class="box glass reveal">
+        <h2 id="day-title">{ic("clock")}A day with the team</h2>
+        <span class="tag" style="margin:6px 0 14px;display:inline-flex">Illustrative example</span>
+        <ol class="day-line">{day}</ol>
+        <p class="note" style="margin-top:12px;color:var(--muted);font-size:.84rem">An example of how the team could work. Not a real client or real results.</p>
+      </div>
+      <div class="box glass violet reveal">
+        <h2>{ic("star")}Who it's for</h2>
+        <ul class="gains">{fit}</ul>
+        {note}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px" aria-labelledby="cta-title">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <p class="eyebrow">Start here</p>
+        <h2 id="cta-title">Start with the {escape(t["name"])}</h2>
+        <p>Tell us about your business on WhatsApp or book a 30-min call. <b style="color:var(--text)">{TEAM_PRICE}</b> ({escape(TEAM_PRICE_NOTE)})</p>
+        <div class="cta-row">{team_buttons(t, pl + "_band")}</div>
+        <a class="book-link" href="{audit(pl + "_band")}" style="margin-top:16px">{ic("star")}<span>Or <b>get the free AI audit</b> first</span>{ic("arrow")}</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px" aria-label="All AI teams">
+    <div class="wrap">
+      <nav class="svc-nav glass" aria-label="AI teams"><h2>Other AI teams</h2><ul class="svc-tabs">{others}</ul></nav>
+    </div>
+  </section>
+  </main>
+''' + footer() + sticky(pl, t["wa"]) + TAIL
+
 def book_page():
     wa_default = "Hi Billy, I'd like to book my AI Audit Results & Next Steps call."
     return head("Book your AI Audit Results & Next Steps call — AI AutoTech",
@@ -645,10 +775,14 @@ def main():
         d = os.path.join(ROOT, "services", s["slug"]); os.makedirs(d, exist_ok=True)
         with open(os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
             f.write(service_page(s))
+    for t in TEAMS:
+        d = os.path.join(ROOT, "teams", t["slug"]); os.makedirs(d, exist_ok=True)
+        with open(os.path.join(d, "index.html"), "w", encoding="utf-8") as f:
+            f.write(team_page(t))
     os.makedirs(os.path.join(ROOT, "book"), exist_ok=True)
     with open(os.path.join(ROOT, "book", "index.html"), "w", encoding="utf-8") as f:
         f.write(book_page())
-    print("built", 2 + len(SERVICES), "pages")
+    print("built", 2 + len(SERVICES) + len(TEAMS), "pages")
 
 if __name__ == "__main__":
     main()
