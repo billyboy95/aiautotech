@@ -14,6 +14,19 @@ SITE = "https://aiautotech.co.za"
 WA_NUM = "27646863803"
 BYSLUG = {s["slug"]: s for s in SERVICES}
 
+# Founder photo in the homepage "Local, practical AI. Built in Benoni" section.
+# Set to False to remove the photo block completely (the section then becomes a single column).
+SHOW_FOUNDER_PHOTO = True
+
+def founder_photo():
+    if not SHOW_FOUNDER_PHOTO:
+        return ""
+    return """
+      <figure class="sa-photo reveal">
+        <img src="/assets/redesign/billy-faber-portrait.webp" alt="Billy Faber, founder of AI Auto Tech" width="620" height="691" loading="lazy" decoding="async" />
+        <figcaption class="glass"><b>Billy Faber</b>Founder &amp; Managing Director, AI Auto Tech</figcaption>
+      </figure>"""
+
 def audit(p):
     return f"/audit/?utm_source=website&amp;utm_medium={p}&amp;utm_campaign=free_ai_audit"
 
@@ -170,6 +183,7 @@ def sticky(placement, wa_text):
 '''
 
 TAIL = f'''  <script src="/assets/redesign/site.js?v={V}" defer></script>
+  <script src="/assets/redesign/contact-crm.js?v={V}" defer></script>
 </body>
 </html>
 '''
@@ -300,7 +314,6 @@ def home():
         </div>
         <p class="cta-note">Free AI Business Audit · about 5 minutes · no obligation</p>
         <a class="book-link" href="{book("hero")}">{ic("calendar")}<span>Prefer to talk first? <b>Book a 30-min call</b></span>{ic("arrow")}</a>
-        <div class="founder-chip glass"><img src="/assets/redesign/billy-faber.webp" alt="Billy Faber, founder of AI AutoTech" width="48" height="48" /><p><b>Built by Billy Faber</b>, founder<br>Local team in Benoni, priced in Rand</p></div>
       </div>
       <nav class="outcomes" aria-label="Outcomes we deliver">{oc}</nav>
       <div class="hero-visual" role="img" aria-label="Illustrative example: an AI AutoTech dashboard on a laptop and a WhatsApp booking chat on a phone">
@@ -403,15 +416,11 @@ def home():
   </section>
 
   <section class="section" id="why" aria-labelledby="why-title">
-    <div class="wrap sa">
-      <figure class="sa-photo reveal">
-        <img src="/assets/redesign/billy-faber.webp" alt="Billy (Willem) Faber, founder of AI AutoTech, at his laptop" width="328" height="408" loading="lazy" decoding="async" />
-        <figcaption class="glass"><b>Billy (Willem) Faber</b>Founder · Benoni, Gauteng</figcaption>
-      </figure>
+    <div class="wrap sa{"" if SHOW_FOUNDER_PHOTO else " no-photo"}">{founder_photo()}
       <div class="reveal">
         <div class="sa-badge glass">{flag()}<span>Built for South African businesses</span></div>
         <h2 class="section-title" id="why-title">Local, practical AI. <span class="grad">Built in Benoni.</span></h2>
-        <p class="section-sub" style="margin-bottom:0">AI AutoTech is run by founder Billy Faber. You deal directly with the person who builds your system, not a call centre or an overseas agency.</p>
+        <p class="section-sub" style="margin-bottom:0">You deal directly with the people who build your system, not a call centre or an overseas agency.</p>
         <div class="why-grid">
           <div class="why glass"><h3>Local first</h3><p>We know South African realities: load shedding, data costs, cash-flow pressure and WhatsApp-first customers.</p></div>
           <div class="why glass"><h3>Rand pricing, no surprises</h3><p>All pricing in Rand. No dollar subscriptions quietly eating into your margins.</p></div>
@@ -463,11 +472,14 @@ def home():
           <input id="name" name="name" type="text" required placeholder="Your name" autocomplete="name" />
           <label for="email">Email</label>
           <input id="email" name="email" type="email" required placeholder="you@company.co.za" autocomplete="email" />
+          <label for="company">Business</label>
+          <input id="company" name="company" type="text" placeholder="Business name (optional)" autocomplete="organization" />
           <label for="phone">Phone</label>
           <input id="phone" name="phone" type="tel" placeholder="0XX XXX XXXX" autocomplete="tel" />
           <label for="message">Message</label>
           <textarea id="message" name="message" required placeholder="What do you need automated?"></textarea>
           <button class="btn btn-primary" type="submit">Send us a message {ic("arrow")}</button>
+          <p class="form-status" role="status" aria-live="polite" hidden></p>
         </form>
       </div>
     </div>
