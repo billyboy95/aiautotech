@@ -14,6 +14,54 @@
     <loc>https://aiautotech.co.za/book/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
+    <loc>https://aiautotech.co.za/services/ai-employees/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://aiautotech.co.za/services/whatsapp-automation/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://aiautotech.co.za/services/ai-voice-agents/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://aiautotech.co.za/services/crm-pipelines/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://aiautotech.co.za/services/ai-chat-voice/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://aiautotech.co.za/services/business-automation/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://aiautotech.co.za/services/websites-dashboards/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://aiautotech.co.za/services/digital-transformation/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://aiautotech.co.za/services/research-specialist/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://aiautotech.co.za/services/autonomous-orchestrator/</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
   </url>
   <url>
     <loc>https://aiautotech.co.za/about.html</loc>
