@@ -168,7 +168,7 @@ h1,h2,h3{font-family:var(--head);letter-spacing:-.02em;line-height:1.1}
 .svc-btn.v:hover .ico,.svc-btn.v:focus-visible .ico,.svc-btn.v.is-tapped .ico{background:rgba(139,92,246,.3);box-shadow:0 0 22px rgba(139,92,246,.6)}
 .svc-btn .price{display:inline-block;margin-top:6px;font-size:.72rem;font-weight:700;color:var(--teal)}
 @media (min-width:640px){.svc-grid{grid-template-columns:1fr 1fr}}
-@media (min-width:1000px){.svc-grid{grid-template-columns:repeat(3,1fr)}}
+@media (min-width:1000px){.svc-grid{grid-template-columns:repeat(3,1fr)}.svc-grid li:last-child:nth-child(3n+1){grid-column:2}}
 
 /* ---------- AI stack ---------- */
 .stack{padding:26px 18px;border-radius:22px}
@@ -272,7 +272,7 @@ h1,h2,h3{font-family:var(--head);letter-spacing:-.02em;line-height:1.1}
 .footer p{color:var(--muted);font-size:.86rem}
 .footer h3{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);margin-bottom:10px;font-family:Inter,sans-serif}
 .footer ul{list-style:none;display:grid;gap:2px}
-.footer ul a{display:inline-flex;align-items:center;min-height:40px;color:var(--sub);text-decoration:none;font-size:.9rem}
+.footer ul a{display:inline-flex;align-items:center;min-height:44px;color:var(--sub);text-decoration:none;font-size:.9rem}
 .footer ul a:hover,.footer ul a:focus-visible{color:var(--teal)}
 .footer .f-audit{color:var(--teal)!important;font-weight:700}
 .footer .legal{font-size:.76rem;color:#6f7d9c;border-top:1px solid var(--line);padding-top:18px}
