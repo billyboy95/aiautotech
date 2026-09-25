@@ -11,51 +11,112 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="/assets/favicon-32.png" type="image/png" sizes="32x32" />
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="AI AutoTech" />
   <meta property="og:url" content="https://aiautotech.co.za/services/business-automation/" />
   <meta property="og:title" content="Business Automation for South African SMBs | AI AutoTech" />
   <meta property="og:description" content="Automate quotes, invoices, client onboarding, document collection and reporting. Reliable, monitored workflows for South African businesses." />
-  <meta property="og:image" content="https://aiautotech.co.za/assets/og.png" />
+  <meta property="og:image" content="https://aiautotech.co.za/assets/og-share.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="AI AutoTech: Your Business, Powered by AI Employees. aiautotech.co.za" />
   <meta property="og:locale" content="en_ZA" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Business Automation for South African SMBs | AI AutoTech" />
   <meta name="twitter:description" content="Automate quotes, invoices, client onboarding, document collection and reporting. Reliable, monitored workflows for South African businesses." />
-  <meta name="twitter:image" content="https://aiautotech.co.za/assets/og.png" />
+  <meta name="twitter:image" content="https://aiautotech.co.za/assets/og-share.jpg" />
+  <meta name="twitter:image:alt" content="AI AutoTech: Your Business, Powered by AI Employees" />
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "Service",
-  "name": "Business Automation",
-  "serviceType": "Business Automation",
-  "description": "We find the repetitive work that eats your week, like capturing data, sending quotes and invoices, onboarding clients, chasing documents and compiling reports, and automate it end to end with reliable, monitored workflows.",
-  "url": "https://aiautotech.co.za/services/business-automation/",
-  "areaServed": {
-    "@type": "Country",
-    "name": "South Africa"
-  },
-  "provider": {
-    "@type": "ProfessionalService",
-    "name": "AI AutoTech",
-    "url": "https://aiautotech.co.za/",
-    "telephone": "+27646863803",
-    "email": "billyfaber06@gmail.com",
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": "Benoni",
-      "addressRegion": "Gauteng",
-      "addressCountry": "ZA"
+  "@graph": [
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "name": "Business Automation",
+      "serviceType": "Business Automation",
+      "description": "We find the repetitive work that eats your week, like capturing data, sending quotes and invoices, onboarding clients, chasing documents and compiling reports, and automate it end to end with reliable, monitored workflows.",
+      "url": "https://aiautotech.co.za/services/business-automation/",
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Benoni"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Ekurhuleni"
+        },
+        {
+          "@type": "City",
+          "name": "Johannesburg"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "Gauteng"
+        }
+      ],
+      "provider": {
+        "@type": "ProfessionalService",
+        "@id": "https://aiautotech.co.za/#organization",
+        "name": "AI AutoTech",
+        "url": "https://aiautotech.co.za/",
+        "telephone": "+27646863803",
+        "email": "billyfaber06@gmail.com",
+        "areaServed": [
+          {
+            "@type": "City",
+            "name": "Benoni"
+          },
+          {
+            "@type": "AdministrativeArea",
+            "name": "Ekurhuleni"
+          },
+          {
+            "@type": "City",
+            "name": "Johannesburg"
+          },
+          {
+            "@type": "AdministrativeArea",
+            "name": "Gauteng"
+          }
+        ]
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://aiautotech.co.za/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Services",
+          "item": "https://aiautotech.co.za/#services"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Business Automation",
+          "item": "https://aiautotech.co.za/services/business-automation/"
+        }
+      ]
     }
-  }
+  ]
 }
   </script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/assets/redesign/site.css?v=20260925c" />
+  <link rel="preload" href="/assets/fonts/inter-latin-wght.woff2" as="font" type="font/woff2" crossorigin /><link rel="preload" href="/assets/fonts/space-grotesk-latin-wght.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/assets/redesign/site.css?v=20260925d" />
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
   <header class="nav">
     <div class="wrap">
-      <a href="/" class="brand" aria-label="AI AutoTech home"><img src="/assets/nav-logo.png" alt="" width="34" height="34" /><span>AI <b>AutoTech</b></span></a>
+      <a href="/" class="brand" aria-label="AI AutoTech home"><img src="/assets/redesign/nav-logo.webp" alt="" width="34" height="34" /><span>AI <b>AutoTech</b></span></a>
       <nav aria-label="Main"><ul class="nav-links"><li><a href="/#services">Services</a></li><li><a href="/services/ai-employees/">AI Employees</a></li><li><a href="/#pricing">Pricing</a></li><li><a href="/#work">Work</a></li><li><a href="/about.html">About</a></li><li><a href="/#contact">Contact</a></li></ul></nav>
       <div class="nav-right">
         <a href="/book/?utm_source=website&amp;utm_medium=nav&amp;utm_campaign=book_call" class="btn-book-nav"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/></svg>Book a call</a>
@@ -145,13 +206,13 @@
   <footer class="footer">
     <div class="wrap">
       <div>
-        <a href="/" aria-label="AI AutoTech home"><img class="flogo" src="/assets/redesign/logo-footer.webp" alt="AI AutoTech" width="160" height="123" loading="lazy" /></a>
+        <a href="/" aria-label="AI AutoTech home"><img class="flogo" src="/assets/redesign/logo-footer.webp" alt="AI AutoTech" width="160" height="123" loading="lazy" decoding="async" /></a>
         <p style="margin-top:12px">AI employees, automation, websites and CRM for South African businesses. Benoni, Gauteng.</p>
         <p style="margin-top:8px"><a href="tel:0646863803" style="color:inherit">064 686 3803</a> · <a href="mailto:billyfaber06@gmail.com" style="color:inherit">billyfaber06@gmail.com</a></p>
       </div>
-      <div><h3>Services</h3><ul><li><a href="/services/ai-employees/">AI Employees &amp; Agents</a></li><li><a href="/services/whatsapp-automation/">WhatsApp Automation</a></li><li><a href="/services/ai-voice-agents/">AI Voice Agents</a></li><li><a href="/services/crm-pipelines/">CRM &amp; Pipelines</a></li><li><a href="/services/ai-chat-voice/">AI Chat + Voice</a></li></ul></div>
-      <div><h3 class="blank" aria-hidden="true">&nbsp;</h3><ul><li><a href="/services/business-automation/">Business Automation</a></li><li><a href="/services/websites-dashboards/">Websites &amp; Dashboards</a></li><li><a href="/services/digital-transformation/">Digital Transformation</a></li><li><a href="/services/research-specialist/">Autonomous Research Specialist</a></li><li><a href="/services/autonomous-orchestrator/">Autonomous Orchestrator</a></li></ul></div>
-      <div><h3>Company</h3><ul>
+      <div><h2>Services</h2><ul><li><a href="/services/ai-employees/">AI Employees &amp; Agents</a></li><li><a href="/services/whatsapp-automation/">WhatsApp Automation</a></li><li><a href="/services/ai-voice-agents/">AI Voice Agents</a></li><li><a href="/services/crm-pipelines/">CRM &amp; Pipelines</a></li><li><a href="/services/ai-chat-voice/">AI Chat + Voice</a></li></ul></div>
+      <div><h2 class="blank" aria-hidden="true">&nbsp;</h2><ul><li><a href="/services/business-automation/">Business Automation</a></li><li><a href="/services/websites-dashboards/">Websites &amp; Dashboards</a></li><li><a href="/services/digital-transformation/">Digital Transformation</a></li><li><a href="/services/research-specialist/">Autonomous Research Specialist</a></li><li><a href="/services/autonomous-orchestrator/">Autonomous Orchestrator</a></li></ul></div>
+      <div><h2>Company</h2><ul>
         <li><a class="f-audit" href="/audit/?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=free_ai_audit">Free AI Audit</a></li>
         <li><a href="/book/?utm_source=website&amp;utm_medium=footer&amp;utm_campaign=book_call">Book a call</a></li>
         <li><a href="/about.html">About</a></li>
@@ -167,7 +228,7 @@
     <a class="btn btn-primary" href="/audit/?utm_source=website&amp;utm_medium=service_business-automation&amp;utm_campaign=free_ai_audit">Get my free AI audit <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
     <a class="btn btn-ghost" href="https://wa.me/27646863803?text=Hi%20Billy%2C%20I%27m%20interested%20in%20Business%20Automation%20for%20my%20business." target="_blank" rel="noopener" aria-label="Talk to us on WhatsApp"><span class="wa"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.7 7.4L3 20.3l1.3-4.6a8.5 8.5 0 1 1 16.2-4.1z"/><path d="M9.2 8.3c-.4 2.9 2.6 6.4 6 6.3l.8-1.4-1.9-1-.9.8a4.6 4.6 0 0 1-2.3-2.3l.8-.9-1-1.9z"/></svg></span></a>
   </div>
-  <script src="/assets/redesign/site.js?v=20260925c" defer></script>
-  <script src="/assets/redesign/contact-crm.js?v=20260925c" defer></script>
+  <script src="/assets/redesign/site.js?v=20260925d" defer></script>
+  <script src="/assets/redesign/contact-crm.js?v=20260925d" defer></script>
 </body>
 </html>
