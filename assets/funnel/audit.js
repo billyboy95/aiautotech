@@ -5,13 +5,36 @@
   var STORE = "aat_audit_v1", RESULT = "aat_audit_result_v1";
   var CONSENT_TEXT = "I agree that AI AutoTech Pty Ltd may contact me by phone, WhatsApp or email about my AI business audit and recommendations. I can ask to be removed at any time.";
 
-  /* ---------- tracking ---------- */
+  /* ---------- tracking ----------
+     Event leads: /connect (HighLevel QR) saves the event defaults and links here WITHOUT params,
+     so a stored /connect session with no URL params is kept exactly as-is.
+     Website leads: any visit carrying its own tracking params (website nav/hero/banner/footer links,
+     ads, shares) or with no stored session starts a fresh attribution with source=website
+     (or source derived from utm_source), so website visitors are never tagged highlevel_event. */
+  var qs = new URLSearchParams(location.search);
+  var urlHasTracking = A.TRACK_KEYS.some(function (k) { return !!qs.get(k); });
   var tracking = A.readTracking();
-  if (!tracking) {
-    tracking = { source: "website_audit", campaign: "", event: "", qr_source: "", utm_source: "", utm_medium: "", utm_campaign: "", utm_term: "", utm_content: "", referrer: (document.referrer || "").slice(0, 400), landing: "/audit" };
+  if (!tracking || urlHasTracking) {
+    var ev = CFG.eventDefaults || {};
+    var isEventUrl = !!ev.utm_source && qs.get("utm_source") === ev.utm_source;
+    var base = isEventUrl
+      ? Object.assign({ utm_term: "", utm_content: "" }, ev)
+      : { source: "website", campaign: "", event: "", qr_source: "", utm_source: "", utm_medium: "", utm_campaign: "", utm_term: "", utm_content: "" };
+    tracking = A.applyUrlParams(base).tracking;
+    if (!isEventUrl) {
+      if (!qs.get("source") && qs.get("utm_source")) tracking.source = qs.get("utm_source").slice(0, 120);
+      if (!qs.get("campaign") && qs.get("utm_campaign")) tracking.campaign = qs.get("utm_campaign").slice(0, 120);
+    }
+    tracking.referrer = (document.referrer || "").slice(0, 400);
+    tracking.landing = "/audit";
+    tracking.captured_at = new Date().toISOString();
   }
-  tracking = A.applyUrlParams(tracking).tracking;
   A.saveTracking(tracking);
+  // Brand link: event sessions go back to the event landing, everyone else to the homepage.
+  (function () {
+    var brand = document.querySelector("#topbar .brand");
+    if (brand && tracking.landing === "/connect") brand.setAttribute("href", "/connect/");
+  })();
 
   /* ---------- helpers ---------- */
   function $(id) { return document.getElementById(id); }
