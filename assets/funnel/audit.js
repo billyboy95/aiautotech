@@ -163,7 +163,7 @@
     }
     var intro = s.intro;
     if (state.stage === 0 && isEvent) intro = "Great to meet you at HighLevel! " + intro;
-    app.innerHTML = '<section class="fade-in"><div class="stage-head"><p class="kicker">' + esc(s.kicker) + "</p><h2>" + esc(s.title) + "</h2>" + (intro ? "<p>" + esc(intro) + "</p>" : "") + '</div><div id="qs">' + html + "</div></section>";
+    app.innerHTML = '<section class="fade-in"><div class="stage-head"><p class="kicker">' + esc(s.kicker) + "</p><h1>" + esc(s.title) + "</h1>" + (intro ? "<p>" + esc(intro) + "</p>" : "") + '</div><div id="qs">' + html + "</div></section>";
     $("stage-name").textContent = s.name;
     $("stage-count").textContent = "Stage " + (state.stage + 1) + " of " + STAGES.length;
     setProgress((state.stage / STAGES.length) * 100);

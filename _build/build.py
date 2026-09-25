@@ -9,7 +9,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 from content import SERVICES, STACK, ORCH_NODES, WHO_KEYS, BOOK, TEAMS, TEAM_PRICE, TEAM_PRICE_NOTE
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V = "20260925c"
+V = "20260925d"
+LASTMOD = "2026-09-25"
 SITE = "https://aiautotech.co.za"
 WA_NUM = "27646863803"
 BYSLUG = {s["slug"]: s for s in SERVICES}
@@ -89,10 +90,30 @@ def flag(cls="flag"):
             f'<path d="M0 0l4.5 3L0 6" stroke="#FFB81C" stroke-width="2" fill="none" clip-path="url(#{fid})"/>'
             '<path d="M0 0l4.5 3L0 6M4.5 3H9" stroke="#007749" stroke-width="1.2" fill="none"/></svg>')
 
-FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com" /><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin /><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet" />'
+FONTS = ('<link rel="preload" href="/assets/fonts/inter-latin-wght.woff2" as="font" type="font/woff2" crossorigin />'
+         '<link rel="preload" href="/assets/fonts/space-grotesk-latin-wght.woff2" as="font" type="font/woff2" crossorigin />')
 
-def head(title, desc, path, og_title=None, jsonld=None):
+OG_IMG = SITE + "/assets/og-share.jpg"
+AREAS = [{"@type":"City","name":"Benoni"},{"@type":"AdministrativeArea","name":"Ekurhuleni"},{"@type":"City","name":"Johannesburg"},{"@type":"AdministrativeArea","name":"Gauteng"}]
+ORG_ID = SITE + "/#organization"
+ORG = {"@type":"ProfessionalService","@id":ORG_ID,"name":"AI AutoTech","legalName":"AI AutoTech (Pty) Ltd","url":SITE+"/",
+       "logo":{"@type":"ImageObject","url":SITE+"/assets/logo.png","width":967,"height":746},"image":OG_IMG,
+       "email":"billyfaber06@gmail.com","telephone":"+27646863803","areaServed":AREAS,"priceRange":"ZAR",
+       "founder":{"@type":"Person","name":"Billy Faber","alternateName":"Willem Faber","jobTitle":"Founder and Managing Director"},
+       "description":"AI AutoTech builds AI employees, WhatsApp automation, AI voice agents, CRM pipelines and websites for South African businesses.",
+       "contactPoint":{"@type":"ContactPoint","contactType":"sales","telephone":"+27646863803","email":"billyfaber06@gmail.com","areaServed":"ZA","availableLanguage":["en"]}}
+PROVIDER = {"@type":"ProfessionalService","@id":ORG_ID,"name":"AI AutoTech","url":SITE+"/","telephone":"+27646863803","email":"billyfaber06@gmail.com","areaServed":AREAS}
+
+def crumbs_ld(items):
+    return {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":k+1,"name":n,"item":SITE+u} for k,(n,u) in enumerate(items)]}
+
+def graph(*nodes):
+    return {"@context":"https://schema.org","@graph":list(nodes)}
+
+def head(title, desc, path, og_title=None, jsonld=None, robots=None, canonical=True, extra=""):
     url = SITE + path
+    rob = f'\n  <meta name="robots" content="{robots}" />' if robots else ""
+    can = f'\n  <link rel="canonical" href="{url}" />' if canonical else ""
     ogt = escape(og_title or title)
     ld = f'\n  <script type="application/ld+json">\n{json.dumps(jsonld, indent=2, ensure_ascii=False)}\n  </script>' if jsonld else ""
     return f'''<!DOCTYPE html>
@@ -102,24 +123,29 @@ def head(title, desc, path, og_title=None, jsonld=None):
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>{escape(title)}</title>
   <meta name="description" content="{escape(desc)}" />
-  <meta name="theme-color" content="#050814" />
-  <link rel="canonical" href="{url}" />
+  <meta name="theme-color" content="#050814" />{rob}{can}
   <link rel="icon" href="/favicon.ico" sizes="any" />
   <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
   <link rel="icon" href="/assets/favicon-32.png" type="image/png" sizes="32x32" />
   <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="AI AutoTech" />
   <meta property="og:url" content="{url}" />
   <meta property="og:title" content="{ogt}" />
   <meta property="og:description" content="{escape(desc)}" />
-  <meta property="og:image" content="{SITE}/assets/og.png" />
+  <meta property="og:image" content="{OG_IMG}" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="AI AutoTech: Your Business, Powered by AI Employees. aiautotech.co.za" />
   <meta property="og:locale" content="en_ZA" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="{ogt}" />
   <meta name="twitter:description" content="{escape(desc)}" />
-  <meta name="twitter:image" content="{SITE}/assets/og.png" />{ld}
+  <meta name="twitter:image" content="{OG_IMG}" />
+  <meta name="twitter:image:alt" content="AI AutoTech: Your Business, Powered by AI Employees" />{ld}
   {FONTS}
-  <link rel="stylesheet" href="/assets/redesign/site.css?v={V}" />
+  <link rel="stylesheet" href="/assets/redesign/site.css?v={V}" />{extra}
 </head>
 <body>
   <a class="skip" href="#main">Skip to content</a>
@@ -128,13 +154,13 @@ def head(title, desc, path, og_title=None, jsonld=None):
 NAV_LINKS = [("/#services", "Services"), ("/services/ai-employees/", "AI Employees"), ("/#pricing", "Pricing"), ("/#work", "Work"), ("/about.html", "About"), ("/#contact", "Contact")]
 
 def nav(active_slug=None):
-    links = "".join(f'<li><a href="{h}"{" aria-current=\"page\"" if active_slug == "ai-employees" and h.endswith("ai-employees/") else ""}>{t}</a></li>' for h, t in NAV_LINKS)
+    links = "".join(f'<li><a href="{h}"{" aria-current=\"page\"" if (active_slug == "ai-employees" and h.endswith("ai-employees/")) or (active_slug == "about" and h == "/about.html") else ""}>{t}</a></li>' for h, t in NAV_LINKS)
     mm_main = "".join(f'<a href="{h}">{t}</a>' for h, t in NAV_LINKS)
     mm_svcs = "".join(f'<a href="/services/{s["slug"]}/"{" aria-current=\"page\"" if s["slug"] == active_slug else ""}>{escape(s["name"])}</a>' for s in SERVICES)
     mm_teams = "".join(f'<a href="/teams/{t["slug"]}/"{" aria-current=\"page\"" if t["slug"] == active_slug else ""}>{escape(t["name"])}</a>' for t in TEAMS)
     return f'''  <header class="nav">
     <div class="wrap">
-      <a href="/" class="brand" aria-label="AI AutoTech home"><img src="/assets/nav-logo.png" alt="" width="34" height="34" /><span>AI <b>AutoTech</b></span></a>
+      <a href="/" class="brand" aria-label="AI AutoTech home"><img src="/assets/redesign/nav-logo.webp" alt="" width="34" height="34" /><span>AI <b>AutoTech</b></span></a>
       <nav aria-label="Main"><ul class="nav-links">{links}</ul></nav>
       <div class="nav-right">
         <a href="{book("nav")}" class="btn-book-nav"{' aria-current="page"' if active_slug == "book" else ""}>{ic("calendar")}{BOOK["label"]}</a>
@@ -161,13 +187,13 @@ def footer():
     return f'''  <footer class="footer">
     <div class="wrap">
       <div>
-        <a href="/" aria-label="AI AutoTech home"><img class="flogo" src="/assets/redesign/logo-footer.webp" alt="AI AutoTech" width="160" height="123" loading="lazy" /></a>
+        <a href="/" aria-label="AI AutoTech home"><img class="flogo" src="/assets/redesign/logo-footer.webp" alt="AI AutoTech" width="160" height="123" loading="lazy" decoding="async" /></a>
         <p style="margin-top:12px">AI employees, automation, websites and CRM for South African businesses. Benoni, Gauteng.</p>
         <p style="margin-top:8px"><a href="tel:0646863803" style="color:inherit">064 686 3803</a> · <a href="mailto:billyfaber06@gmail.com" style="color:inherit">billyfaber06@gmail.com</a></p>
       </div>
-      <div><h3>Services</h3><ul>{li(SERVICES[:half])}</ul></div>
-      <div><h3 class="blank" aria-hidden="true">&nbsp;</h3><ul>{li(SERVICES[half:])}</ul></div>
-      <div><h3>Company</h3><ul>
+      <div><h2>Services</h2><ul>{li(SERVICES[:half])}</ul></div>
+      <div><h2 class="blank" aria-hidden="true">&nbsp;</h2><ul>{li(SERVICES[half:])}</ul></div>
+      <div><h2>Company</h2><ul>
         <li><a class="f-audit" href="{audit("footer")}">Free AI Audit</a></li>
         <li><a href="{book("footer")}">Book a call</a></li>
         <li><a href="/about.html">About</a></li>
@@ -245,7 +271,7 @@ def mock(kind, s):
     if kind == "kanban":
         cols = [("New lead",[("Thandi M.","Clinic enquiry · WhatsApp"),("Sipho D.","Website form")]),("Contacted",[("Johan P.","School enrolment")]),
                 ("Qualified",[("Nomsa K.","Viewing request"),("Ravi N.","Quote needed")]),("Won",[("Pieter V.","Quote accepted")])]
-        k = "".join(f'<div class="col"><h4>{t}</h4>' + "".join(f'<div class="card"><b>{n}</b>{d}</div>' for n, d in cards) + '</div>' for t, cards in cols)
+        k = "".join(f'<div class="col"><p class="kh">{t}</p>' + "".join(f'<div class="card"><b>{n}</b>{d}</div>' for n, d in cards) + '</div>' for t, cards in cols)
         return lab("Sales pipeline (sample)") + f'<div class="kanban">{k}</div>' + ''.join([
           '<div class="row" style="margin-top:10px"><span class="av">' + ic("whatsapp") + '</span><span><b>WhatsApp lead → CRM</b><br>Assigned to the sales team</span><span class="st">Auto</span></div>',
           '<div class="row"><span class="av">' + ic("calendar") + '</span><span><b>Follow-up reminder</b><br>Tomorrow 09:00 if no reply</span><span class="st v">Scheduled</span></div>'])
@@ -293,11 +319,8 @@ def stack_block(compact=False):
       </div>'''
 
 def home():
-    ld = {"@context":"https://schema.org","@type":"ProfessionalService","name":"AI AutoTech","url":SITE+"/","logo":SITE+"/assets/logo.png","image":SITE+"/assets/og.png",
-          "email":"billyfaber06@gmail.com","telephone":"+27646863803","address":{"@type":"PostalAddress","addressLocality":"Benoni","addressRegion":"Gauteng","addressCountry":"ZA"},
-          "areaServed":"ZA","priceRange":"ZAR","founder":{"@type":"Person","name":"Willem (Billy) Faber","jobTitle":"Founder and Managing Director","email":"billyfaber06@gmail.com"},
-          "description":"AI AutoTech builds AI Employees, WhatsApp automation, voice agents, websites and CRM systems for South African businesses.",
-          "hasOfferCatalog":{"@type":"OfferCatalog","name":"AI AutoTech services","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":s["name"],"url":f'{SITE}/services/{s["slug"]}/'}} for s in SERVICES]}}
+    org = dict(ORG); org["hasOfferCatalog"] = {"@type":"OfferCatalog","name":"AI AutoTech services","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":s["name"],"url":f'{SITE}/services/{s["slug"]}/'}} for s in SERVICES]}
+    ld = graph(org, {"@type":"WebSite","@id":SITE+"/#website","url":SITE+"/","name":"AI AutoTech","publisher":{"@id":ORG_ID},"inLanguage":"en-ZA"})
     wa_home = "Hi Billy, I saw the AI AutoTech website and would like to chat about AI for my business."
     kp = [("New leads","M0 14 L10 11 L20 12 L30 7 L40 8 L50 4 L60 2"),("Bookings","M0 12 L10 13 L20 9 L30 10 L40 6 L50 6 L60 3"),("Conversations","M0 10 L10 8 L20 11 L30 6 L40 7 L50 3 L60 4"),("Revenue","M0 15 L10 12 L20 12 L30 9 L40 6 L50 5 L60 2")]
     kpis = "".join(f'<div class="kpi"><span>{n}</span>{spark(d, "#2ee6d6" if i%2==0 else "#b19cff")}</div>' for i, (n, d) in enumerate(kp))
@@ -305,7 +328,7 @@ def home():
     oc = "".join(f'<a class="outcome float" style="--d:-{i*1.3:.1f}s" href="{h}">{ic(ico)}{t}</a>' for i, (ico, t, h) in enumerate(outcomes))
     svc_items = "".join(f'<li style="--d:-{(i*0.9)%7:.1f}s">{svc_button(s)}</li>' for i, s in enumerate(SERVICES))
     return head("AI AutoTech | Your Business, Powered by AI Employees (South Africa)",
-                "AI AutoTech builds AI employees, WhatsApp automation, AI voice agents, CRM pipelines and websites for South African businesses. Based in Benoni, Gauteng. Get your free AI audit.",
+                "AI employees, WhatsApp automation, AI voice agents, CRM and websites for South African businesses. Based in Benoni, Gauteng. Get your free AI audit.",
                 "/", og_title="AI AutoTech: Your Business, Powered by AI Employees", jsonld=ld) + nav() + f'''  <main id="main">
   <section class="hero" aria-labelledby="hero-title">
     <div class="wrap">
@@ -511,9 +534,7 @@ def service_page(s):
     wa_t = f"Hi Billy, I'm interested in {s['name']} for my business."
     price = s.get("price") or "Priced after your free audit"
     ld = {"@context":"https://schema.org","@type":"Service","name":s["name"],"serviceType":s["name"],"description":s["lead"],"url":f"{SITE}/services/{slug}/",
-          "areaServed":{"@type":"Country","name":"South Africa"},
-          "provider":{"@type":"ProfessionalService","name":"AI AutoTech","url":SITE+"/","telephone":"+27646863803","email":"billyfaber06@gmail.com",
-                      "address":{"@type":"PostalAddress","addressLocality":"Benoni","addressRegion":"Gauteng","addressCountry":"ZA"}}}
+          "areaServed":AREAS,"provider":PROVIDER}
     if s.get("price_num"):
         ld["offers"] = {"@type":"Offer","priceCurrency":"ZAR","price":s["price_num"],"description":s["price"],"priceSpecification":{"@type":"UnitPriceSpecification","price":s["price_num"],"priceCurrency":"ZAR","unitText":"MONTH","valueAddedTaxIncluded":False}}
     steps = "".join(f'<li><span class="num">0{i+1}</span><div><b>{escape(t)}</b><p>{escape(d)}</p></div></li>' for i, (t, d) in enumerate(s["steps"]))
@@ -521,6 +542,7 @@ def service_page(s):
     who = "".join(f'<li class="who glass violet"><h3>{ic(k)}{label}</h3><p>{escape(s["who"][k])}</p></li>' for k, label in WHO_KEYS)
     tabs = "".join(f'<li><a class="svc-tab" href="/services/{o["slug"]}/"{" aria-current=\"page\"" if o["slug"]==slug else ""}>{ic(o["icon"])}{escape(o["short"])}</a></li>' for o in SERVICES)
     idx = [x["slug"] for x in SERVICES].index(slug)
+    ld = graph(ld, crumbs_ld([("Home","/"),("Services","/#services"),(s["name"],f"/services/{slug}/")]))
     return head(s["title"], s["desc"], f"/services/{slug}/", jsonld=ld) + nav(slug) + f'''  <main id="main">
   <section class="svc-hero" aria-labelledby="svc-h1">
     <div class="wrap">
@@ -637,15 +659,14 @@ def teams_section():
 def team_page(t):
     slug = t["slug"]; pl = "team_" + slug.replace("-", "_")
     ld = {"@context":"https://schema.org","@type":"Service","name":t["name"],"serviceType":"AI employees","description":t["desc"],"url":f"{SITE}/teams/{slug}/",
-          "areaServed":{"@type":"Country","name":"South Africa"},
-          "provider":{"@type":"ProfessionalService","name":"AI AutoTech","url":SITE+"/","telephone":"+27646863803","email":"billyfaber06@gmail.com",
-                      "address":{"@type":"PostalAddress","addressLocality":"Benoni","addressRegion":"Gauteng","addressCountry":"ZA"}},
+          "areaServed":AREAS,"provider":PROVIDER,
           "offers":{"@type":"Offer","priceCurrency":"ZAR","price":"8999","description":"From R8,999/month (excl. VAT)"}}
     mem = "".join(f'<li class="member glass{" violet" if k % 2 else ""} reveal"><span class="ico">{ic(i)}</span><div><h3>{escape(n)}</h3><p>{escape(d)}</p></div></li>' for k, (i, n, d) in enumerate(t["members"]))
     day = "".join(f'<li><span class="when">{escape(w)}</span><p>{escape(x)}</p></li>' for w, x in t["day"])
     fit = "".join(f'<li>{ic("check")}<span>{escape(f)}</span></li>' for f in t["fit"])
     others = "".join(f'<li><a class="svc-tab" href="/teams/{o["slug"]}/"{" aria-current=\"page\"" if o["slug"]==slug else ""}>{ic(o["icon"])}{escape(o["name"])}</a></li>' for o in TEAMS)
     note = f'<p class="team-note">{escape(t["note"])}</p>' if t.get("note") else ""
+    ld = graph(ld, crumbs_ld([("Home","/"),("AI teams","/#teams"),(t["name"],f"/teams/{slug}/")]))
     return head(t["title"], t["desc"], f"/teams/{slug}/", jsonld=ld) + nav(slug) + f'''  <main id="main">
   <section class="svc-hero team-hero" aria-labelledby="team-h1">
     <div class="wrap">
@@ -738,12 +759,13 @@ def book_page():
       <div class="cal-card">
         <div class="cal-inner">
           <div class="cal-loading" id="cal-loading">Loading available times…</div>
-          <iframe id="cal-frame" title="Book your AI Audit Results &amp; Next Steps call with Billy Faber" src="{BOOK["embed"]}" loading="eager"></iframe>
+          <iframe id="cal-frame" title="Book your AI Audit Results &amp; Next Steps call with Billy Faber" data-src="{BOOK["embed"]}"></iframe>
+          <noscript><iframe title="Book your AI Audit Results &amp; Next Steps call with Billy Faber" src="{BOOK["embed"]}" style="position:absolute;inset:0;width:100%;height:100%;border:0"></iframe></noscript>
         </div>
       </div>
       <div class="book-fallback glass violet">
         <p>Calendar not loading? <a href="{BOOK["google_page"]}" target="_blank" rel="noopener">Open the booking page &rarr;</a></p>
-        <a id="wa" class="btn btn-ghost" href="https://wa.me/{WA_NUM}" target="_blank" rel="noopener" aria-label="Message AI AutoTech on WhatsApp to book"><span class="wa">{ic("whatsapp")}</span>Prefer WhatsApp? Message Billy</a>
+        <a id="wa" class="btn btn-ghost" href="https://wa.me/{WA_NUM}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Prefer WhatsApp? Message Billy</a>
       </div>
     </div>
   </section>
@@ -751,7 +773,11 @@ def book_page():
 """ + footer() + f"""  <script>
     (function () {{
       var frame = document.getElementById("cal-frame"), loading = document.getElementById("cal-loading");
-      frame.addEventListener("load", function () {{ loading.hidden = true; }});
+      frame.addEventListener("load", function () {{ if (frame.src) loading.hidden = true; }});
+      // Load the Google Calendar embed once the page itself has painted, so it doesn't hold up first render.
+      function loadCal() {{ if (!frame.src) frame.src = frame.getAttribute("data-src"); }}
+      if (document.readyState === "complete") setTimeout(loadCal, 50); else window.addEventListener("load", function () {{ setTimeout(loadCal, 50); }});
+      setTimeout(loadCal, 3500);
       var raw = (new URLSearchParams(location.search).get("ref") || "").trim().toUpperCase();
       var ref = /^AAT-[A-Z0-9]{{4,10}}$/.test(raw) ? raw : "";
       var msg = "{wa_default}";
@@ -768,6 +794,202 @@ def book_page():
   </script>
 """ + TAIL
 
+# ---------------- About / Privacy / Thanks / 404 ----------------
+WA_GENERAL = "Hi Billy, I saw the AI AutoTech website and would like to chat about AI for my business."
+
+def cta_band(pl, title, text):
+    return f'''  <section class="section" style="padding-top:10px" aria-labelledby="cta-title">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <p class="eyebrow">Start here</p>
+        <h2 id="cta-title">{title}</h2>
+        <p>{text}</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="{audit(pl)}">Get my free AI audit {ic("arrow")}</a>
+          <a class="btn btn-ghost" href="{wa(WA_GENERAL)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Talk to us on WhatsApp</a>
+        </div>
+        <a class="book-link" href="{book(pl)}" style="margin-top:16px">{ic("calendar")}<span>Or <b>book a 30-min Google Meet</b> with Billy</span>{ic("arrow")}</a>
+      </div>
+    </div>
+  </section>
+'''
+
+def about_page():
+    ld = graph(dict(ORG), {"@type":"AboutPage","@id":SITE+"/about.html#page","url":SITE+"/about.html","name":"About AI AutoTech","about":{"@id":ORG_ID},"inLanguage":"en-ZA"},
+               crumbs_ld([("Home","/"),("About","/about.html")]))
+    svcs = "".join(f'<li><a class="svc-tab" href="/services/{o["slug"]}/">{ic(o["icon"])}{escape(o["name"])}</a></li>' for o in SERVICES)
+    return head("About AI AutoTech | AI Employees & Automation, Benoni, Gauteng",
+                "AI AutoTech (Pty) Ltd, Benoni: founded and led by Billy Faber. We build AI employees, WhatsApp automation, voice agents, CRM and websites for SA businesses.",
+                "/about.html", og_title="About AI AutoTech: local, practical AI from Benoni", jsonld=ld) + nav("about") + f'''  <main id="main">
+  <section class="svc-hero about-hero" aria-labelledby="about-h1">
+    <div class="wrap">
+      <div>
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <span>About</span></nav>
+        <div class="hero-badge">{flag()}Benoni · Gauteng · South Africa</div>
+        <h1 id="about-h1" style="margin-top:14px">About <span class="grad">AI AutoTech</span></h1>
+        <p class="sub">Local, practical AI. Built in Benoni.</p>
+        <p class="lead">AI AutoTech (Pty) Ltd is a South African company based in Benoni, Gauteng, founded and led by Billy Faber, our Managing Director. We build AI employees, WhatsApp automation, AI voice agents, CRM pipelines, websites and dashboards for South African businesses, priced in Rand and managed for you.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="{audit("about_hero")}">Get my free AI audit {ic("arrow")}</a>
+          <a class="btn btn-ghost" href="{wa(WA_GENERAL)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Talk to us on WhatsApp</a>
+        </div>
+        <a class="book-link" href="{book("about_hero")}">{ic("calendar")}<span>Prefer to talk first? <b>Book a 30-min call</b></span>{ic("arrow")}</a>
+      </div>
+      <figure class="sa-photo about-photo">
+        <img src="/assets/redesign/billy-faber-office.webp" alt="Billy Faber, founder and Managing Director of AI AutoTech" width="560" height="732" fetchpriority="high" decoding="async" />
+        <figcaption class="glass"><b>Billy Faber</b>Founder &amp; Managing Director</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:20px" aria-label="What we do and how we work">
+    <div class="wrap two">
+      <div class="box glass reveal">
+        <h2>{ic("bot")}What we do</h2>
+        <p class="prose-p">We put AI to work on the jobs that slow a business down: answering WhatsApps and calls, following up leads, booking appointments, keeping the CRM up to date and handling repetitive admin.</p>
+        <p class="prose-p">Every system is set up around how your business already works, connected to the tools you use, and it hands anything sensitive to a person.</p>
+      </div>
+      <div class="box glass violet reveal">
+        <h2>{ic("star")}How we work</h2>
+        <ul class="gains">
+          <li>{ic("check")}<span><b style="color:var(--text)">Local first.</b> We know South African realities: load shedding, data costs, cash-flow pressure and WhatsApp-first customers.</span></li>
+          <li>{ic("check")}<span><b style="color:var(--text)">Rand pricing.</b> Flat monthly pricing in Rand, excl. VAT. No dollar subscriptions.</span></li>
+          <li>{ic("check")}<span><b style="color:var(--text)">Done for you.</b> We build, deploy and manage the system so you can keep running your business.</span></li>
+          <li>{ic("check")}<span><b style="color:var(--text)">Direct contact.</b> You deal directly with the people who build your system, not a call centre.</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px" aria-labelledby="facts-title">
+    <div class="wrap">
+      <div class="box glass reveal facts">
+        <h2 id="facts-title">{ic("layers")}Company details</h2>
+        <dl class="facts-list">
+          <div><dt>Company</dt><dd>AI AutoTech (Pty) Ltd</dd></div>
+          <div><dt>Founder &amp; Managing Director</dt><dd>Willem (Billy) Faber</dd></div>
+          <div><dt>Based in</dt><dd>Benoni, Gauteng, South Africa. Service-area business with no walk-in office.</dd></div>
+          <div><dt>Areas served</dt><dd>Benoni, Ekurhuleni, Johannesburg and Gauteng. Meetings on Google Meet, WhatsApp or phone.</dd></div>
+          <div><dt>Phone / WhatsApp</dt><dd><a href="tel:+27646863803">064 686 3803</a></dd></div>
+          <div><dt>Email</dt><dd><a href="mailto:billyfaber06@gmail.com">billyfaber06@gmail.com</a></dd></div>
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px" aria-label="Our services">
+    <div class="wrap">
+      <nav class="svc-nav glass" aria-label="Services"><h2>What we build</h2><ul class="svc-tabs">{svcs}</ul></nav>
+    </div>
+  </section>
+
+''' + cta_band("about", "See where AI fits your business", "The free AI audit takes about 5 minutes. You get your top AI opportunities, a recommended AI team and a Priority 1-2-3 plan.") + '''  </main>
+''' + footer() + sticky("about_sticky", WA_GENERAL) + TAIL
+
+PRIVACY_SECTIONS = [
+ ("Who we are", '''<p>AI AutoTech (Pty) Ltd (“AI AutoTech”, “we”, “us”) is a South African company based in Benoni, Gauteng. This notice explains how we handle personal information when you use aiautotech.co.za or contact us, in line with the Protection of Personal Information Act (POPIA).</p>
+<p><b>Responsible party:</b> AI AutoTech (Pty) Ltd, Benoni, Gauteng, South Africa. Contact: Willem (Billy) Faber, Founder and Managing Director, <a href="mailto:billyfaber06@gmail.com">billyfaber06@gmail.com</a>, <a href="tel:+27646863803">064 686 3803</a> (phone / WhatsApp).</p>'''),
+ ("What we collect", '''<ul>
+<li><b>Contact form:</b> your name, email address, and optionally your business name and phone number, plus your message. We also record the page you sent it from, the referring page and campaign tags (UTM) in the link you used.</li>
+<li><b>Free AI Business Audit</b> (<a href="/audit/?utm_source=website&amp;utm_medium=privacy_text&amp;utm_campaign=free_ai_audit">/audit/</a>): your first name, surname, business name, email, mobile / WhatsApp number, your role, your answers to the audit questions, how you found us (for example an event QR code or campaign link) and your consent to be contacted.</li>
+<li><b>Booking a call</b> (<a href="/book/?utm_source=website&amp;utm_medium=privacy_text&amp;utm_campaign=book_call">/book/</a>): bookings are made in a Google Calendar booking page embedded on our site. Google collects the name, email and any notes you enter and sends us the booking.</li>
+<li><b>WhatsApp, email and phone:</b> whatever you choose to send us.</li>
+<li><b>Technical data:</b> our hosting provider may log technical request data such as IP address and browser type.</li>
+</ul>'''),
+ ("Why we use it", '''<p>Only to reply to your enquiry, prepare your audit results, schedule and hold calls you book, quote for and deliver services you ask for, and keep records required by South African law. We do not sell personal information, and we do not use it for unrelated marketing.</p>'''),
+ ("Where it is stored and who helps us", '''<p>We use a small number of service providers (operators) who process information for us:</p>
+<ul>
+<li><b>Supabase</b> hosts our customer database (CRM), where contact-form messages and audit submissions are stored.</li>
+<li><b>Vercel</b> hosts the CRM application that receives form and audit submissions.</li>
+<li><b>FormSubmit</b> delivers a copy of contact-form messages to our email inbox.</li>
+<li><b>GitHub Pages</b> hosts this website.</li>
+<li><b>Google</b> provides the booking calendar, Google Meet, email and the map on our home page.</li>
+<li><b>WhatsApp (Meta)</b> handles messages you send us on WhatsApp.</li>
+</ul>
+<p>Some of these providers store data outside South Africa. We only use providers that protect information to a standard comparable to POPIA, and we only share what is needed to run the site, reply to you or deliver our services, or where the law requires it.</p>'''),
+ ("Cookies, local storage and embedded content", '''<p>We do not set advertising or analytics cookies. Our fonts are hosted on our own site.</p>
+<p>The audit saves your progress and your results in your browser's local storage, on your own device, so you can continue where you left off. Campaign tags from the link you used may also be kept there so we know how you found us. You can clear this at any time in your browser settings.</p>
+<p>The Google Map on our home page and the Google Calendar booking page are loaded from Google. When they load, Google may set cookies or collect technical data under <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's privacy policy</a>.</p>'''),
+ ("How long we keep it and how we protect it", '''<p>We keep enquiry and audit records for as long as needed to finish the conversation and any work that follows, and as required by law, then delete or anonymise them. We take reasonable technical and organisational steps to protect information in our control, but no internet transmission is completely secure.</p>'''),
+ ("Your rights", '''<p>You may ask us whether we hold your personal information, ask for a copy, ask us to correct or delete it, or object to us using it. Email <a href="mailto:billyfaber06@gmail.com">billyfaber06@gmail.com</a>. You may also lodge a complaint with the Information Regulator (South Africa) at <a href="https://inforegulator.org.za/" target="_blank" rel="noopener">inforegulator.org.za</a>.</p>'''),
+ ("Changes to this notice", '''<p>We may update this notice when our services or providers change. The date at the top shows the latest version.</p>'''),
+]
+
+def privacy_page():
+    toc = "".join(f'<li><a href="#p{k+1}">{escape(h)}</a></li>' for k, (h, _) in enumerate(PRIVACY_SECTIONS))
+    body = "".join(f'<section class="prose-sec" id="p{k+1}" aria-labelledby="p{k+1}-t"><h2 id="p{k+1}-t">{escape(h)}</h2>{html}</section>' for k, (h, html) in enumerate(PRIVACY_SECTIONS))
+    ld = graph({"@type":"WebPage","@id":SITE+"/privacy.html#page","url":SITE+"/privacy.html","name":"Privacy Policy (POPIA notice)","publisher":{"@id":ORG_ID},"dateModified":LASTMOD,"inLanguage":"en-ZA"},
+               crumbs_ld([("Home","/"),("Privacy","/privacy.html")]))
+    return head("Privacy Policy (POPIA) | AI AutoTech",
+                "How AI AutoTech (Pty) Ltd collects, uses and protects personal information from our website, contact form, free AI audit and bookings, and your rights under POPIA.",
+                "/privacy.html", jsonld=ld) + nav("privacy") + f'''  <main id="main">
+  <section class="svc-hero page-hero" aria-labelledby="priv-h1">
+    <div class="wrap narrow">
+      <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <span>Privacy</span></nav>
+      <h1 id="priv-h1">Privacy <span class="grad">Policy</span></h1>
+      <p class="sub">POPIA notice · Updated 25 September 2026</p>
+    </div>
+  </section>
+  <section class="section" style="padding-top:0">
+    <div class="wrap narrow">
+      <nav class="toc glass" aria-label="On this page"><h2>On this page</h2><ol>{toc}</ol></nav>
+      <div class="prose glass">{body}</div>
+      <p class="back-links"><a href="/">Back to home</a> · <a href="{audit("privacy")}">Free AI Audit</a> · <a href="/#contact">Contact us</a></p>
+    </div>
+  </section>
+  </main>
+''' + footer() + TAIL
+
+def simple_page(title, desc, path, h1, sub, body_html, pl, robots=None, canonical=True, mark="thanks"):
+    return head(title, desc, path, robots=robots, canonical=canonical) + nav(mark) + f'''  <main id="main">
+  <section class="svc-hero page-hero status-hero" aria-labelledby="st-h1">
+    <div class="wrap narrow center">
+      <div class="status-card glass">
+        {body_html[0]}
+        <h1 id="st-h1">{h1}</h1>
+        <p class="lead">{sub}</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="{audit(pl)}">Get my free AI audit {ic("arrow")}</a>
+          <a class="btn btn-ghost" href="{book(pl)}">{ic("calendar")}Book a 30-min call</a>
+          <a class="btn btn-ghost" href="{wa(WA_GENERAL)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>WhatsApp us</a>
+        </div>
+        {body_html[1]}
+      </div>
+    </div>
+  </section>
+  </main>
+''' + footer() + TAIL
+
+def thanks_page():
+    return simple_page("Message received | AI AutoTech",
+        "Thanks for contacting AI AutoTech. Billy will get back to you shortly. Urgent? WhatsApp 064 686 3803, or take the free AI audit while you wait.",
+        "/thanks.html", 'Message <span class="grad">received</span>',
+        'Thanks for getting in touch. Billy will get back to you shortly. If it\'s urgent, WhatsApp <a href="https://wa.me/27646863803" target="_blank" rel="noopener">064 686 3803</a>. While you wait, you can take the free AI audit (about 5 minutes) or book a call.',
+        (f'<span class="status-ico ok">{ic("check")}</span>', '<p class="back-links"><a href="/">Back to aiautotech.co.za</a></p>'),
+        "thanks_page", robots="noindex, follow")
+
+def notfound_page():
+    links = "".join(f'<li><a href="{h}">{t}</a></li>' for h, t in [("/", "Home"), ("/#services", "Services"), ("/#teams", "AI teams"), ("/#pricing", "Pricing"), ("/about.html", "About"), ("/#contact", "Contact")])
+    return simple_page("Page not found (404) | AI AutoTech",
+        "This page could not be found on aiautotech.co.za. Take the free AI audit, book a call or WhatsApp AI AutoTech.",
+        "/404.html", 'Page <span class="grad">not found</span>',
+        "Sorry, we couldn't find that page. It may have moved, or the link may be mistyped. Here's where to go next:",
+        (f'<span class="status-ico">404</span>', f'<ul class="nf-links">{links}</ul>'),
+        "404_page", robots="noindex", canonical=False, mark="404")
+
+def sitemap():
+    urls = [("/", "weekly", "1.0"), ("/audit/", "monthly", "0.9"), ("/book/", "monthly", "0.7")]
+    urls += [(f"/services/{s['slug']}/", "monthly", "0.8") for s in SERVICES]
+    urls += [(f"/teams/{t['slug']}/", "monthly", "0.7") for t in TEAMS]
+    urls += [("/about.html", "yearly", "0.6"), ("/privacy.html", "yearly", "0.3")]
+    body = "".join(f"  <url>\n    <loc>{SITE}{u}</loc>\n    <lastmod>{LASTMOD}</lastmod>\n    <changefreq>{c}</changefreq>\n    <priority>{p}</priority>\n  </url>\n" for u, c, p in urls)
+    return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{body}</urlset>\n'
+
+MANIFEST = {"name":"AI AutoTech","short_name":"AI AutoTech","description":"AI employees, WhatsApp automation, voice agents, CRM and websites for South African businesses.",
+            "start_url":"/?utm_source=pwa","scope":"/","display":"standalone","background_color":"#050814","theme_color":"#050814",
+            "icons":[{"src":"/assets/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"/assets/icon-512.png","sizes":"512x512","type":"image/png"},
+                     {"src":"/assets/icon-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]}
+
 def main():
     with open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8") as f:
         f.write(home())
@@ -782,7 +1004,14 @@ def main():
     os.makedirs(os.path.join(ROOT, "book"), exist_ok=True)
     with open(os.path.join(ROOT, "book", "index.html"), "w", encoding="utf-8") as f:
         f.write(book_page())
-    print("built", 2 + len(SERVICES) + len(TEAMS), "pages")
+    for name, fn in [("about.html", about_page), ("privacy.html", privacy_page), ("thanks.html", thanks_page), ("404.html", notfound_page)]:
+        with open(os.path.join(ROOT, name), "w", encoding="utf-8") as f:
+            f.write(fn())
+    with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as f:
+        f.write(sitemap())
+    with open(os.path.join(ROOT, "site.webmanifest"), "w", encoding="utf-8") as f:
+        json.dump(MANIFEST, f, indent=2)
+    print("built", 6 + len(SERVICES) + len(TEAMS), "pages + sitemap + manifest")
 
 if __name__ == "__main__":
     main()

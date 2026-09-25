@@ -316,7 +316,7 @@ TEAM_PRICE_NOTE = "excl. VAT. Final price depends on how many AI employees you s
 TEAMS = [
   dict(slug="dental-front-desk", name="Dental Front Desk Team", short="Dental practices", icon="clinic", tone="t",
     title="Dental Front Desk AI Team | WhatsApp bookings, reminders & reviews | AI AutoTech",
-    desc="An AI front desk for dental practices: answers patient WhatsApps 24/7, books appointments, sends reminders, chases no-shows and collects Google reviews. From R8,999/month.",
+    desc="AI front desk for dental practices: answers patient WhatsApps 24/7, books appointments, sends reminders and chases no-shows. From R8,999/month.",
     pitch="Answers WhatsApps 24/7, books patients, sends reminders, chases no-shows and collects reviews.",
     lead="Your reception team stays focused on the patients in front of them. The AI team handles the messages, bookings, reminders and follow-ups around them, day and night, using your practice's own information and diary.",
     members=[
@@ -356,7 +356,7 @@ TEAMS = [
     wa="Hi Billy, I'd like to start with the Estate Agent Lead Team for my agency."),
   dict(slug="college-admissions", name="College Admissions Team", short="Colleges & training", icon="school", tone="t",
     title="College Admissions AI Team | Course questions, applications & campus visits | AI AutoTech",
-    desc="An AI admissions team for colleges and training providers: answers course and fee questions, collects applications and documents, follows up with applicants and books campus visits. From R8,999/month.",
+    desc="AI admissions team for colleges: answers course and fee questions, collects applications and documents, and books campus visits. From R8,999/month.",
     pitch="Answers course and fee questions, collects applications and documents, follows up with applicants and books campus visits.",
     lead="During intake season your admissions office gets the same questions hundreds of ways. The AI team answers them from your approved course information, guides applicants through the paperwork and keeps them moving to registration.",
     members=[
@@ -375,7 +375,7 @@ TEAMS = [
     wa="Hi Billy, I'd like to start with the College Admissions Team for my college."),
   dict(slug="broker-client", name="Broker Client Team", short="Insurance & finance brokers", icon="broker", tone="v",
     title="Broker AI Client Team | Quote requests, documents & renewals | AI AutoTech",
-    desc="An AI client team for insurance and financial brokers: handles quote requests, collects documents, sends renewal reminders and answers policy questions. From R8,999/month.",
+    desc="AI client team for insurance and financial brokers: handles quote requests, collects documents and sends renewal reminders. From R8,999/month.",
     pitch="Handles quote requests, collects documents, sends renewal reminders and answers policy questions.",
     lead="Your brokers should spend their time advising clients, not chasing forms. The AI team handles the admin around every quote, renewal and policy question, and hands anything that needs advice to a licensed person.",
     members=[
