@@ -6,7 +6,7 @@
   if (!form || !CFG || !A) return;
   var loadedAt = Date.now();
   var CONSENT = "I agree that AI AutoTech Pty Ltd may contact me by phone, WhatsApp or email about this guide and AI for my business. I can ask to be removed at any time.";
-  var GUIDE = "The jobs your business should hand to AI";
+  var GUIDE = "The 10 jobs your business should hand to AI this year (South African edition, 2026)";
   var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   var PHONE_RE = /^[+\d][\d\s()-]{6,29}$/;
   A.captureCampaign({ landing: "/guide/" });
