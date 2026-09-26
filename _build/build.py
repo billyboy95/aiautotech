@@ -9,7 +9,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from content import SERVICES, STACK, ORCH_NODES, WHO_KEYS, BOOK, TEAMS, TEAM_PRICE, TEAM_PRICE_NOTE
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V = "20260926a"
+V = "20260926b"
 LASTMOD = "2026-09-26"
 SITE = "https://aiautotech.co.za"
 WA_NUM = "27646863803"
@@ -350,7 +350,7 @@ def home():
           <a class="btn btn-ghost" href="{wa(wa_home)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Talk to us on WhatsApp</a>
         </div>
         <p class="cta-note">Free AI Business Audit · about 5 minutes · no obligation</p>
-        <p class="guide-link"><a href="/guide/">Free guide: The jobs your business should hand to AI</a></p>
+        <p class="guide-link"><a href="/guide/">Free guide: The 10 jobs your business should hand to AI this year (South African edition, 2026)</a></p>
         <a class="book-link" href="{book("hero")}">{ic("calendar")}<span>Prefer to talk first? <b>Book a 30-min call</b></span>{ic("arrow")}</a>
       </div>
       <nav class="outcomes" aria-label="Outcomes we deliver">{oc}</nav>
@@ -1012,28 +1012,36 @@ MANIFEST = {"name":"AI AutoTech","short_name":"AI AutoTech","description":"AI em
             "icons":[{"src":"/assets/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"/assets/icon-512.png","sizes":"512x512","type":"image/png"},
                      {"src":"/assets/icon-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]}
 
+GUIDE_TITLE = "The 10 jobs your business should hand to AI this year (South African edition, 2026)"
+
 def guide_page():
     ld = graph(dict(ORG), {
         "@type": "WebPage",
         "@id": SITE + "/guide/#page",
         "url": SITE + "/guide/",
-        "name": "The jobs your business should hand to AI",
-        "description": "A free guide from AI AutoTech on the jobs a South African business can hand to AI employees.",
+        "name": GUIDE_TITLE,
+        "description": "A free 2026 guide from AI AutoTech in Benoni on ten jobs a South African business can hand to AI.",
         "about": {"@id": ORG_ID},
         "inLanguage": "en-ZA",
     })
-    points = [
-        ("whatsapp", "Answering WhatsApp messages and handing a person the chats that need one."),
-        ("phone", "Answering calls, taking a message and booking a time."),
-        ("leads", "Following up leads and quotes so they are not left in a personal inbox."),
-        ("gear", "Repetitive admin: capturing details, reminders and simple hand-overs."),
+    jobs = [
+        "First replies on WhatsApp and your website",
+        "Answering the calls you miss",
+        "Booking, moving and cancelling appointments",
+        "Confirmations and reminders",
+        "Following up no-shows and cancellations",
+        "Qualifying and following up leads",
+        "Collecting and chasing documents",
+        "Renewals, recalls and repeat business",
+        "Asking for Google reviews",
+        "Quotes, invoices, CRM updates and reports",
     ]
-    lis = "".join(f"<li>{ic(i)}<span>{escape(t)}</span></li>" for i, t in points)
+    lis = "".join(f"<li><span>{escape(t)}</span></li>" for t in jobs)
     return head(
-        "Free guide: The jobs your business should hand to AI | AI AutoTech",
-        "Free guide from AI AutoTech in Benoni: the jobs a South African business can hand to AI, including WhatsApp, calls, follow-up and admin. Name, business, email and WhatsApp to download it.",
+        f"{GUIDE_TITLE} | AI AutoTech",
+        "Free 2026 guide from AI AutoTech in Benoni: the 10 jobs a South African business should hand to AI this year. Add your name, business, email and WhatsApp to download it.",
         "/guide/",
-        og_title="The jobs your business should hand to AI | AI AutoTech",
+        og_title=f"{GUIDE_TITLE} | AI AutoTech",
         jsonld=ld,
     ) + nav() + f'''  <main id="main">
   <section class="svc-hero" aria-labelledby="guide-h1">
@@ -1041,9 +1049,12 @@ def guide_page():
       <div>
         <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <span>Free guide</span></nav>
         <div class="hero-badge" style="margin-top:14px">{flag()}Benoni · Gauteng · South Africa</div>
-        <h1 id="guide-h1">The jobs your business should hand to <span class="grad">AI</span></h1>
-        <p class="lead">A free guide from AI AutoTech (Pty) Ltd. It describes the work we already build for South African businesses: WhatsApp and call answering, lead follow-up, booking and repetitive admin.</p>
-        <ul class="guide-points">{lis}</ul>
+        <h1 id="guide-h1">The 10 jobs your business should hand to <span class="grad">AI</span> this year</h1>
+        <p class="sub">South African edition, 2026</p>
+        <p class="lead">A free guide from AI AutoTech (Pty) Ltd in Benoni, Gauteng. It is written for South African owners of dental practices, estate agencies, brokerages and other service businesses, and covers what to automate in a world of WhatsApp-first customers and Rand budgets.</p>
+        <h2 class="guide-list-title">Inside the guide</h2>
+        <ol class="guide-points">{lis}</ol>
+        <p class="cta-note">Time figures in the PDF are labelled typical estimates for a small South African business. They are for planning, not guarantees.</p>
         <!-- PLACEHOLDER: do not add testimonials, client counts or result statistics. Real proof can be added here only when Billy supplies it. -->
         <p class="cta-note">No fee. We use your details to send the guide and to contact you about it. <a href="/privacy.html">Privacy notice</a>.</p>
       </div>
@@ -1067,7 +1078,6 @@ def guide_page():
         <div id="guide-done" hidden>
           <h2>Your guide is ready</h2>
           <p class="lead">Reference <b id="guide-ref"></b>. Quote it if you message Billy.</p>
-          <!-- PLACEHOLDER: /guide/ai-guide.pdf is a stand-in file. Replace that file with the finished guide. Do not describe results that are not in the real PDF. -->
           <a class="btn btn-primary" href="/guide/ai-guide.pdf">Download the guide {ic("arrow")}</a>
           <p class="cta-note"><a href="{audit("guide_thanks")}">Book a free AI audit</a></p>
         </div>
@@ -1086,7 +1096,7 @@ def guide_page():
     </div>
   </section>
   </main>
-''' + footer() + sticky("guide_sticky", "Hi Billy, I saw the free AI guide on aiautotech.co.za.") + TAIL.replace("</body>", '  <script src="/assets/funnel/guide.js?v=1" defer></script>\n</body>')
+''' + footer() + sticky("guide_sticky", "Hi Billy, I saw the free AI guide on aiautotech.co.za.") + TAIL.replace("</body>", '  <script src="/assets/funnel/guide.js?v=2" defer></script>\n</body>')
 
 def johannesburg_page():
     ld = graph(dict(ORG), {
@@ -1121,7 +1131,7 @@ def johannesburg_page():
           <a class="btn btn-ghost" href="{wa("Hi Billy, I am in Johannesburg and I would like to talk about AI for my business.")}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>WhatsApp +27 64 686 3803</a>
         </div>
         <p class="cta-note">Free AI Business Audit · about 5 minutes · no obligation</p>
-        <p class="guide-link"><a href="/guide/">Or get the free guide: The jobs your business should hand to AI</a></p>
+        <p class="guide-link"><a href="/guide/">Or get the free guide: The 10 jobs your business should hand to AI this year (South African edition, 2026)</a></p>
       </div>
     </div>
   </section>

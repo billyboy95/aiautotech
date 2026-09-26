@@ -629,7 +629,9 @@ h1,h2,h3{font-family:var(--head);letter-spacing:-.02em;line-height:1.1}
 .guide-form .form-status a{color:inherit;text-decoration:underline}
 .guide-layout{display:grid;gap:22px}
 @media (min-width:900px){.guide-layout{grid-template-columns:1.1fr .9fr;align-items:start}}
-.guide-points{list-style:none;display:grid;gap:10px;margin-top:18px}
-.guide-points li{display:flex;gap:10px;align-items:flex-start;color:var(--sub)}
-.guide-points svg{width:18px;height:18px;flex-shrink:0;color:var(--teal);margin-top:3px}
+.guide-layout h1{font-size:clamp(1.45rem,4.6vw,2.35rem);line-height:1.12}
+.guide-list-title{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);font-family:Inter,sans-serif;margin:18px 0 8px}
+ol.guide-points{list-style:none;display:grid;gap:8px;margin:0;padding:0;counter-reset:job}
+ol.guide-points li{counter-increment:job;display:flex;gap:10px;align-items:flex-start;color:var(--sub)}
+ol.guide-points li::before{content:counter(job);flex-shrink:0;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:rgba(46,230,214,.12);color:var(--teal);font-size:.72rem;font-weight:700;margin-top:1px}
 #guide-done .btn{margin-top:16px}
