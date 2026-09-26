@@ -41,3 +41,62 @@ window.AAT.applyUrlParams = function (base) {
   });
   return { tracking: out, changed: changed };
 };
+/* Persist campaign attribution (LinkedIn, Facebook, WhatsApp, QR, and any other utm_*).
+   Internal links use utm_source=website and must not wipe a stored external campaign.
+   /connect still forces the printed-QR event defaults via via=connect. */
+window.AAT.externalReferrer = function () {
+  var r = document.referrer || "";
+  if (!r) return "";
+  try {
+    var host = new URL(r).hostname.replace(/^www\./, "");
+    var me = location.hostname.replace(/^www\./, "");
+    if (host && me && host === me) return "";
+  } catch (e) {}
+  return r.slice(0, 400);
+};
+window.AAT.captureCampaign = function (opts) {
+  opts = opts || {};
+  var qs = new URLSearchParams(location.search);
+  var viaConnect = qs.get("via") === "connect";
+  var urlHasTracking = window.AAT.TRACK_KEYS.some(function (k) { return !!qs.get(k); });
+  var stored = window.AAT.readTracking();
+  var ev = (window.AAT_CONFIG && window.AAT_CONFIG.eventDefaults) || {};
+  var isEventUrl = !!ev.utm_source && qs.get("utm_source") === ev.utm_source;
+  var incoming = qs.get("source") || qs.get("utm_source") || "";
+  var internalNav = urlHasTracking && (incoming === "" || incoming === "website");
+
+  if (viaConnect) {
+    var tracking = window.AAT.applyUrlParams(Object.assign({ utm_term: "", utm_content: "" }, ev)).tracking;
+    var cref = "";
+    try { cref = sessionStorage.getItem("aat_connect_ref") || ""; } catch (e) {}
+    tracking.referrer = cref.slice(0, 400);
+    tracking.landing = "/connect";
+    tracking.captured_at = new Date().toISOString();
+    window.AAT.saveTracking(tracking);
+    return { tracking: tracking, viaConnect: true };
+  }
+
+  var storedExternal = stored && stored.source && stored.source !== "website" && stored.source !== "lead_magnet";
+  if (storedExternal && !isEventUrl && (!urlHasTracking || internalNav)) {
+    return { tracking: stored, viaConnect: false };
+  }
+
+  if (!stored || urlHasTracking || isEventUrl) {
+    var base = isEventUrl
+      ? Object.assign({ utm_term: "", utm_content: "" }, ev)
+      : { source: "website", campaign: "", event: "", qr_source: "", utm_source: "", utm_medium: "", utm_campaign: "", utm_term: "", utm_content: "" };
+    var next = window.AAT.applyUrlParams(base).tracking;
+    if (!isEventUrl) {
+      if (!qs.get("source") && qs.get("utm_source")) next.source = qs.get("utm_source").slice(0, 120);
+      if (!qs.get("campaign") && qs.get("utm_campaign")) next.campaign = qs.get("utm_campaign").slice(0, 120);
+    }
+    var ref = window.AAT.externalReferrer();
+    next.referrer = (ref || (stored && stored.referrer) || "").slice(0, 400);
+    next.landing = (opts.landing || location.pathname || "").slice(0, 120);
+    next.captured_at = new Date().toISOString();
+    window.AAT.saveTracking(next);
+    return { tracking: next, viaConnect: false };
+  }
+
+  return { tracking: stored, viaConnect: false };
+};

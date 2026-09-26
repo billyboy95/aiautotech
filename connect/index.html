@@ -54,15 +54,21 @@
     a.go{display:flex;align-items:center;justify-content:center;min-height:52px;border-radius:14px;background:linear-gradient(90deg,#2ee6d6,#14c8d8);color:#041018;font-weight:800;text-decoration:none;margin-bottom:12px}
     a.wa{display:flex;align-items:center;justify-content:center;min-height:48px;border-radius:14px;border:1px solid rgba(37,211,102,.45);color:#d7fbe5;text-decoration:none;font-weight:700}
     a:focus-visible{outline:2px solid #2ee6d6;outline-offset:3px}
+    .trust{margin-top:16px;color:#8c9ab9;font-size:.78rem;line-height:1.45}
+    .wa-fab{position:fixed;right:14px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:5;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:#25D366;color:#04140c;text-decoration:none;box-shadow:0 10px 28px rgba(0,0,0,.35)}
+    .wa-fab svg{width:28px;height:28px}
   </style>
 </head>
 <body>
   <div class="box">
     <h1>Opening your free AI audit…</h1>
     <p>If nothing happens, tap the button below.</p>
-    <a class="go" id="go" href="/audit/?utm_source=highlevel&amp;utm_medium=qr&amp;utm_campaign=highlevel_event_2026&amp;via=connect">Start my free AI audit</a>
+    <a class="go" id="go" href="/audit/?utm_source=highlevel&amp;utm_medium=qr&amp;utm_campaign=highlevel_event_2026&amp;via=connect">Book a free AI audit</a>
     <a class="wa" href="https://wa.me/27646863803?text=Hi%20Billy%2C%20we%20met%20at%20the%20HighLevel%20event.%20I%20scanned%20the%20AI%20AutoTech%20QR%20code%20and%20I%27d%20like%20my%20free%20AI%20business%20audit." target="_blank" rel="noopener">Rather chat on WhatsApp?</a>
+    <!-- PLACEHOLDER: do not add testimonials or result statistics on this QR page. -->
+    <p class="trust">AI AutoTech (Pty) Ltd · Benoni · Billy Faber · +27 64 686 3803</p>
   </div>
+  <a class="wa-fab" href="https://wa.me/27646863803?text=Hi%20Billy%2C%20we%20met%20at%20the%20HighLevel%20event.%20I%20scanned%20the%20AI%20AutoTech%20QR%20code%20and%20I%27d%20like%20my%20free%20AI%20business%20audit." target="_blank" rel="noopener" aria-label="WhatsApp AI AutoTech on +27 64 686 3803"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 11.6a8.5 8.5 0 0 1-12.7 7.4L3 20.3l1.3-4.6a8.5 8.5 0 1 1 16.2-4.1z"/><path d="M9.2 8.3c-.4 2.9 2.6 6.4 6 6.3l.8-1.4-1.9-1-.9.8a4.6 4.6 0 0 1-2.3-2.3l.8-.9-1-1.9z"/></svg></a>
   <script>try { document.getElementById("go").href = window.__AAT_NEXT__ || document.getElementById("go").href; } catch (e) {}</script>
 </body>
 </html>

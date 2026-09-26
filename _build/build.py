@@ -9,8 +9,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 from content import SERVICES, STACK, ORCH_NODES, WHO_KEYS, BOOK, TEAMS, TEAM_PRICE, TEAM_PRICE_NOTE
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V = "20260925d"
-LASTMOD = "2026-09-25"
+V = "20260926a"
+LASTMOD = "2026-09-26"
 SITE = "https://aiautotech.co.za"
 WA_NUM = "27646863803"
 BYSLUG = {s["slug"]: s for s in SERVICES}
@@ -96,9 +96,10 @@ FONTS = ('<link rel="preload" href="/assets/fonts/inter-latin-wght.woff2" as="fo
 OG_IMG = SITE + "/assets/og-share.jpg"
 AREAS = [{"@type":"City","name":"Benoni"},{"@type":"AdministrativeArea","name":"Ekurhuleni"},{"@type":"City","name":"Johannesburg"},{"@type":"AdministrativeArea","name":"Gauteng"}]
 ORG_ID = SITE + "/#organization"
-ORG = {"@type":"ProfessionalService","@id":ORG_ID,"name":"AI AutoTech","legalName":"AI AutoTech (Pty) Ltd","url":SITE+"/",
+ORG = {"@type":["ProfessionalService","LocalBusiness"],"@id":ORG_ID,"name":"AI AutoTech","legalName":"AI AutoTech (Pty) Ltd","url":SITE+"/",
        "logo":{"@type":"ImageObject","url":SITE+"/assets/logo.png","width":967,"height":746},"image":OG_IMG,
        "email":"billyfaber06@gmail.com","telephone":"+27646863803","areaServed":AREAS,"priceRange":"ZAR",
+       "address":{"@type":"PostalAddress","addressLocality":"Benoni","addressRegion":"Gauteng","addressCountry":"ZA"},
        "founder":{"@type":"Person","name":"Billy Faber","alternateName":"Willem Faber","jobTitle":"Founder and Managing Director"},
        "description":"AI AutoTech builds AI employees, WhatsApp automation, AI voice agents, CRM pipelines and websites for South African businesses.",
        "contactPoint":{"@type":"ContactPoint","contactType":"sales","telephone":"+27646863803","email":"billyfaber06@gmail.com","areaServed":"ZA","availableLanguage":["en"]}}
@@ -175,7 +176,7 @@ def nav(active_slug=None):
     <div class="mm-services">{mm_svcs}</div>
     <p class="mm-label">AI teams</p>
     <div class="mm-services">{mm_teams}</div>
-    <a href="{audit("mobile_menu")}" class="mm-audit"><span class="pulse-dot" aria-hidden="true"></span>Get my free AI audit</a>
+    <a href="{audit("mobile_menu")}" class="mm-audit"><span class="pulse-dot" aria-hidden="true"></span>Book a free AI audit</a>
     <a href="{book("mobile_menu")}" class="mm-book">{ic("calendar")}Book a 30-min call</a>
     <a href="{wa("Hi Billy, I saw the AI AutoTech website and would like to chat about AI for my business.")}" class="mm-wa" target="_blank" rel="noopener">Talk to us on WhatsApp</a>
   </div>
@@ -194,9 +195,11 @@ def footer():
       <div><h2>Services</h2><ul>{li(SERVICES[:half])}</ul></div>
       <div><h2 class="blank" aria-hidden="true">&nbsp;</h2><ul>{li(SERVICES[half:])}</ul></div>
       <div><h2>Company</h2><ul>
-        <li><a class="f-audit" href="{audit("footer")}">Free AI Audit</a></li>
+        <li><a class="f-audit" href="{audit("footer")}">Book a free AI audit</a></li>
+        <li><a href="/guide/">Free AI guide</a></li>
         <li><a href="{book("footer")}">Book a call</a></li>
         <li><a href="/about.html">About</a></li>
+        <li><a href="/ai-agency-johannesburg/">AI agency, Johannesburg</a></li>
         <li><a href="/#work">Work</a></li>
         <li><a href="/#contact">Contact</a></li>
         <li><a href="{wa("Hi Billy, I saw the AI AutoTech website and would like to chat about AI for my business.")}" target="_blank" rel="noopener">WhatsApp</a></li>
@@ -205,16 +208,21 @@ def footer():
       <p class="legal">© <span id="year">2026</span> AI AutoTech (Pty) Ltd · Benoni, Gauteng, South Africa · All prices in ZAR, excl. VAT. Tool names (Grok, Perplexity, Hermes, Claude Code, Codex, Cursor, Supabase, Vercel) are trademarks of their owners and are shown to describe compatibility, not a partnership. Dashboards and chats shown on this site are illustrative examples.</p>
     </div>
   </footer>
-'''
+''' + wa_fab()
 
 def sticky(placement, wa_text):
     return f'''  <div class="sticky-audit" id="sticky-audit">
-    <a class="btn btn-primary" href="{audit(placement)}">Get my free AI audit {ic("arrow")}</a>
-    <a class="btn btn-ghost" href="{wa(wa_text)}" target="_blank" rel="noopener" aria-label="Talk to us on WhatsApp"><span class="wa">{ic("whatsapp")}</span></a>
+    <a class="btn btn-primary" href="{audit(placement)}">Book a free AI audit {ic("arrow")}</a>
   </div>
 '''
 
-TAIL = f'''  <script src="/assets/redesign/site.js?v={V}" defer></script>
+def wa_fab(text="Hi Billy, I saw the AI AutoTech website and would like to chat about AI for my business."):
+    return f'''  <a class="wa-fab" href="{wa(text)}" target="_blank" rel="noopener" aria-label="WhatsApp AI AutoTech on +27 64 686 3803">{ic("whatsapp")}</a>
+'''
+
+TAIL = f'''  <script src="/assets/funnel/config.js?v=4" defer></script>
+  <script src="/assets/funnel/track.js?v=1" defer></script>
+  <script src="/assets/redesign/site.js?v={V}" defer></script>
   <script src="/assets/redesign/contact-crm.js?v={V}" defer></script>
 </body>
 </html>
@@ -327,9 +335,9 @@ def home():
     outcomes = [("leads","More Leads","/services/whatsapp-automation/"),("calendar","More Bookings","/services/ai-voice-agents/"),("smile","Happier Customers","/services/ai-chat-voice/"),("growth","Greater Growth",audit("outcome_growth"))]
     oc = "".join(f'<a class="outcome float" style="--d:-{i*1.3:.1f}s" href="{h}">{ic(ico)}{t}</a>' for i, (ico, t, h) in enumerate(outcomes))
     svc_items = "".join(f'<li style="--d:-{(i*0.9)%7:.1f}s">{svc_button(s)}</li>' for i, s in enumerate(SERVICES))
-    return head("AI AutoTech | Your Business, Powered by AI Employees (South Africa)",
-                "AI employees, WhatsApp automation, AI voice agents, CRM and websites for South African businesses. Based in Benoni, Gauteng. Get your free AI audit.",
-                "/", og_title="AI AutoTech: Your Business, Powered by AI Employees", jsonld=ld) + nav() + f'''  <main id="main">
+    return head("AI Automation South Africa | AI AutoTech",
+                "AI automation for South African businesses: AI employees, WhatsApp automation, voice agents and CRM. Based in Benoni, serving Johannesburg and Gauteng. Book a free AI audit.",
+                "/", og_title="AI Automation South Africa | AI AutoTech", jsonld=ld) + nav() + f'''  <main id="main">
   <section class="hero" aria-labelledby="hero-title">
     <div class="wrap">
       <div class="hero-text">
@@ -338,10 +346,11 @@ def home():
         <p class="tagline"><span>Automate.</span> <span>Streamline.</span> <span>Grow.</span></p>
         <p class="lead">We build AI employees that answer your WhatsApps and calls, follow up leads, book appointments and handle admin for South African businesses, so you can scale without hiring.</p>
         <div class="cta-row">
-          <a class="btn btn-primary" href="{audit("hero")}">Get my free AI audit {ic("arrow")}</a>
+          <a class="btn btn-primary" href="{audit("hero")}">Book a free AI audit {ic("arrow")}</a>
           <a class="btn btn-ghost" href="{wa(wa_home)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Talk to us on WhatsApp</a>
         </div>
         <p class="cta-note">Free AI Business Audit · about 5 minutes · no obligation</p>
+        <p class="guide-link"><a href="/guide/">Free guide: The jobs your business should hand to AI</a></p>
         <a class="book-link" href="{book("hero")}">{ic("calendar")}<span>Prefer to talk first? <b>Book a 30-min call</b></span>{ic("arrow")}</a>
       </div>
       <nav class="outcomes" aria-label="Outcomes we deliver">{oc}</nav>
@@ -374,6 +383,18 @@ def home():
         <div class="stat glass violet s4 float" style="--d:-5.2s" aria-hidden="true">{ic("smile")}<span><b>Happier customers</b><span>Instant replies</span></span></div>
         <p class="illus">Example dashboard &amp; chat, for illustration only</p>
       </div>
+    </div>
+  </section>
+
+  <section class="trust-strip" aria-label="About AI AutoTech">
+    <div class="wrap">
+      <!-- PLACEHOLDER: do not add testimonials, client counts, ratings or result statistics until real approved proof exists. -->
+      <ul>
+        <li><b>AI AutoTech (Pty) Ltd</b><span>AI automation from Benoni, South Africa</span></li>
+        <li><b>Billy Faber</b><span>Founder and Managing Director</span></li>
+        <li><b><a href="tel:+27646863803">+27 64 686 3803</a></b><span>WhatsApp and phone</span></li>
+        <li><a class="trust-card" href="/#work"><b>Live work</b><span>EASTC Holdings sites on .co.za</span></a></li>
+      </ul>
     </div>
   </section>
 
@@ -439,7 +460,7 @@ def home():
       <div class="price-grid">
         <div class="price-card glass reveal"><span class="tag teal">AI Employees &amp; Agents</span><div class="amt">R8,999<small> /month</small></div><p>Starting price for an AI employee that answers, follows up, books and handles admin, 24/7.</p><a class="btn btn-ghost" href="/services/ai-employees/">See AI employees {ic("arrow")}</a></div>
         <div class="price-card glass violet reveal"><span class="tag">AI Voice Agents</span><div class="amt">R14,999<small> /month</small></div><p>Starting price for 24/7 call answering, lead qualification and booking by phone.</p><a class="btn btn-ghost" href="/services/ai-voice-agents/">See voice agents {ic("arrow")}</a></div>
-        <div class="price-card glass other reveal"><span class="tag teal">Everything else</span><h3 style="margin-top:12px">Priced after your free audit</h3><p style="margin-top:8px">WhatsApp, CRM, automation, websites and research are scoped to your business, with a fixed quote.</p><a class="btn btn-primary" href="{audit("pricing")}">Get my free AI audit {ic("arrow")}</a></div>
+        <div class="price-card glass other reveal"><span class="tag teal">Everything else</span><h3 style="margin-top:12px">Priced after your free audit</h3><p style="margin-top:8px">WhatsApp, CRM, automation, websites and research are scoped to your business, with a fixed quote.</p><a class="btn btn-primary" href="{audit("pricing")}">Book a free AI audit {ic("arrow")}</a></div>
       </div>
     </div>
   </section>
@@ -554,7 +575,7 @@ def service_page(s):
         <p class="lead">{escape(s["lead"])}</p>
         <div class="price-pill glass">{ic("price")}<span>{escape(price)}</span></div>
         <div class="cta-row">
-          <a class="btn btn-primary" href="{audit(pl)}">Get my free AI audit {ic("arrow")}</a>
+          <a class="btn btn-primary" href="{audit(pl)}">Book a free AI audit {ic("arrow")}</a>
           <a class="btn btn-ghost" href="{wa(wa_t)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Talk to us on WhatsApp</a>
         </div>
         <p class="cta-note">Free AI Business Audit · about 5 minutes · no obligation</p>
@@ -586,7 +607,7 @@ def service_page(s):
         <h2 id="cta-title">See if {escape(s["name"])} fits your business</h2>
         <p>The free AI audit takes about 5 minutes. You get your top AI opportunities, a recommended AI team and a Priority 1-2-3 plan. <b style="color:var(--text)">{escape(price)}.</b></p>
         <div class="cta-row">
-          <a class="btn btn-primary" href="{audit(pl)}">Get my free AI audit {ic("arrow")}</a>
+          <a class="btn btn-primary" href="{audit(pl)}">Book a free AI audit {ic("arrow")}</a>
           <a class="btn btn-ghost" href="{wa(wa_t)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Talk to us on WhatsApp</a>
         </div>
         <a class="book-link" href="{book(pl)}" style="margin-top:16px">{ic("calendar")}<span>Or <b>book a 30-min Google Meet</b> with Billy</span>{ic("arrow")}</a>
@@ -646,7 +667,7 @@ def teams_section():
             <p>Answer a few quick questions and get your recommended AI team and a Priority 1-2-3 plan. Or just talk to us.</p>
           </div>
           <div class="team-cta">
-            <a class="btn btn-primary" href="{audit("teams_section")}">Get my free AI audit {ic("arrow")}</a>
+            <a class="btn btn-primary" href="{audit("teams_section")}">Book a free AI audit {ic("arrow")}</a>
             <a class="btn btn-ghost" href="{wa("Hi Billy, I saw the AI teams on your website. Can we chat about which one fits my business?")}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Just talk to us</a>
             <a class="btn btn-ghost" href="{book("teams_section")}">{ic("calendar")}Book a call</a>
           </div>
@@ -805,7 +826,7 @@ def cta_band(pl, title, text):
         <h2 id="cta-title">{title}</h2>
         <p>{text}</p>
         <div class="cta-row">
-          <a class="btn btn-primary" href="{audit(pl)}">Get my free AI audit {ic("arrow")}</a>
+          <a class="btn btn-primary" href="{audit(pl)}">Book a free AI audit {ic("arrow")}</a>
           <a class="btn btn-ghost" href="{wa(WA_GENERAL)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Talk to us on WhatsApp</a>
         </div>
         <a class="book-link" href="{book(pl)}" style="margin-top:16px">{ic("calendar")}<span>Or <b>book a 30-min Google Meet</b> with Billy</span>{ic("arrow")}</a>
@@ -830,7 +851,7 @@ def about_page():
         <p class="sub">Local, practical AI. Built in Benoni.</p>
         <p class="lead">AI AutoTech (Pty) Ltd is a South African company based in Benoni, Gauteng, founded and led by Billy Faber, our Managing Director. We build AI employees, WhatsApp automation, AI voice agents, CRM pipelines, websites and dashboards for South African businesses, priced in Rand and managed for you.</p>
         <div class="cta-row">
-          <a class="btn btn-primary" href="{audit("about_hero")}">Get my free AI audit {ic("arrow")}</a>
+          <a class="btn btn-primary" href="{audit("about_hero")}">Book a free AI audit {ic("arrow")}</a>
           <a class="btn btn-ghost" href="{wa(WA_GENERAL)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Talk to us on WhatsApp</a>
         </div>
         <a class="book-link" href="{book("about_hero")}">{ic("calendar")}<span>Prefer to talk first? <b>Book a 30-min call</b></span>{ic("arrow")}</a>
@@ -892,11 +913,12 @@ PRIVACY_SECTIONS = [
  ("What we collect", '''<ul>
 <li><b>Contact form:</b> your name, email address, and optionally your business name and phone number, plus your message. We also record the page you sent it from, the referring page and campaign tags (UTM) in the link you used.</li>
 <li><b>Free AI Business Audit</b> (<a href="/audit/?utm_source=website&amp;utm_medium=privacy_text&amp;utm_campaign=free_ai_audit">/audit/</a>): your first name, surname, business name, email, mobile / WhatsApp number, your role, your answers to the audit questions, how you found us (for example an event QR code or campaign link) and your consent to be contacted.</li>
+<li><b>Free guide</b> (<a href="/guide/">/guide/</a>): your name, business name, email and WhatsApp number, plus the same campaign tags and referring page, so we can send the guide and follow up. You consent before we save it.</li>
 <li><b>Booking a call</b> (<a href="/book/?utm_source=website&amp;utm_medium=privacy_text&amp;utm_campaign=book_call">/book/</a>): bookings are made in a Google Calendar booking page embedded on our site. Google collects the name, email and any notes you enter and sends us the booking.</li>
 <li><b>WhatsApp, email and phone:</b> whatever you choose to send us.</li>
 <li><b>Technical data:</b> our hosting provider may log technical request data such as IP address and browser type.</li>
 </ul>'''),
- ("Why we use it", '''<p>Only to reply to your enquiry, prepare your audit results, schedule and hold calls you book, quote for and deliver services you ask for, and keep records required by South African law. We do not sell personal information, and we do not use it for unrelated marketing.</p>'''),
+ ("Why we use it", '''<p>Only to reply to your enquiry, send a guide you asked for, prepare your audit results, schedule and hold calls you book, quote for and deliver services you ask for, and keep records required by South African law. We do not sell personal information, and we do not use it for unrelated marketing.</p>'''),
  ("Where it is stored and who helps us", '''<p>We use a small number of service providers (operators) who process information for us:</p>
 <ul>
 <li><b>Supabase</b> hosts our customer database (CRM), where contact-form messages and audit submissions are stored.</li>
@@ -927,7 +949,7 @@ def privacy_page():
     <div class="wrap narrow">
       <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <span>Privacy</span></nav>
       <h1 id="priv-h1">Privacy <span class="grad">Policy</span></h1>
-      <p class="sub">POPIA notice · Updated 25 September 2026</p>
+      <p class="sub">POPIA notice · Updated 26 September 2026</p>
     </div>
   </section>
   <section class="section" style="padding-top:0">
@@ -949,7 +971,7 @@ def simple_page(title, desc, path, h1, sub, body_html, pl, robots=None, canonica
         <h1 id="st-h1">{h1}</h1>
         <p class="lead">{sub}</p>
         <div class="cta-row">
-          <a class="btn btn-primary" href="{audit(pl)}">Get my free AI audit {ic("arrow")}</a>
+          <a class="btn btn-primary" href="{audit(pl)}">Book a free AI audit {ic("arrow")}</a>
           <a class="btn btn-ghost" href="{book(pl)}">{ic("calendar")}Book a 30-min call</a>
           <a class="btn btn-ghost" href="{wa(WA_GENERAL)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>WhatsApp us</a>
         </div>
@@ -978,7 +1000,7 @@ def notfound_page():
         "404_page", robots="noindex", canonical=False, mark="404")
 
 def sitemap():
-    urls = [("/", "weekly", "1.0"), ("/audit/", "monthly", "0.9"), ("/book/", "monthly", "0.7")]
+    urls = [("/", "weekly", "1.0"), ("/audit/", "monthly", "0.9"), ("/guide/", "monthly", "0.9"), ("/book/", "monthly", "0.7"), ("/ai-agency-johannesburg/", "monthly", "0.7")]
     urls += [(f"/services/{s['slug']}/", "monthly", "0.8") for s in SERVICES]
     urls += [(f"/teams/{t['slug']}/", "monthly", "0.7") for t in TEAMS]
     urls += [("/about.html", "yearly", "0.6"), ("/privacy.html", "yearly", "0.3")]
@@ -989,6 +1011,140 @@ MANIFEST = {"name":"AI AutoTech","short_name":"AI AutoTech","description":"AI em
             "start_url":"/?utm_source=pwa","scope":"/","display":"standalone","background_color":"#050814","theme_color":"#050814",
             "icons":[{"src":"/assets/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"/assets/icon-512.png","sizes":"512x512","type":"image/png"},
                      {"src":"/assets/icon-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}]}
+
+def guide_page():
+    ld = graph(dict(ORG), {
+        "@type": "WebPage",
+        "@id": SITE + "/guide/#page",
+        "url": SITE + "/guide/",
+        "name": "The jobs your business should hand to AI",
+        "description": "A free guide from AI AutoTech on the jobs a South African business can hand to AI employees.",
+        "about": {"@id": ORG_ID},
+        "inLanguage": "en-ZA",
+    })
+    points = [
+        ("whatsapp", "Answering WhatsApp messages and handing a person the chats that need one."),
+        ("phone", "Answering calls, taking a message and booking a time."),
+        ("leads", "Following up leads and quotes so they are not left in a personal inbox."),
+        ("gear", "Repetitive admin: capturing details, reminders and simple hand-overs."),
+    ]
+    lis = "".join(f"<li>{ic(i)}<span>{escape(t)}</span></li>" for i, t in points)
+    return head(
+        "Free guide: The jobs your business should hand to AI | AI AutoTech",
+        "Free guide from AI AutoTech in Benoni: the jobs a South African business can hand to AI, including WhatsApp, calls, follow-up and admin. Name, business, email and WhatsApp to download it.",
+        "/guide/",
+        og_title="The jobs your business should hand to AI | AI AutoTech",
+        jsonld=ld,
+    ) + nav() + f'''  <main id="main">
+  <section class="svc-hero" aria-labelledby="guide-h1">
+    <div class="wrap guide-layout">
+      <div>
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <span>Free guide</span></nav>
+        <div class="hero-badge" style="margin-top:14px">{flag()}Benoni · Gauteng · South Africa</div>
+        <h1 id="guide-h1">The jobs your business should hand to <span class="grad">AI</span></h1>
+        <p class="lead">A free guide from AI AutoTech (Pty) Ltd. It describes the work we already build for South African businesses: WhatsApp and call answering, lead follow-up, booking and repetitive admin.</p>
+        <ul class="guide-points">{lis}</ul>
+        <!-- PLACEHOLDER: do not add testimonials, client counts or result statistics. Real proof can be added here only when Billy supplies it. -->
+        <p class="cta-note">No fee. We use your details to send the guide and to contact you about it. <a href="/privacy.html">Privacy notice</a>.</p>
+      </div>
+      <div class="contact-card glass">
+        <form id="guide-form" class="guide-form" novalidate>
+          <p class="eyebrow">Free download</p>
+          <h2>Send me the guide</h2>
+          <label for="guide-name">Name</label>
+          <input id="guide-name" name="name" type="text" required autocomplete="name" maxlength="120" placeholder="Your name" />
+          <label for="guide-business">Business</label>
+          <input id="guide-business" name="business" type="text" required autocomplete="organization" maxlength="120" placeholder="Business name" />
+          <label for="guide-email">Email</label>
+          <input id="guide-email" name="email" type="email" required autocomplete="email" maxlength="160" placeholder="you@company.co.za" />
+          <label for="guide-wa">WhatsApp</label>
+          <input id="guide-wa" name="whatsapp" type="tel" required autocomplete="tel" inputmode="tel" maxlength="30" placeholder="e.g. 082 123 4567" />
+          <label class="consent"><input id="guide-consent" name="consent" type="checkbox" required /> <span>I agree that AI AutoTech Pty Ltd may contact me by phone, WhatsApp or email about this guide and AI for my business. I can ask to be removed at any time.</span></label>
+          <div class="hp" aria-hidden="true"><label>Company website<input name="company_website" type="text" tabindex="-1" autocomplete="off" /></label></div>
+          <button class="btn btn-primary" type="submit">Email me the guide {ic("arrow")}</button>
+          <p id="guide-status" class="form-status" role="status" aria-live="polite" hidden></p>
+        </form>
+        <div id="guide-done" hidden>
+          <h2>Your guide is ready</h2>
+          <p class="lead">Reference <b id="guide-ref"></b>. Quote it if you message Billy.</p>
+          <!-- PLACEHOLDER: /guide/ai-guide.pdf is a stand-in file. Replace that file with the finished guide. Do not describe results that are not in the real PDF. -->
+          <a class="btn btn-primary" href="/guide/ai-guide.pdf">Download the guide {ic("arrow")}</a>
+          <p class="cta-note"><a href="{audit("guide_thanks")}">Book a free AI audit</a></p>
+        </div>
+        <p class="cta-note" style="margin-top:14px">Rather talk first? <a href="{wa("Hi Billy, I would like the free AI AutoTech guide and a chat about AI for my business.")}" target="_blank" rel="noopener">WhatsApp +27 64 686 3803</a></p>
+      </div>
+    </div>
+  </section>
+  <section class="trust-strip" aria-label="About AI AutoTech">
+    <div class="wrap">
+      <ul>
+        <li><b>AI AutoTech (Pty) Ltd</b><span>Benoni, Gauteng</span></li>
+        <li><b>Billy Faber</b><span>Founder and Managing Director</span></li>
+        <li><b><a href="tel:+27646863803">+27 64 686 3803</a></b><span>WhatsApp and phone</span></li>
+        <li><a class="trust-card" href="/#work"><b>Live work</b><span>EASTC Holdings sites</span></a></li>
+      </ul>
+    </div>
+  </section>
+  </main>
+''' + footer() + sticky("guide_sticky", "Hi Billy, I saw the free AI guide on aiautotech.co.za.") + TAIL.replace("</body>", '  <script src="/assets/funnel/guide.js?v=1" defer></script>\n</body>')
+
+def johannesburg_page():
+    ld = graph(dict(ORG), {
+        "@type": "WebPage",
+        "@id": SITE + "/ai-agency-johannesburg/#page",
+        "url": SITE + "/ai-agency-johannesburg/",
+        "name": "AI agency for Johannesburg businesses",
+        "description": "AI AutoTech is based in Benoni and works with businesses in Johannesburg and Gauteng.",
+        "about": {"@id": ORG_ID},
+        "inLanguage": "en-ZA",
+    }, crumbs_ld([("Home", "/"), ("AI agency, Johannesburg", "/ai-agency-johannesburg/")]))
+    cards = "".join(
+        f'<li><a class="svc-tab" href="/services/{s["slug"]}/">{ic(s["icon"])}{escape(s["name"])}</a></li>'
+        for s in SERVICES
+    )
+    return head(
+        "AI Agency Johannesburg | AI AutoTech, Benoni",
+        "AI agency for Johannesburg businesses. AI AutoTech is based in Benoni and works across Johannesburg, Ekurhuleni and Gauteng by Google Meet, WhatsApp and phone. Book a free AI audit.",
+        "/ai-agency-johannesburg/",
+        og_title="AI agency for Johannesburg businesses | AI AutoTech",
+        jsonld=ld,
+    ) + nav() + f'''  <main id="main">
+  <section class="svc-hero" aria-labelledby="jhb-h1">
+    <div class="wrap">
+      <div>
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <span>Johannesburg</span></nav>
+        <div class="hero-badge" style="margin-top:14px">{flag()}Benoni · serving Johannesburg</div>
+        <h1 id="jhb-h1">An AI agency for <span class="grad">Johannesburg</span> businesses</h1>
+        <p class="lead">AI AutoTech (Pty) Ltd is an AI automation company based in Benoni. We work with businesses in Johannesburg, Ekurhuleni and Gauteng. There is no walk-in office. You deal with Billy Faber, founder and managing director, on Google Meet, WhatsApp or phone.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="{audit("johannesburg")}">Book a free AI audit {ic("arrow")}</a>
+          <a class="btn btn-ghost" href="{wa("Hi Billy, I am in Johannesburg and I would like to talk about AI for my business.")}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>WhatsApp +27 64 686 3803</a>
+        </div>
+        <p class="cta-note">Free AI Business Audit · about 5 minutes · no obligation</p>
+        <p class="guide-link"><a href="/guide/">Or get the free guide: The jobs your business should hand to AI</a></p>
+      </div>
+    </div>
+  </section>
+  <section class="section" style="padding-top:10px" aria-labelledby="jhb-work">
+    <div class="wrap">
+      <h2 class="section-title" id="jhb-work">What we build</h2>
+      <p class="section-sub">The same services as on the rest of this site: AI employees, WhatsApp automation for business, voice agents, CRM, websites and the rest. Priced in Rand.</p>
+      <nav class="svc-nav glass" aria-label="Services"><ul class="svc-tabs">{cards}</ul></nav>
+    </div>
+  </section>
+  <section class="trust-strip" aria-label="About AI AutoTech">
+    <div class="wrap">
+      <!-- PLACEHOLDER: do not add Johannesburg client names, ratings or result statistics until real approved proof exists. -->
+      <ul>
+        <li><b>Based in Benoni</b><span>Service area includes Johannesburg</span></li>
+        <li><b>Billy Faber</b><span>Founder and Managing Director</span></li>
+        <li><b><a href="tel:+27646863803">+27 64 686 3803</a></b><span>WhatsApp and phone</span></li>
+        <li><a class="trust-card" href="/#work"><b>Live work</b><span>EASTC Holdings sites on .co.za</span></a></li>
+      </ul>
+    </div>
+  </section>
+  </main>
+''' + footer() + sticky("johannesburg_sticky", "Hi Billy, I am in Johannesburg and I would like to talk about AI for my business.") + TAIL
 
 def main():
     with open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8") as f:
@@ -1007,6 +1163,12 @@ def main():
     for name, fn in [("about.html", about_page), ("privacy.html", privacy_page), ("thanks.html", thanks_page), ("404.html", notfound_page)]:
         with open(os.path.join(ROOT, name), "w", encoding="utf-8") as f:
             f.write(fn())
+    os.makedirs(os.path.join(ROOT, "guide"), exist_ok=True)
+    with open(os.path.join(ROOT, "guide", "index.html"), "w", encoding="utf-8") as f:
+        f.write(guide_page())
+    os.makedirs(os.path.join(ROOT, "ai-agency-johannesburg"), exist_ok=True)
+    with open(os.path.join(ROOT, "ai-agency-johannesburg", "index.html"), "w", encoding="utf-8") as f:
+        f.write(johannesburg_page())
     with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as f:
         f.write(sitemap())
     with open(os.path.join(ROOT, "site.webmanifest"), "w", encoding="utf-8") as f:

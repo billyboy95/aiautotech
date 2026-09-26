@@ -62,7 +62,7 @@
     var lead = {
       name: v("name"), email: v("email"), phone: v("phone"), message: v("message"),
       company: v("company") || v("business"),
-      page: location.pathname, referrer: (document.referrer || "").slice(0, 400),
+      page: location.pathname, referrer: (t.referrer || document.referrer || "").slice(0, 400),
       utm_source: t.utm_source, utm_medium: t.utm_medium, utm_campaign: t.utm_campaign,
       utm_term: t.utm_term, utm_content: t.utm_content,
       elapsedMs: Date.now() - loadedAt, _honey: ""

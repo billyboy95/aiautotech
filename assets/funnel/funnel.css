@@ -138,6 +138,13 @@ body.is-results #saved-note { visibility: hidden; }
 body.is-results .wa-alt { display: none; }
 
 .privacy-note a { color: var(--blue-soft); text-decoration: underline; }
+.trust-mini { margin: 0 0 8px; color: var(--sub); font-size: .78rem; line-height: 1.45; }
+.trust-mini a { color: var(--blue-soft); }
+.wa-fab { position: fixed; right: 14px; bottom: calc(92px + env(safe-area-inset-bottom, 0px)); z-index: 30; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; background: #25D366; color: #fff; box-shadow: 0 8px 22px rgba(0,0,0,.35); text-decoration: none; }
+.wa-fab svg { width: 26px; height: 26px; }
+.wa-fab:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+body.is-results .wa-fab { bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+@media (max-width: 640px) { .navbar .wrap { padding-right: 68px; } }
 /* Reserve room for the JS-rendered audit so the footer does not jump (CLS) */
 #app { min-height: 100vh; min-height: 100dvh; }
 .stage-head h1 { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; }
