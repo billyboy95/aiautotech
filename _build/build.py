@@ -190,6 +190,7 @@ def footer():
       <div>
         <a href="/" aria-label="AI AutoTech home"><img class="flogo" src="/assets/redesign/logo-footer.webp" alt="AI AutoTech" width="160" height="123" loading="lazy" decoding="async" /></a>
         <p style="margin-top:12px">AI employees, automation, websites and CRM for South African businesses. Benoni, Gauteng.</p>
+        <p style="margin-top:8px;font-weight:700;letter-spacing:.02em">Automate · Innovate · Elevate.</p>
         <p style="margin-top:8px"><a href="tel:0646863803" style="color:inherit">064 686 3803</a> · <a href="mailto:billyfaber06@gmail.com" style="color:inherit">billyfaber06@gmail.com</a></p>
       </div>
       <div><h2>Services</h2><ul>{li(SERVICES[:half])}</ul></div>
@@ -343,7 +344,7 @@ def home():
       <div class="hero-text">
         <div class="hero-badge">{flag()}Benoni · Gauteng · South Africa</div>
         <h1 id="hero-title">Your business, powered by <span class="grad">AI employees</span></h1>
-        <p class="tagline"><span>Automate.</span> <span>Streamline.</span> <span>Grow.</span></p>
+        <p class="tagline"><span>Automate</span> · <span>Innovate</span> · <span>Elevate</span></p>
         <p class="lead">We build AI employees that answer your WhatsApps and calls, follow up leads, book appointments and handle admin for South African businesses, so you can scale without hiring.</p>
         <div class="cta-row">
           <a class="btn btn-primary" href="{audit("hero")}">Book a free AI audit {ic("arrow")}</a>
