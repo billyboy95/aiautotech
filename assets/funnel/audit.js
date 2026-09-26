@@ -13,32 +13,9 @@
      ads, shares) or with no stored session starts a fresh attribution with source=website
      (or source derived from utm_source), so website visitors are never tagged highlevel_event.
      A return visit without params keeps the stored attribution. */
-  var qs = new URLSearchParams(location.search);
-  var viaConnect = qs.get("via") === "connect";
-  var urlHasTracking = A.TRACK_KEYS.some(function (k) { return !!qs.get(k); });
-  var tracking = A.readTracking();
-  if (viaConnect) {
-    tracking = A.applyUrlParams(Object.assign({ utm_term: "", utm_content: "" }, CFG.eventDefaults || {})).tracking;
-    var cref = ""; try { cref = sessionStorage.getItem("aat_connect_ref") || ""; } catch (e) {}
-    tracking.referrer = cref.slice(0, 400);
-    tracking.landing = "/connect";
-    tracking.captured_at = new Date().toISOString();
-  } else if (!tracking || urlHasTracking) {
-    var ev = CFG.eventDefaults || {};
-    var isEventUrl = !!ev.utm_source && qs.get("utm_source") === ev.utm_source;
-    var base = isEventUrl
-      ? Object.assign({ utm_term: "", utm_content: "" }, ev)
-      : { source: "website", campaign: "", event: "", qr_source: "", utm_source: "", utm_medium: "", utm_campaign: "", utm_term: "", utm_content: "" };
-    tracking = A.applyUrlParams(base).tracking;
-    if (!isEventUrl) {
-      if (!qs.get("source") && qs.get("utm_source")) tracking.source = qs.get("utm_source").slice(0, 120);
-      if (!qs.get("campaign") && qs.get("utm_campaign")) tracking.campaign = qs.get("utm_campaign").slice(0, 120);
-    }
-    tracking.referrer = (document.referrer || "").slice(0, 400);
-    tracking.landing = "/audit";
-    tracking.captured_at = new Date().toISOString();
-  }
-  A.saveTracking(tracking);
+  var cap = A.captureCampaign({ landing: "/audit" });
+  var tracking = cap.tracking;
+  var viaConnect = cap.viaConnect;
   // Tidy the address bar after a QR hop (attribution is stored; a refresh keeps it).
   if (viaConnect && window.history && history.replaceState) {
     try { history.replaceState(null, "", location.pathname + (/[?&]new=1/.test(location.search) ? "?new=1" : "") + location.hash); } catch (e) {}
@@ -593,21 +570,37 @@
       elapsedMs: Math.min(Date.now() - (state.startedAt || Date.now()), 86400000), hp: state.hp || ""
     };
     renderBusy();
-    var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
-    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 25000);
-    fetch(CFG.apiUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload), signal: ctrl ? ctrl.signal : undefined })
-      .then(function (r) { return r.json().catch(function () { return { ok: false, error: "Unexpected server response (" + r.status + ")." }; }); })
-      .then(function (res) {
-        clearTimeout(timer); busy = false;
-        if (!res || !res.ok || !res.reference) throw new Error((res && res.error) || "Could not save your audit.");
-        var saved = { reference: res.reference, id: res.id, firstName: payload.firstName, company: payload.company, result: result, at: new Date().toISOString() };
-        try { localStorage.setItem(RESULT, JSON.stringify(saved)); localStorage.removeItem(STORE); } catch (e) {}
-        renderResults(saved);
-      })
-      .catch(function (err) {
-        clearTimeout(timer); busy = false;
-        renderError(err && err.name === "AbortError" ? "The connection timed out." : (err && err.message) || "Network error.");
-      });
+    // The CRM ignores submits under 15s (anti-bot) and still returns ok without an id.
+    // Wait out the remainder, then send the real elapsed time, and retry once if nothing was stored.
+    sendPayload(payload, 0);
+    function sendPayload(body, attempt) {
+      var started = state.startedAt || Date.now();
+      var elapsed = Date.now() - started;
+      var wait = elapsed < 16000 ? 16000 - elapsed : 0;
+      setTimeout(function () {
+        body.elapsedMs = Math.min(Date.now() - started, 86400000);
+        var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+        var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 25000);
+        fetch(CFG.apiUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), signal: ctrl ? ctrl.signal : undefined })
+          .then(function (r) { return r.json().catch(function () { return { ok: false, error: "Unexpected server response (" + r.status + ")." }; }); })
+          .then(function (res) {
+            clearTimeout(timer);
+            if (res && res.ok && res.reference && !res.id && attempt < 1 && !(body.hp && String(body.hp).trim())) {
+              sendPayload(body, attempt + 1);
+              return;
+            }
+            busy = false;
+            if (!res || !res.ok || !res.reference || !res.id) throw new Error((res && res.error) || "Could not save your audit.");
+            var saved = { reference: res.reference, id: res.id, firstName: body.firstName, company: body.company, result: result, at: new Date().toISOString() };
+            try { localStorage.setItem(RESULT, JSON.stringify(saved)); localStorage.removeItem(STORE); } catch (e) {}
+            renderResults(saved);
+          })
+          .catch(function (err) {
+            clearTimeout(timer); busy = false;
+            renderError(err && err.name === "AbortError" ? "The connection timed out." : (err && err.message) || "Network error.");
+          });
+      }, wait);
+    }
   }
 
   function renderBusy() {
