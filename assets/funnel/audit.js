@@ -84,11 +84,33 @@
       { id: "wa_business", type: "single", label: "WhatsApp setup", opts: ["WhatsApp Business app", "WhatsApp API / automation", "Personal WhatsApp", "Don't use WhatsApp"] },
       { id: "ai_use", type: "single", label: "Current AI use", opts: ["Not yet", "ChatGPT personally", "Some AI tools in the business", "AI built into our workflows"] },
       { id: "goal_12m", type: "single", label: "Main goal for the next 12 months", opts: ["More leads", "Higher conversion", "Save time / reduce costs", "Better customer experience", "Scale without hiring", "Better visibility & reporting"] },
-      { id: "budget", type: "single", label: "Monthly budget range for AI & automation", opts: ["Under R5,000", "R5,000–R10,000", "R10,000–R20,000", "R20,000–R50,000", "R50,000+", "Not sure yet"] },
+      { id: "budget", type: "single", label: "Monthly budget range for AI & automation", hint: budgetHint(), opts: ["Under R5,000", "R5,000–R10,000", "R10,000–R20,000", "R20,000–R50,000", "R50,000+", "Not sure yet"] },
       { id: "timeline", type: "single", label: "When would you like to start?", opts: ["As soon as possible", "Within a month", "1–3 months", "3–6 months", "Just exploring"] }
     ] }
   ];
   var CONTACT_IDS = ["firstName", "lastName", "company", "email", "phone", "role", "consent"];
+
+  function budgetHint() {
+    var price = window.AIOS_PRICING || {};
+    var line = "This is your budget, not a quote.";
+    if (price.pill) line += " Our estimate is " + price.pill + ".";
+    line += " " + (price.disclaimer || "Any price is an estimate and is confirmed on the call.");
+    return line;
+  }
+  function aiosPriceHtml() {
+    var price = window.AIOS_PRICING;
+    if (!price || !price.platform) return "";
+    var lines = "<li><b>" + esc(price.platform.name) + "</b> " + esc(price.platform.amountLabel) + esc(price.platform.period) + " — " + esc(price.platform.includes) + "</li>";
+    (price.agents || []).forEach(function (agent) {
+      lines += "<li><b>" + esc(agent.name) + " agent</b> " + esc(agent.amountLabel) + esc(agent.period) + " — " + esc(agent.includes) + "</li>";
+    });
+    var discounts = (price.discounts || []).map(function (row) { return esc(row.off) + " at " + esc(row.label); }).join(", ");
+    var extras = (price.extras || []).map(function (row) { return "<li><b>" + esc(row.name) + ".</b> " + esc(row.detail) + "</li>"; }).join("");
+    return '<div class="aios-price"><h3>Price estimate</h3><p class="sub">' + esc(price.positioning || "") + "</p><ul>" + lines + "</ul>" +
+      (discounts ? '<p class="tiny">Team discounts: ' + discounts + ".</p>" : "") +
+      (extras ? '<p class="tiny aios-extra-label">Extras</p><ul>' + extras + "</ul>" : "") +
+      '<p class="tiny">' + esc(price.disclaimer || "") + "</p></div>";
+  }
 
   /* ---------- state ---------- */
   function load() { try { return JSON.parse(localStorage.getItem(STORE) || "null"); } catch (e) { return null; } }
@@ -664,11 +686,11 @@
       '<section style="margin-top:34px;"><p class="tagline">Highest priority AI opportunities</p><h2 style="margin:8px 0 14px;">Where AI fits your business</h2>' + opps + "</section>" +
       '<section style="margin-top:34px;"><p class="tagline">Your recommended AI team</p><h2 style="margin:8px 0 14px;">Your AI team, by department</h2><div class="team">' + team + "</div></section>" +
       '<section style="margin-top:34px;"><p class="tagline">Implementation order</p><h2 style="margin:8px 0 14px;">Suggested rollout</h2><div class="roadmap">' + phases + '</div><p class="small sub" style="margin-top:10px;">Start with Priority 1 to prove value fast, then layer on the rest.</p></section>' +
-      '<section class="card" style="margin-top:34px;"><h2>Next step: your AI strategy session</h2><p class="sub" style="margin:8px 0 16px;">A free 30-minute session with Billy to turn this audit into a costed plan for ' + esc(company) + '.</p><div class="cta-stack">' +
+      '<section class="card" style="margin-top:34px;"><h2>Next step: your AI strategy session</h2><p class="sub" style="margin:8px 0 16px;">A free 30-minute session with Billy to walk through an estimate for ' + esc(company) + '. The estimate is confirmed on the call.</p>' + aiosPriceHtml() + '<div class="cta-stack">' +
       '<a class="btn btn-primary" id="cta-book-2" href="' + esc(book) + '" target="_blank" rel="noopener">Book my audit results call</a>' +
       '<a class="btn btn-wa" id="cta-wa" href="' + esc(discuss) + '" target="_blank" rel="noopener" aria-label="Discuss my AI audit on WhatsApp">WhatsApp AI AutoTech</a>' +
       '<a class="btn btn-ghost" id="cta-site" href="' + esc(CFG.siteUrl) + '">Explore AI AutoTech</a></div></section>' +
-      '<p class="disclaimer" style="margin-top:18px;">*All time and revenue figures are estimates calculated from the answers you gave, using the assumptions shown under each item. They are indicative only, not guaranteed results; some agents overlap, so totals are not additive in every case. We confirm real numbers with you before any work starts.</p>' +
+      '<p class="disclaimer" style="margin-top:18px;">*Time and revenue figures are estimates calculated from the answers you gave, using the assumptions shown under each item. They are indicative only, not guaranteed results, and they are not a price. Some agents overlap, so totals are not additive in every case. The price estimate above comes from the AIOS sheet and is confirmed on the call.</p>' +
       '<p style="margin-top:18px;text-align:center;"><button type="button" class="btn btn-ghost" id="restart" style="min-height:44px;font-size:.78rem;">Start a new audit</button></p>';
     $("restart").addEventListener("click", function () {
       if (!confirm("Start a new audit? Your saved result stays in AI AutoTech's records.")) return;

@@ -6,13 +6,49 @@ import json, math, os, sys
 from html import escape
 from urllib.parse import quote
 sys.path.insert(0, os.path.dirname(__file__))
-from content import SERVICES, STACK, ORCH_NODES, WHO_KEYS, BOOK, TEAMS, TEAM_PRICE, TEAM_PRICE_NOTE
+from content import SERVICES, STACK, ORCH_NODES, WHO_KEYS, BOOK, TEAMS
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-V = "20260926b"
-LASTMOD = "2026-09-26"
+V = "20260927a"
+LASTMOD = "2026-09-27"
 SITE = "https://aiautotech.co.za"
 WA_NUM = "27646863803"
+
+def load_pricing():
+    path = os.path.join(ROOT, "assets", "pricing.js")
+    text = open(path, encoding="utf-8").read()
+    marker = "window.AIOS_PRICING = "
+    start = text.index(marker) + len(marker)
+    data, _ = json.JSONDecoder().raw_decode(text[start:].lstrip())
+    required = ("short", "pill", "disclaimer", "meta", "positioning", "platform", "agents", "discounts", "extras")
+    missing = [k for k in required if k not in data]
+    if missing:
+        raise SystemExit("assets/pricing.js is missing: " + ", ".join(missing))
+    if data.get("published") is not False:
+        raise SystemExit("assets/pricing.js: published must stay false until Billy says the sheet is a final public offer.")
+    return data
+
+P = load_pricing()
+
+def priced_desc(desc):
+    base = desc.strip()
+    if base.endswith("."):
+        base = base[:-1]
+    return base + ". " + P["meta"]
+
+def aggregate_offer():
+    amounts = [P["platform"]["amount"]] + [a["amount"] for a in P["agents"]]
+    return {
+        "@type": "AggregateOffer",
+        "priceCurrency": "ZAR",
+        "lowPrice": min(amounts, key=int),
+        "highPrice": max(amounts, key=int),
+        "offerCount": str(len(amounts)),
+        "description": P["pill"] + ". Monthly platform and agent fees. " + P["disclaimer"],
+    }
+
+def price_pill_inner():
+    return f'{escape(P["pill"])} <small>({escape(P["disclaimer"])})</small>'
 BYSLUG = {s["slug"]: s for s in SERVICES}
 
 # Founder photo in the homepage "Local, practical AI. Built in Benoni" section.
@@ -98,7 +134,7 @@ AREAS = [{"@type":"City","name":"Benoni"},{"@type":"AdministrativeArea","name":"
 ORG_ID = SITE + "/#organization"
 ORG = {"@type":["ProfessionalService","LocalBusiness"],"@id":ORG_ID,"name":"AI AutoTech","legalName":"AI AutoTech (Pty) Ltd","url":SITE+"/",
        "logo":{"@type":"ImageObject","url":SITE+"/assets/logo.png","width":967,"height":746},"image":OG_IMG,
-       "email":"billyfaber06@gmail.com","telephone":"+27646863803","areaServed":AREAS,"priceRange":"ZAR",
+       "email":"billyfaber06@gmail.com","telephone":"+27646863803","areaServed":AREAS,"priceRange":"R" + P["platform"]["amount"] + "+",
        "address":{"@type":"PostalAddress","addressLocality":"Benoni","addressRegion":"Gauteng","addressCountry":"ZA"},
        "founder":{"@type":"Person","name":"Billy Faber","alternateName":"Willem Faber","jobTitle":"Founder and Managing Director"},
        "description":"AI AutoTech builds AI employees, WhatsApp automation, AI voice agents, CRM pipelines and websites for South African businesses.",
@@ -221,7 +257,8 @@ def wa_fab(text="Hi Billy, I saw the AI AutoTech website and would like to chat 
     return f'''  <a class="wa-fab" href="{wa(text)}" target="_blank" rel="noopener" aria-label="WhatsApp AI AutoTech on +27 64 686 3803">{ic("whatsapp")}</a>
 '''
 
-TAIL = f'''  <script src="/assets/funnel/config.js?v=4" defer></script>
+TAIL = f'''  <script src="/assets/pricing.js?v={V}" defer></script>
+  <script src="/assets/funnel/config.js?v=4" defer></script>
   <script src="/assets/funnel/track.js?v=1" defer></script>
   <script src="/assets/redesign/site.js?v={V}" defer></script>
   <script src="/assets/redesign/contact-crm.js?v={V}" defer></script>
@@ -311,9 +348,47 @@ def mock(kind, s):
     return ""
 
 # ---------------- Pages ----------------
+def pricing_section():
+    plat = P["platform"]
+    agents = "".join(
+        f'<article class="price-card glass{" violet" if i % 2 else ""} reveal"><span class="tag{" teal" if i % 2 == 0 else ""}">{escape(a["name"])}</span><div class="amt">{escape(a["amountLabel"])}<small>{escape(a["period"])}</small></div><p>{escape(a["includes"])}</p></article>'
+        for i, a in enumerate(P["agents"])
+    )
+    discounts = "".join(f'<span><b>{escape(d["off"])}</b> at {escape(d["label"])}</span>' for d in P["discounts"])
+    extras = "".join(f'<li><b>{escape(x["name"])}.</b> {escape(x["detail"])}</li>' for x in P["extras"])
+    return f'''  <section class="section" id="pricing" aria-labelledby="price-title">
+    <div class="wrap">
+      <div class="center reveal">
+        <p class="eyebrow">Pricing</p>
+        <h2 class="section-title" id="price-title">Priced in Rand. <span class="grad">Scale without hiring.</span></h2>
+        <p class="section-sub">{escape(P["positioning"])} You pay for the platform, then the agents you use.</p>
+        <p class="price-disclaimer">{escape(P["disclaimer"])}</p>
+      </div>
+      <article class="price-card glass reveal price-platform"><span class="tag teal">{escape(plat["name"])}</span><div class="amt">{escape(plat["amountLabel"])}<small>{escape(plat["period"])}</small></div><p>{escape(plat["includes"])}</p></article>
+      <h3 class="price-subhead reveal">Agents</h3>
+      <p class="price-sub reveal">Computer hours are included in each agent. Team discounts apply when you run several agents.</p>
+      <div class="price-agents">{agents}</div>
+      <div class="price-meta">
+        <div class="price-panel glass reveal">
+          <h3>Team discounts</h3>
+          <div class="discount-row">{discounts}</div>
+        </div>
+        <div class="price-panel glass violet reveal">
+          <h3>Extras</h3>
+          <ul>{extras}</ul>
+        </div>
+      </div>
+      <div class="center reveal price-cta">
+        <a class="btn btn-primary" href="{audit("pricing")}">Book a free AI audit {ic("arrow")}</a>
+        <p class="cta-note">The audit recommends a team. This estimate is confirmed on the call.</p>
+      </div>
+    </div>
+  </section>
+'''
+
 def svc_button(s, placement_home=True):
     v = " v" if s["tone"] == "v" else ""
-    pr = f'<span class="price">{escape(s["price"].replace(" (excl. VAT)",""))}</span>' if s.get("price") else ""
+    pr = f'<span class="price">{escape(P["pill"])}</span>'
     return f'<a class="svc-btn{v}" href="/services/{s["slug"]}/"><span class="ico">{ic(s["icon"])}</span><span><b>{escape(s["name"])}</b><small>{escape(s["card"])}</small>{pr}</span>{ic("arrow","arr")}</a>'
 
 def stack_block(compact=False):
@@ -328,7 +403,7 @@ def stack_block(compact=False):
       </div>'''
 
 def home():
-    org = dict(ORG); org["hasOfferCatalog"] = {"@type":"OfferCatalog","name":"AI AutoTech services","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":s["name"],"url":f'{SITE}/services/{s["slug"]}/'}} for s in SERVICES]}
+    org = dict(ORG); org["hasOfferCatalog"] = {"@type":"OfferCatalog","name":"AI AutoTech services","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":s["name"],"url":f'{SITE}/services/{s["slug"]}/'},"priceCurrency":"ZAR","description":P["pill"] + ". " + P["disclaimer"]} for s in SERVICES]}
     ld = graph(org, {"@type":"WebSite","@id":SITE+"/#website","url":SITE+"/","name":"AI AutoTech","publisher":{"@id":ORG_ID},"inLanguage":"en-ZA"})
     wa_home = "Hi Billy, I saw the AI AutoTech website and would like to chat about AI for my business."
     kp = [("New leads","M0 14 L10 11 L20 12 L30 7 L40 8 L50 4 L60 2"),("Bookings","M0 12 L10 13 L20 9 L30 10 L40 6 L50 6 L60 3"),("Conversations","M0 10 L10 8 L20 11 L30 6 L40 7 L50 3 L60 4"),("Revenue","M0 15 L10 12 L20 12 L30 9 L40 6 L50 5 L60 2")]
@@ -451,20 +526,7 @@ def home():
     </div>
   </section>
 
-  <section class="section" id="pricing" aria-labelledby="price-title">
-    <div class="wrap">
-      <div class="center reveal">
-        <p class="eyebrow">Pricing</p>
-        <h2 class="section-title" id="price-title">Priced in Rand. <span class="grad">Scale without hiring.</span></h2>
-        <p class="section-sub">Flat monthly pricing, excl. VAT. The free audit tells you exactly what you need, so you never pay for more than that.</p>
-      </div>
-      <div class="price-grid">
-        <div class="price-card glass reveal"><span class="tag teal">AI Employees &amp; Agents</span><div class="amt">R8,999<small> /month</small></div><p>Starting price for an AI employee that answers, follows up, books and handles admin, 24/7.</p><a class="btn btn-ghost" href="/services/ai-employees/">See AI employees {ic("arrow")}</a></div>
-        <div class="price-card glass violet reveal"><span class="tag">AI Voice Agents</span><div class="amt">R14,999<small> /month</small></div><p>Starting price for 24/7 call answering, lead qualification and booking by phone.</p><a class="btn btn-ghost" href="/services/ai-voice-agents/">See voice agents {ic("arrow")}</a></div>
-        <div class="price-card glass other reveal"><span class="tag teal">Everything else</span><h3 style="margin-top:12px">Priced after your free audit</h3><p style="margin-top:8px">WhatsApp, CRM, automation, websites and research are scoped to your business, with a fixed quote.</p><a class="btn btn-primary" href="{audit("pricing")}">Book a free AI audit {ic("arrow")}</a></div>
-      </div>
-    </div>
-  </section>
+{pricing_section()}
 
   <section class="section" id="why" aria-labelledby="why-title">
     <div class="wrap sa{"" if SHOW_FOUNDER_PHOTO else " no-photo"}">{founder_photo()}
@@ -474,7 +536,7 @@ def home():
         <p class="section-sub" style="margin-bottom:0">You deal directly with the people who build your system, not a call centre or an overseas agency.</p>
         <div class="why-grid">
           <div class="why glass"><h3>Local first</h3><p>We know South African realities: load shedding, data costs, cash-flow pressure and WhatsApp-first customers.</p></div>
-          <div class="why glass"><h3>Rand pricing, no surprises</h3><p>All pricing in Rand. No dollar subscriptions quietly eating into your margins.</p></div>
+          <div class="why glass"><h3>Rand pricing</h3><p>Platform and agent fees are monthly, in Rand, excl. VAT. Extras and setup are on the price sheet. We confirm the estimate on your call.</p></div>
           <div class="why glass"><h3>Done for you</h3><p>We build, deploy and manage the whole system so you can keep running your business.</p></div>
           <div class="why glass"><h3>Scale without hiring</h3><p>Add AI employees as you grow, with no recruitment, HR admin or long contracts.</p></div>
         </div>
@@ -554,18 +616,16 @@ def home():
 def service_page(s):
     slug = s["slug"]; pl = f"service_{slug}"
     wa_t = f"Hi Billy, I'm interested in {s['name']} for my business."
-    price = s.get("price") or "Priced after your free audit"
+    price = price_pill_inner()
     ld = {"@context":"https://schema.org","@type":"Service","name":s["name"],"serviceType":s["name"],"description":s["lead"],"url":f"{SITE}/services/{slug}/",
-          "areaServed":AREAS,"provider":PROVIDER}
-    if s.get("price_num"):
-        ld["offers"] = {"@type":"Offer","priceCurrency":"ZAR","price":s["price_num"],"description":s["price"],"priceSpecification":{"@type":"UnitPriceSpecification","price":s["price_num"],"priceCurrency":"ZAR","unitText":"MONTH","valueAddedTaxIncluded":False}}
+          "areaServed":AREAS,"provider":PROVIDER,"offers":aggregate_offer()}
     steps = "".join(f'<li><span class="num">0{i+1}</span><div><b>{escape(t)}</b><p>{escape(d)}</p></div></li>' for i, (t, d) in enumerate(s["steps"]))
     gains = "".join(f'<li>{ic("check")}<span>{escape(g)}</span></li>' for g in s["gains"])
     who = "".join(f'<li class="who glass violet"><h3>{ic(k)}{label}</h3><p>{escape(s["who"][k])}</p></li>' for k, label in WHO_KEYS)
     tabs = "".join(f'<li><a class="svc-tab" href="/services/{o["slug"]}/"{" aria-current=\"page\"" if o["slug"]==slug else ""}>{ic(o["icon"])}{escape(o["short"])}</a></li>' for o in SERVICES)
     idx = [x["slug"] for x in SERVICES].index(slug)
     ld = graph(ld, crumbs_ld([("Home","/"),("Services","/#services"),(s["name"],f"/services/{slug}/")]))
-    return head(s["title"], s["desc"], f"/services/{slug}/", jsonld=ld) + nav(slug) + f'''  <main id="main">
+    return head(s["title"], priced_desc(s["desc"]), f"/services/{slug}/", jsonld=ld) + nav(slug) + f'''  <main id="main">
   <section class="svc-hero" aria-labelledby="svc-h1">
     <div class="wrap">
       <div>
@@ -574,7 +634,8 @@ def service_page(s):
         <h1 id="svc-h1" style="margin-top:12px"><span class="grad">{escape(s["name"])}</span></h1>
         <p class="sub">{escape(s["sub"])}</p>
         <p class="lead">{escape(s["lead"])}</p>
-        <div class="price-pill glass">{ic("price")}<span>{escape(price)}</span></div>
+        <div class="price-pill glass">{ic("price")}<span>{price}</span></div>
+        <p class="price-more"><a href="/#pricing">See the full estimate</a></p>
         <div class="cta-row">
           <a class="btn btn-primary" href="{audit(pl)}">Book a free AI audit {ic("arrow")}</a>
           <a class="btn btn-ghost" href="{wa(wa_t)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Talk to us on WhatsApp</a>
@@ -606,7 +667,7 @@ def service_page(s):
       <div class="cta-band reveal">
         <p class="eyebrow">Start here</p>
         <h2 id="cta-title">See if {escape(s["name"])} fits your business</h2>
-        <p>The free AI audit takes about 5 minutes. You get your top AI opportunities, a recommended AI team and a Priority 1-2-3 plan. <b style="color:var(--text)">{escape(price)}.</b></p>
+        <p>The free AI audit takes about 5 minutes. You get your top AI opportunities, a recommended AI team and a Priority 1-2-3 plan. Any price we put on that plan is an estimate: <b style="color:var(--text)">{escape(P["pill"])}</b>. {escape(P["disclaimer"])}</p>
         <div class="cta-row">
           <a class="btn btn-primary" href="{audit(pl)}">Book a free AI audit {ic("arrow")}</a>
           <a class="btn btn-ghost" href="{wa(wa_t)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>Talk to us on WhatsApp</a>
@@ -644,7 +705,7 @@ def team_card(t):
           <p class="team-sub">{len(t["members"])} AI employees in this team</p>
           <ul class="team-members">{mem}</ul>
           <div class="team-day"><span class="tag">Illustrative example</span><p><b>{escape(when)}</b> {escape(what)}</p><a href="/teams/{t["slug"]}/">See the full day and team {ic("arrow")}</a></div>
-          <p class="team-price">{ic("price")}<span><b>{TEAM_PRICE}</b> excl. VAT</span></p>
+          <p class="team-price">{ic("price")}<span><b>{escape(P["pill"])}</b><small>{escape(P["disclaimer"])}</small></span></p>
           <div class="team-cta">{team_buttons(t, "team_card_" + t["slug"].replace("-", "_"))}</div>
         </article>'''
 
@@ -680,16 +741,16 @@ def teams_section():
 
 def team_page(t):
     slug = t["slug"]; pl = "team_" + slug.replace("-", "_")
-    ld = {"@context":"https://schema.org","@type":"Service","name":t["name"],"serviceType":"AI employees","description":t["desc"],"url":f"{SITE}/teams/{slug}/",
+    ld = {"@context":"https://schema.org","@type":"Service","name":t["name"],"serviceType":"AI employees","description":priced_desc(t["desc"]),"url":f"{SITE}/teams/{slug}/",
           "areaServed":AREAS,"provider":PROVIDER,
-          "offers":{"@type":"Offer","priceCurrency":"ZAR","price":"8999","description":"From R8,999/month (excl. VAT)"}}
+          "offers":aggregate_offer()}
     mem = "".join(f'<li class="member glass{" violet" if k % 2 else ""} reveal"><span class="ico">{ic(i)}</span><div><h3>{escape(n)}</h3><p>{escape(d)}</p></div></li>' for k, (i, n, d) in enumerate(t["members"]))
     day = "".join(f'<li><span class="when">{escape(w)}</span><p>{escape(x)}</p></li>' for w, x in t["day"])
     fit = "".join(f'<li>{ic("check")}<span>{escape(f)}</span></li>' for f in t["fit"])
     others = "".join(f'<li><a class="svc-tab" href="/teams/{o["slug"]}/"{" aria-current=\"page\"" if o["slug"]==slug else ""}>{ic(o["icon"])}{escape(o["name"])}</a></li>' for o in TEAMS)
     note = f'<p class="team-note">{escape(t["note"])}</p>' if t.get("note") else ""
     ld = graph(ld, crumbs_ld([("Home","/"),("AI teams","/#teams"),(t["name"],f"/teams/{slug}/")]))
-    return head(t["title"], t["desc"], f"/teams/{slug}/", jsonld=ld) + nav(slug) + f'''  <main id="main">
+    return head(t["title"], priced_desc(t["desc"]), f"/teams/{slug}/", jsonld=ld) + nav(slug) + f'''  <main id="main">
   <section class="svc-hero team-hero" aria-labelledby="team-h1">
     <div class="wrap">
       <div>
@@ -698,7 +759,8 @@ def team_page(t):
         <h1 id="team-h1" style="margin-top:12px"><span class="grad">{escape(t["name"])}</span></h1>
         <p class="sub">{escape(t["pitch"])}</p>
         <p class="lead">{escape(t["lead"])}</p>
-        <div class="price-pill glass">{ic("price")}<span>{TEAM_PRICE} <small>({escape(TEAM_PRICE_NOTE)})</small></span></div>
+        <div class="price-pill glass">{ic("price")}<span>{price_pill_inner()}</span></div>
+        <p class="price-more"><a href="/#pricing">See the full estimate</a></p>
         <div class="cta-row">{team_buttons(t, pl)}</div>
         <a class="book-link" href="{audit(pl)}">{ic("star")}<span>Not sure this is the right team? <b>Get the free AI audit</b></span>{ic("arrow")}</a>
       </div>
@@ -739,7 +801,7 @@ def team_page(t):
       <div class="cta-band reveal">
         <p class="eyebrow">Start here</p>
         <h2 id="cta-title">Start with the {escape(t["name"])}</h2>
-        <p>Tell us about your business on WhatsApp or book a 30-min call. <b style="color:var(--text)">{TEAM_PRICE}</b> ({escape(TEAM_PRICE_NOTE)})</p>
+        <p>Tell us about your business on WhatsApp or book a 30-min call. <b style="color:var(--text)">{escape(P["pill"])}</b>. {escape(P["disclaimer"])}</p>
         <div class="cta-row">{team_buttons(t, pl + "_band")}</div>
         <a class="book-link" href="{audit(pl + "_band")}" style="margin-top:16px">{ic("star")}<span>Or <b>get the free AI audit</b> first</span>{ic("arrow")}</a>
       </div>
@@ -757,14 +819,14 @@ def team_page(t):
 def book_page():
     wa_default = "Hi Billy, I'd like to book my AI Audit Results & Next Steps call."
     return head("Book your AI Audit Results & Next Steps call — AI AutoTech",
-                "Book a free 30-minute Google Meet with Billy Faber to go through your AI business audit results, your recommended AI team and your Priority 1-2-3 plan.",
+                "Book a free 30-minute Google Meet with Billy Faber to go through your AI business audit results. Any price is an estimate and is confirmed on the call.",
                 "/book/", og_title="Book your AI Audit Results & Next Steps call — AI AutoTech") + nav("book") + f"""  <main id="main">
   <section class="book-hero" aria-labelledby="book-title">
     <div class="wrap">
       <div class="book-intro glass reveal">
         <p class="eyebrow">Free {BOOK["length"]} {BOOK["where"]}</p>
         <h1 id="book-title">Book your AI Audit Results &amp; <span class="grad">Next Steps</span> call</h1>
-        <p class="lead">Free 30-minute Google Meet with Billy Faber. We'll go through your audit results, your recommended AI team and your Priority 1-2-3 plan, and agree next steps. Not done the audit yet? You can still book, or <a href="{audit("book")}">take the free AI audit first</a> (about 5 minutes).</p>
+        <p class="lead">Free 30-minute Google Meet with Billy Faber. We'll go through your audit results, your recommended AI team and your Priority 1-2-3 plan, and agree next steps. Any price we walk through is an estimate ({escape(P["pill"])}) and is confirmed on the call. Not done the audit yet? You can still book, or <a href="{audit("book")}">take the free AI audit first</a> (about 5 minutes).</p>
         <ul class="book-facts">
           <li>{ic("clock")}<span><b>30 minutes</b></span></li>
           <li>{ic("meet")}<span><b>Google Meet</b> link in your invite</span></li>
@@ -875,7 +937,7 @@ def about_page():
         <h2>{ic("star")}How we work</h2>
         <ul class="gains">
           <li>{ic("check")}<span><b style="color:var(--text)">Local first.</b> We know South African realities: load shedding, data costs, cash-flow pressure and WhatsApp-first customers.</span></li>
-          <li>{ic("check")}<span><b style="color:var(--text)">Rand pricing.</b> Flat monthly pricing in Rand, excl. VAT. No dollar subscriptions.</span></li>
+          <li>{ic("check")}<span><b style="color:var(--text)">Rand pricing.</b> {escape(P["pill"])}. {escape(P["disclaimer"])}</span></li>
           <li>{ic("check")}<span><b style="color:var(--text)">Done for you.</b> We build, deploy and manage the system so you can keep running your business.</span></li>
           <li>{ic("check")}<span><b style="color:var(--text)">Direct contact.</b> You deal directly with the people who build your system, not a call centre.</span></li>
         </ul>
@@ -1055,7 +1117,7 @@ def guide_page():
         <p class="lead">A free guide from AI AutoTech (Pty) Ltd in Benoni, Gauteng. It is written for South African owners of dental practices, estate agencies, brokerages and other service businesses, and covers what to automate in a world of WhatsApp-first customers and Rand budgets.</p>
         <h2 class="guide-list-title">Inside the guide</h2>
         <ol class="guide-points">{lis}</ol>
-        <p class="cta-note">Time figures in the PDF are labelled typical estimates for a small South African business. They are for planning, not guarantees.</p>
+        <p class="cta-note">Time figures in the PDF are labelled typical estimates for a small South African business. They are for planning, not guarantees. The guide does not set a package price. The current estimate is {escape(P["pill"])}. {escape(P["disclaimer"])}</p>
         <!-- PLACEHOLDER: do not add testimonials, client counts or result statistics. Real proof can be added here only when Billy supplies it. -->
         <p class="cta-note">No fee. We use your details to send the guide and to contact you about it. <a href="/privacy.html">Privacy notice</a>.</p>
       </div>
@@ -1139,7 +1201,7 @@ def johannesburg_page():
   <section class="section" style="padding-top:10px" aria-labelledby="jhb-work">
     <div class="wrap">
       <h2 class="section-title" id="jhb-work">What we build</h2>
-      <p class="section-sub">The same services as on the rest of this site: AI employees, WhatsApp automation for business, voice agents, CRM, websites and the rest. Priced in Rand.</p>
+      <p class="section-sub">The same services as on the rest of this site: AI employees, WhatsApp automation for business, voice agents, CRM, websites and the rest. {escape(P["pill"])}. {escape(P["disclaimer"])}</p>
       <nav class="svc-nav glass" aria-label="Services"><ul class="svc-tabs">{cards}</ul></nav>
     </div>
   </section>
@@ -1184,6 +1246,22 @@ def main():
         f.write(sitemap())
     with open(os.path.join(ROOT, "site.webmanifest"), "w", encoding="utf-8") as f:
         json.dump(MANIFEST, f, indent=2)
+    banned = ("R8,999", "R14,999", "8,999", "14,999", "Priced after your free audit", "costed plan")
+    offenders = []
+    for dirpath, dirnames, filenames in os.walk(ROOT):
+        dirnames[:] = [d for d in dirnames if d not in (".git", "_build")]
+        for name in filenames:
+            if not name.endswith((".html", ".js", ".json", ".xml")):
+                continue
+            path = os.path.join(dirpath, name)
+            if os.path.abspath(path) == os.path.abspath(__file__):
+                continue
+            text = open(path, encoding="utf-8", errors="replace").read()
+            hits = [b for b in banned if b in text]
+            if hits:
+                offenders.append(f"{os.path.relpath(path, ROOT)}: {', '.join(hits)}")
+    if offenders:
+        raise SystemExit("Old package prices or costed-plan wording still present:\n" + "\n".join(offenders))
     print("built", 6 + len(SERVICES) + len(TEAMS), "pages + sitemap + manifest")
 
 if __name__ == "__main__":
