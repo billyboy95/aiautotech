@@ -1,6 +1,7 @@
 /* Lead magnet: name, business, email, WhatsApp -> CRM audit endpoint, source=lead_magnet. */
 (function () {
   "use strict";
+  var FORMSUBMIT_AJAX = "https://formsubmit.co/ajax/4b43618c4f12b0258208d17e157896bb";
   var CFG = window.AAT_CONFIG, A = window.AAT;
   var form = document.getElementById("guide-form");
   if (!form || !CFG || !A) return;
@@ -77,6 +78,31 @@
       hp: v("company_website")
     };
 
+    // Instant lead alert to Billy via FormSubmit (same endpoint as the homepage contact form).
+    // Fire-and-forget: never blocks or changes what the visitor sees.
+    function alertBilly(ok, res, errMsg) {
+      try {
+        var tr = payload.tracking || {};
+        var mail = {
+          name: name, business: business, phone: phone, email: email,
+          _subject: ok ? "New AI AutoTech audit" : "FAILED audit save, contact this lead",
+          _template: "table", _captcha: "false",
+          form: "Free AI guide (/guide/)",
+          crm_status: ok ? ("Saved in CRM (id " + res.id + ")") : ("NOT saved in CRM: " + (errMsg || "unknown error") + ". Contact this lead and add manually."),
+          reference: (res && res.reference) || "",
+          source: tr.source || "", attribution_source: (payload.answers && payload.answers.attribution_source) || "",
+          campaign: tr.campaign || "", event: tr.event || "",
+          utm: [tr.utm_source, tr.utm_medium, tr.utm_campaign, tr.utm_term, tr.utm_content].filter(Boolean).join(" / "),
+          referrer: tr.referrer || "", page: location.pathname + location.search
+        };
+        fetch(FORMSUBMIT_AJAX, {
+          method: "POST", keepalive: true,
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(mail)
+        }).catch(function () {});
+      } catch (e) {}
+    }
+
     if (btn) { btn.disabled = true; btn.textContent = "Sending your guide…"; }
     status.hidden = true;
     send(payload, 0);
@@ -99,6 +125,7 @@
           clearTimeout(timer);
           if (res && res.ok && res.reference && !res.id && attempt < 1) { send(body, attempt + 1); return; }
           if (!res || !res.ok || !res.reference || !res.id) throw new Error((res && res.error) || "Could not save your details.");
+          alertBilly(true, res);
           form.hidden = true;
           var done = document.getElementById("guide-done");
           if (done) {
@@ -108,6 +135,7 @@
           }
         }).catch(function (err) {
           clearTimeout(timer);
+          alertBilly(false, null, err && err.name === "AbortError" ? "The connection timed out." : (err && err.message) || "Network error.");
           if (btn) { btn.disabled = false; btn.innerHTML = btnHtml; }
           var wa = A.wa("Hi Billy, I tried to get the free AI guide on aiautotech.co.za and the form did not go through. My name is " + name + ".");
           show((err && err.name === "AbortError" ? "The connection timed out." : (err && err.message) || "Network error.") +
