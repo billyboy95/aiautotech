@@ -1,6 +1,7 @@
 /* AI AutoTech — Free AI Business Audit (static, no secrets). */
 (function () {
   "use strict";
+  var FORMSUBMIT_AJAX = "https://formsubmit.co/ajax/4b43618c4f12b0258208d17e157896bb";
   var CFG = window.AAT_CONFIG, A = window.AAT;
   var STORE = "aat_audit_v1", RESULT = "aat_audit_result_v1";
   var CONSENT_TEXT = "I agree that AI AutoTech Pty Ltd may contact me by phone, WhatsApp or email about my AI business audit and recommendations. I can ask to be removed at any time.";
@@ -570,6 +571,35 @@
       elapsedMs: Math.min(Date.now() - (state.startedAt || Date.now()), 86400000), hp: state.hp || ""
     };
     renderBusy();
+    // Instant lead alert to Billy via FormSubmit (same endpoint as the homepage contact form).
+    // Fire-and-forget: never blocks or changes what the visitor sees.
+    function alertBilly(ok, res, errMsg) {
+      try {
+        if (payload.hp && String(payload.hp).trim()) return;
+        var sc = result.score || {};
+        var tr = payload.tracking || {};
+        var mail = {
+          name: (payload.firstName + " " + payload.lastName).trim(), business: payload.company,
+          phone: payload.phone, email: payload.email,
+          _subject: ok ? "New AI AutoTech audit" : "FAILED audit save, contact this lead",
+          _template: "table", _captcha: "false",
+          crm_status: ok ? ("Saved in CRM (id " + res.id + ")") : ("NOT saved in CRM: " + (errMsg || "unknown error") + ". Contact this lead and add manually."),
+          reference: (res && res.reference) || "",
+          score: "Opportunity index " + (sc.opportunityIndex != null ? sc.opportunityIndex : "?") + "/100, readiness " + (sc.readiness != null ? sc.readiness : "?") +
+            ", " + (sc.hoursLow != null ? sc.hoursLow : "?") + "-" + (sc.hoursHigh != null ? sc.hoursHigh : "?") + " hrs/week",
+          top_agents: (result.recommendations || []).slice(0, 3).map(function (x) { return x.agent; }).join(", "),
+          role: payload.role, website: payload.website, industry: payload.industry,
+          source: tr.source || "", campaign: tr.campaign || "", event: tr.event || "",
+          utm: [tr.utm_source, tr.utm_medium, tr.utm_campaign, tr.utm_term, tr.utm_content].filter(Boolean).join(" / "),
+          referrer: tr.referrer || "", page: location.pathname + location.search
+        };
+        fetch(FORMSUBMIT_AJAX, {
+          method: "POST", keepalive: true,
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify(mail)
+        }).catch(function () {});
+      } catch (e) {}
+    }
     // The CRM ignores submits under 15s (anti-bot) and still returns ok without an id.
     // Wait out the remainder, then send the real elapsed time, and retry once if nothing was stored.
     sendPayload(payload, 0);
@@ -591,12 +621,14 @@
             }
             busy = false;
             if (!res || !res.ok || !res.reference || !res.id) throw new Error((res && res.error) || "Could not save your audit.");
+            alertBilly(true, res);
             var saved = { reference: res.reference, id: res.id, firstName: body.firstName, company: body.company, result: result, at: new Date().toISOString() };
             try { localStorage.setItem(RESULT, JSON.stringify(saved)); localStorage.removeItem(STORE); } catch (e) {}
             renderResults(saved);
           })
           .catch(function (err) {
             clearTimeout(timer); busy = false;
+            alertBilly(false, null, err && err.name === "AbortError" ? "The connection timed out." : (err && err.message) || "Network error.");
             renderError(err && err.name === "AbortError" ? "The connection timed out." : (err && err.message) || "Network error.");
           });
       }, wait);
