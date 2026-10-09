@@ -635,3 +635,18 @@ ol.guide-points{list-style:none;display:grid;gap:8px;margin:0;padding:0;counter-
 ol.guide-points li{counter-increment:job;display:flex;gap:10px;align-items:flex-start;color:var(--sub)}
 ol.guide-points li::before{content:counter(job);flex-shrink:0;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:rgba(46,230,214,.12);color:var(--teal);font-size:.72rem;font-weight:700;margin-top:1px}
 #guide-done .btn{margin-top:16px}
+
+/* ---- Resources / articles ---- */
+.article-hero h1,.res-hero h1{text-transform:none;font-size:clamp(1.7rem,5.2vw,2.55rem);line-height:1.16;letter-spacing:-.02em}
+.article-hero .lead,.res-hero .lead{max-width:68ch}
+.article-meta{color:var(--muted);font-size:.86rem;margin-top:10px}
+.article-meta a{color:var(--teal)}
+.res-index .svc-grid li{animation:none}
+.article-cta{margin-top:16px}
+.article-cta .cta-row{margin-top:14px}
+.estimate{background:rgba(255,184,28,.08);border:1px solid rgba(255,184,28,.28);border-radius:12px;padding:12px 14px;color:var(--sub);font-size:.92rem;margin-top:12px}
+.estimate b{color:var(--text)}
+.more-reads{list-style:none;display:grid;gap:10px;margin-top:8px;padding:0}
+.more-reads a{display:block;text-decoration:none;color:var(--text);padding:12px 14px;border-radius:14px;border:1px solid var(--line)}
+.more-reads a span{color:var(--sub);font-size:.9rem}
+.more-reads a:hover,.more-reads a:focus-visible{border-color:var(--teal-line);box-shadow:var(--glow)}
