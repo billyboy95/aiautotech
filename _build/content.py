@@ -14,9 +14,9 @@ SERVICES = [
     sub="Handle the busy work so your team can focus on what matters.",
     card="Trained AI agents that answer, follow up, book and do admin, 24/7.",
     lead="An AI employee is a trained AI agent with one clear job: answering enquiries, following up leads, booking appointments or doing admin. It works inside the tools you already use, day and night, and hands over to a person when it should.",
-    price="From R8,999/month (excl. VAT)", price_num="8999", mock="roster",
+    mock="roster",
     title="AI Employees & Agents for South African Businesses | AI AutoTech",
-    desc="Hire an AI employee from R8,999/month. AI agents that answer enquiries, follow up leads, book appointments and handle admin 24/7 for South African businesses.",
+    desc="AI agents that answer enquiries, follow up leads, book appointments and handle admin 24/7 for South African businesses.",
     steps=[
       ("Map the job", "We sit with you and write down exactly what the role does: which questions it answers, which tasks it completes and when it must hand over to a person."),
       ("Build & connect", "We train the agent on your prices, policies and FAQs, then connect it to WhatsApp, email, your calendar and your CRM."),
@@ -28,7 +28,7 @@ SERVICES = [
       "Every conversation logged, so nothing depends on someone's memory",
       "Clear hand-over to a person for complaints, sales closes and anything sensitive",
       "Extra capacity without recruitment, UIF, leave or weeks of training",
-      "A flat monthly fee in Rand that you can budget for",
+      "Monthly platform and agent fees in Rand, excl. VAT, confirmed on your call",
     ],
     who=dict(
       clinic="A front-desk agent that answers 'are you open?', 'do you take my medical aid?' and books consultation slots.",
@@ -40,7 +40,7 @@ SERVICES = [
   dict(slug="whatsapp-automation", name="WhatsApp Automation", short="WhatsApp", icon="whatsapp", tone="t",
     card="Instant replies, lead capture, reminders and one shared team inbox.",
     lead="Most South African customers would rather WhatsApp than phone or email. We turn your WhatsApp number into an organised sales and service channel: instant replies, lead capture, quick-reply menus, reminders and hand-over to your team, with every chat saved to your CRM.",
-    price=None, mock="chat",
+    mock="chat",
     sub="WhatsApp automation for business: replies, leads, bookings and reminders.",
     title="WhatsApp Automation for Business | AI AutoTech",
     desc="WhatsApp automation for business: instant replies, lead capture, booking, reminders and a shared inbox. Built in Benoni for South African companies.",
@@ -68,9 +68,9 @@ SERVICES = [
     sub="24/7 call answering and lead qualification.",
     card="Natural-sounding agents that answer calls, qualify and book, day and night.",
     lead="Never miss a call again. An AI voice agent answers your phone line in a natural voice, answers common questions, qualifies the caller, books the appointment and sends your team a written summary, even at 9pm on a Sunday.",
-    price="From R14,999/month (excl. VAT)", price_num="14999", mock="voice",
+    mock="voice",
     title="AI Voice Agents: 24/7 Call Answering | AI AutoTech South Africa",
-    desc="AI voice agents from R14,999/month: 24/7 call answering, lead qualification and appointment booking for South African businesses. Built in Benoni, Gauteng.",
+    desc="AI voice agents for 24/7 call answering, lead qualification and appointment booking. Built in Benoni, Gauteng, for South African businesses.",
     steps=[
       ("Script & voice", "We write the call flow with you: the greeting, the questions to ask, what it may and may not say, and when to transfer to a person."),
       ("Connect your line", "Call forwarding or a dedicated number, linked to your calendar and CRM, with after-hours and overflow rules."),
@@ -95,7 +95,7 @@ SERVICES = [
     sub="Organise leads, close more.",
     card="Every lead in one pipeline, with automatic follow-ups.",
     lead="Never lose a lead. Every enquiry from WhatsApp, your website, forms, calls and social media lands in one pipeline, with automatic follow-ups and a clear view of what is about to close.",
-    price=None, mock="kanban",
+    mock="kanban",
     title="CRM & Pipelines: Organise Leads, Close More | AI AutoTech",
     desc="CRM and sales pipelines set up for South African businesses: WhatsApp, website and form leads in one place, automatic follow-ups and clear dashboards.",
     steps=[
@@ -122,7 +122,7 @@ SERVICES = [
     sub="Natural conversations that sell and support, on every channel.",
     card="One assistant for web chat, WhatsApp, social and voice notes.",
     lead="One AI assistant for your website chat, WhatsApp and social inboxes. It understands typed messages and voice notes, answers from your own information, recommends the right product or service and books the next step.",
-    price=None, mock="webchat",
+    mock="webchat",
     title="AI Chat + Voice Assistant for Websites & WhatsApp | AI AutoTech",
     desc="An AI assistant for website chat, WhatsApp and social media that understands voice notes, answers from your own information and books the next step.",
     steps=[
@@ -149,7 +149,7 @@ SERVICES = [
     sub="Save time, reduce costs and remove manual processes.",
     card="Quotes, invoices, onboarding and reports that run themselves.",
     lead="We find the repetitive work that eats your week, like capturing data, sending quotes and invoices, onboarding clients, chasing documents and compiling reports, and automate it end to end with reliable, monitored workflows.",
-    price=None, mock="flow",
+    mock="flow",
     title="Business Automation for South African SMBs | AI AutoTech",
     desc="Automate quotes, invoices, client onboarding, document collection and reporting. Reliable, monitored workflows for South African businesses.",
     steps=[
@@ -176,7 +176,7 @@ SERVICES = [
     sub="Modern, fast, mobile-friendly websites that convert.",
     card="Fast sites with WhatsApp and booking built in, plus live dashboards.",
     lead="Your website should bring in enquiries, not just look nice. We build fast, mobile-first sites with WhatsApp, booking and lead capture built in, plus simple dashboards so you can see leads, bookings and sales in one place.",
-    price=None, mock="dashboard",
+    mock="dashboard",
     title="Websites & Dashboards for South African Businesses | AI AutoTech",
     desc="Fast, mobile-first business websites with WhatsApp, booking and lead capture built in, plus live dashboards. Built in Benoni, Gauteng.",
     steps=[
@@ -203,7 +203,7 @@ SERVICES = [
     sub="Future-ready systems for sustainable growth.",
     card="A phased move from paper and spreadsheets to connected systems.",
     lead="For businesses still running on paper, spreadsheets and memory. We plan and implement the move to connected digital systems step by step, without stopping your day-to-day operations.",
-    price=None, mock="phases",
+    mock="phases",
     title="Digital Transformation for South African SMBs | AI AutoTech",
     desc="Move from paper and spreadsheets to connected digital systems, CRM, automation and AI, in phases that fit South African small and medium businesses.",
     steps=[
@@ -230,7 +230,7 @@ SERVICES = [
     sub="Deep research, real sources, fact-checked.",
     card="An AI researcher that reads the sources and hands you a cited brief.",
     lead="An AI research agent that searches the web and your own documents, reads the sources, cross-checks the claims and delivers a cited brief. Use it for market research, competitor tracking, tenders, due diligence and content.",
-    price=None, mock="research",
+    mock="research",
     title="Autonomous Research Specialist: Cited AI Research | AI AutoTech",
     desc="An autonomous AI research agent that searches, reads and fact-checks sources and delivers cited briefs for market research, competitors and tenders.",
     steps=[
@@ -257,7 +257,7 @@ SERVICES = [
     sub="One command centre that coordinates your AI team.",
     card="The hub that assigns, checks and connects your AI agents.",
     lead="When you run several AI agents, something has to coordinate them. The orchestrator assigns tasks, passes context between agents, checks their work and escalates to a person when needed, so your AI team works as one.",
-    price=None, mock="hex",
+    mock="hex",
     title="Autonomous Orchestrator: Coordinate Your AI Agents | AI AutoTech",
     desc="An autonomous orchestrator that coordinates your AI agents: assigning tasks, sharing context, checking work and escalating to people when needed.",
     steps=[
@@ -309,14 +309,13 @@ BOOK = dict(
 )
 
 # ---------------- "Pick your AI team" (second front door next to the audit) ----------------
-# Only known price: AI employees from R8,999/month. No invented prices, stats, testimonials or results.
-TEAM_PRICE = "From R8,999/month"
-TEAM_PRICE_NOTE = "excl. VAT. Final price depends on how many AI employees you start with and your setup; confirmed before any work starts."
+# Public prices live in assets/pricing.js. Do not put package amounts in this file.
+# No invented stats, testimonials or results.
 
 TEAMS = [
   dict(slug="dental-front-desk", name="Dental Front Desk Team", short="Dental practices", icon="clinic", tone="t",
     title="Dental Front Desk AI Team | WhatsApp bookings, reminders & reviews | AI AutoTech",
-    desc="AI front desk for dental practices: answers patient WhatsApps 24/7, books appointments, sends reminders and chases no-shows. From R8,999/month.",
+    desc="AI front desk for dental practices: answers patient WhatsApps 24/7, books appointments, sends reminders and chases no-shows.",
     pitch="Answers WhatsApps 24/7, books patients, sends reminders, chases no-shows and collects reviews.",
     lead="Your reception team stays focused on the patients in front of them. The AI team handles the messages, bookings, reminders and follow-ups around them, day and night, using your practice's own information and diary.",
     members=[
@@ -337,7 +336,7 @@ TEAMS = [
     wa="Hi Billy, I'd like to start with the Dental Front Desk Team for my practice."),
   dict(slug="estate-agent-leads", name="Estate Agent Lead Team", short="Estate agents", icon="estate", tone="v",
     title="Estate Agent AI Lead Team | Instant replies, qualified buyers & viewings | AI AutoTech",
-    desc="An AI lead team for estate agents: replies to every property enquiry in seconds, qualifies buyers and renters, books viewings and follows up. From R8,999/month.",
+    desc="An AI lead team for estate agents: replies to every property enquiry in seconds, qualifies buyers and renters, books viewings and follows up.",
     pitch="Replies to every property enquiry in seconds, qualifies buyers and renters, books viewings and follows up.",
     lead="Property enquiries arrive from portals, your website and WhatsApp at all hours. The AI team replies to every one in seconds, works out who is serious and gets viewings into your agents' calendars.",
     members=[
@@ -356,7 +355,7 @@ TEAMS = [
     wa="Hi Billy, I'd like to start with the Estate Agent Lead Team for my agency."),
   dict(slug="college-admissions", name="College Admissions Team", short="Colleges & training", icon="school", tone="t",
     title="College Admissions AI Team | Course questions, applications & campus visits | AI AutoTech",
-    desc="AI admissions team for colleges: answers course and fee questions, collects applications and documents, and books campus visits. From R8,999/month.",
+    desc="AI admissions team for colleges: answers course and fee questions, collects applications and documents, and books campus visits.",
     pitch="Answers course and fee questions, collects applications and documents, follows up with applicants and books campus visits.",
     lead="During intake season your admissions office gets the same questions hundreds of ways. The AI team answers them from your approved course information, guides applicants through the paperwork and keeps them moving to registration.",
     members=[
@@ -375,7 +374,7 @@ TEAMS = [
     wa="Hi Billy, I'd like to start with the College Admissions Team for my college."),
   dict(slug="broker-client", name="Broker Client Team", short="Insurance & finance brokers", icon="broker", tone="v",
     title="Broker AI Client Team | Quote requests, documents & renewals | AI AutoTech",
-    desc="AI client team for insurance and financial brokers: handles quote requests, collects documents and sends renewal reminders. From R8,999/month.",
+    desc="AI client team for insurance and financial brokers: handles quote requests, collects documents and sends renewal reminders.",
     pitch="Handles quote requests, collects documents, sends renewal reminders and answers policy questions.",
     lead="Your brokers should spend their time advising clients, not chasing forms. The AI team handles the admin around every quote, renewal and policy question, and hands anything that needs advice to a licensed person.",
     members=[

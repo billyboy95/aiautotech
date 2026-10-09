@@ -168,7 +168,8 @@ h1,h2,h3{font-family:var(--head);letter-spacing:-.02em;line-height:1.1}
 .svc-btn.v .arr{color:var(--violet-2)}
 .svc-btn.v:hover,.svc-btn.v:focus-visible,.svc-btn.v.is-tapped{border-color:var(--violet-2);box-shadow:0 0 0 1px rgba(177,156,255,.9),0 0 34px rgba(139,92,246,.5),0 0 70px rgba(139,92,246,.2),inset 0 0 22px rgba(139,92,246,.14)}
 .svc-btn.v:hover .ico,.svc-btn.v:focus-visible .ico,.svc-btn.v.is-tapped .ico{background:rgba(139,92,246,.3);box-shadow:0 0 22px rgba(139,92,246,.6)}
-.svc-btn .price{display:inline-block;margin-top:6px;font-size:.72rem;font-weight:700;color:var(--teal)}
+.svc-btn>span{min-width:0}
+.svc-btn .price{display:block;margin-top:6px;font-size:.72rem;font-weight:700;color:var(--teal);line-height:1.35}
 @media (min-width:640px){.svc-grid{grid-template-columns:1fr 1fr}}
 @media (min-width:1000px){.svc-grid{grid-template-columns:repeat(3,1fr)}.svc-grid li:last-child:nth-child(3n+1){grid-column:2}}
 
@@ -219,14 +220,28 @@ h1,h2,h3{font-family:var(--head);letter-spacing:-.02em;line-height:1.1}
 
 /* ---------- Pricing ---------- */
 .price-grid{display:grid;gap:16px}
-.price-card{padding:26px 22px;border-radius:20px;position:relative;overflow:hidden}
+.price-card{padding:26px 22px;border-radius:20px;position:relative;overflow:hidden;min-width:0}
 .price-card h3{font-size:1.2rem;margin-bottom:6px}
-.price-card .amt{font-family:var(--head);font-size:clamp(2rem,8vw,2.6rem);font-weight:700;line-height:1.1;margin:10px 0 4px}
-.price-card .amt small{font-size:1rem;color:var(--sub);font-weight:500}
-.price-card p{color:var(--sub);font-size:.94rem;margin-bottom:18px}
+.price-card .amt{font-family:var(--head);font-size:clamp(1.7rem,7vw,2.4rem);font-weight:700;line-height:1.1;margin:10px 0 4px;overflow-wrap:anywhere}
+.price-card .amt small{font-size:.95rem;color:var(--sub);font-weight:500}
+.price-card p{color:var(--sub);font-size:.94rem;margin-bottom:0}
 .price-card .btn{width:100%}
 .price-card.other{display:flex;flex-direction:column;justify-content:center}
-@media (min-width:860px){.price-grid{grid-template-columns:repeat(3,1fr)}}
+.price-disclaimer{margin:14px auto 0;max-width:70ch;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:rgba(5,8,20,.45);color:var(--sub);font-size:.9rem}
+.price-platform{margin-top:22px}
+.price-subhead{font-family:var(--head);font-size:1.35rem;margin:22px 0 6px}
+.price-sub{color:var(--sub);margin-bottom:14px;max-width:68ch}
+.price-agents{display:grid;gap:16px}
+.price-meta{display:grid;gap:16px;margin-top:16px}
+.price-panel{padding:22px;border-radius:20px;min-width:0}
+.price-panel h3{font-family:var(--head);font-size:1.05rem;margin-bottom:10px}
+.price-panel ul{list-style:none;display:grid;gap:8px}
+.price-panel li{color:var(--sub);font-size:.92rem}
+.price-panel li b{color:var(--text)}
+.discount-row{display:flex;flex-wrap:wrap;gap:8px}
+.discount-row span{display:inline-flex;gap:6px;align-items:center;padding:8px 12px;border-radius:999px;border:1px solid var(--teal-line);background:var(--teal-soft);font-weight:700;font-size:.88rem}
+.price-cta{margin-top:22px}
+@media (min-width:860px){.price-grid,.price-agents{grid-template-columns:repeat(3,1fr)}.price-meta{grid-template-columns:.8fr 1.2fr}}
 
 /* ---------- SA section ---------- */
 .sa{display:grid;gap:26px;align-items:center}
@@ -296,7 +311,10 @@ h1,h2,h3{font-family:var(--head);letter-spacing:-.02em;line-height:1.1}
 .svc-hero h1{font-size:clamp(2.1rem,9vw,3.6rem);text-transform:uppercase;margin-bottom:10px}
 .svc-hero .sub{font-family:var(--head);font-size:clamp(1.15rem,4.6vw,1.5rem);color:var(--teal);font-weight:600;margin-bottom:14px}
 .svc-hero .lead{color:var(--sub);font-size:1.04rem;margin-bottom:18px;max-width:600px}
-.price-pill{display:inline-flex;align-items:center;gap:10px;padding:10px 16px;border-radius:14px;margin-bottom:22px;font-weight:700;font-size:.98rem}
+.price-pill{display:inline-flex;align-items:flex-start;gap:10px;max-width:100%;padding:10px 16px;border-radius:14px;margin-bottom:8px;font-weight:700;font-size:.98rem}
+.price-pill span{min-width:0}
+.price-more{margin:0 0 18px;font-size:.88rem}
+.price-more a{font-weight:700}
 .price-pill svg{width:20px;height:20px;color:var(--teal)}
 @media (min-width:960px){.svc-hero .wrap{grid-template-columns:1.05fr 1fr}.svc-hero{padding-top:calc(var(--nav-h) + 44px)}}
 .mock{position:relative;padding:16px;border-radius:22px;min-height:300px;background:linear-gradient(160deg,rgba(14,24,52,.92),rgba(8,12,28,.92))}
@@ -504,9 +522,11 @@ h1,h2,h3{font-family:var(--head);letter-spacing:-.02em;line-height:1.1}
 .team-day a{display:inline-flex;align-items:center;gap:6px;min-height:44px;color:var(--teal);font-weight:700;text-decoration:none}
 .team-day a svg{width:16px;height:16px}
 .team-day a:hover,.team-day a:focus-visible{text-decoration:underline}
-.team-price{display:flex;align-items:center;gap:8px;color:var(--sub);font-size:.92rem}
+.team-price{display:flex;align-items:flex-start;gap:8px;color:var(--sub);font-size:.92rem;min-width:0}
+.team-price span{min-width:0}
 .team-price b{color:var(--text);font-size:1.02rem}
-.team-price svg{width:18px;height:18px;color:var(--teal)}
+.team-price small{display:block;margin-top:2px;font-weight:500;font-size:.78rem;color:var(--muted);line-height:1.4}
+.team-price svg{width:18px;height:18px;color:var(--teal);flex-shrink:0;margin-top:3px}
 .team-cta{display:grid;gap:10px;margin-top:auto}
 .team-cta .btn{width:100%;min-height:50px;padding:0 16px;font-size:.95rem}
 .btn-team{color:#dcfff6;background:linear-gradient(135deg,rgba(46,230,214,.2),rgba(20,200,216,.12));border:1px solid rgba(46,230,214,.7);box-shadow:0 0 22px rgba(46,230,214,.22)}
