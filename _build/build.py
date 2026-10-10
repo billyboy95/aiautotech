@@ -1001,7 +1001,7 @@ def notfound_page():
         "404_page", robots="noindex", canonical=False, mark="404")
 
 def sitemap():
-    urls = [("/", "weekly", "1.0"), ("/audit/", "monthly", "0.9"), ("/guide/", "monthly", "0.9"), ("/book/", "monthly", "0.7"), ("/ai-agency-johannesburg/", "monthly", "0.7")]
+    urls = [("/", "weekly", "1.0"), ("/audit/", "monthly", "0.9"), ("/guide/", "monthly", "0.9"), ("/book/", "monthly", "0.7"), ("/ai-agency-johannesburg/", "monthly", "0.7"), ("/brokers/", "monthly", "0.8")]
     urls += [(f"/services/{s['slug']}/", "monthly", "0.8") for s in SERVICES]
     urls += [(f"/teams/{t['slug']}/", "monthly", "0.7") for t in TEAMS]
     urls += [("/about.html", "yearly", "0.6"), ("/privacy.html", "yearly", "0.3")]
@@ -1157,6 +1157,169 @@ def johannesburg_page():
   </main>
 ''' + footer() + sticky("johannesburg_sticky", "Hi Billy, I am in Johannesburg and I would like to talk about AI for my business.") + TAIL
 
+
+# ---------------- /brokers/ niche landing page ----------------
+PRODUCT = "AIOS"  # product name still to be decided (Closora / Brokora); change it here only.
+BROKER_WA = "Hi Billy, I run a short-term insurance brokerage and I'd like the free AI audit."
+
+BROKER_PAINS = [
+    ("clock", "Quotes arrive after hours", "A client sends a car-insurance request at 19:40 on WhatsApp. By the time someone replies the next morning, they've asked two other brokers."),
+    ("chat", "Details come in bits", "ID number in one message, vehicle registration in another, and the valuation certificate never arrives. Someone has to chase it."),
+    ("layers", "Retyping everything", "The same client details get typed into an email, a spreadsheet and each insurer's quoting portal."),
+    ("calendar", "Renewals slip", "Renewal dates live in someone's head or a spreadsheet, and the client hears from a direct insurer first."),
+    ("mail", "The shared inbox has no owner", "info@ fills up with quotes, claims, debit-order queries and spam, and it's nobody's job to sort it."),
+    ("leads", "The principal does admin", "The most experienced person in the business spends the afternoon on admin instead of clients."),
+]
+BROKER_AGENTS = [
+    ("mail", "Inbox Agent", "Sorts info@ into quotes, claims, admin and spam, and drafts replies in your tone for a person to approve. Never sends without approval."),
+    ("leads", "Quote Intake Agent", "Collects the facts needed for motor, home and business quotes on WhatsApp or your website, ready for your quoting system. Never recommends a product, insurer or level of cover."),
+    ("research", "Document Chaser", "Politely follows up missing documents such as ID, licence, registration papers and valuations, and keeps them in your own systems."),
+    ("calendar", "Renewal Reminder", "Flags renewals 30, 14 and 7 days out and books a review call with the broker. Never changes or cancels a policy."),
+    ("smile", "Hand-off to a human", "Sends the client and a one-paragraph summary to the right broker, with the full conversation attached. Always says it's AI if asked."),
+]
+BROKER_STEPS = [
+    ("Call 1: free audit (30 min)", "You talk, we listen: how quotes, documents, renewals and the inbox work in your brokerage today."),
+    ("Your plan", "We map where time and clients get lost, and choose the first admin jobs to hand to AI."),
+    ("Call 2: your plan and a demo (30 min)", "We show the plan, a demo on your type of enquiries and a fixed Rand price. You decide."),
+    ("Set up in your tools", "WhatsApp, email, your website and your CRM. Replies start as drafts for your approval until you're happy."),
+]
+BROKER_TRUST = [
+    "<b>No advice, ever.</b> {p} collects facts and hands over. Advice and recommendations stay with your Key Individual and representatives under FAIS.",
+    "<b>Approved wording only.</b> If a client asks a policy question, {p} answers only from wording you've approved. Otherwise it says a broker will answer.",
+    "<b>A person approves first.</b> Replies start as drafts. Nothing goes to a client without approval until you switch that on.",
+    "<b>Clear hand-off.</b> Any conversation can be handed to a person at any time, and clients can always ask for a human.",
+    "<b>POPIA-ready.</b> Client data stays in your accounts. We sign a written operator agreement (POPIA section 21), keep access logged and honour opt-outs straight away.",
+    "<b>Records kept.</b> Every conversation is saved, so you have it for your FAIS record-keeping.",
+]
+BROKER_AUDIT_GETS = [
+    "Where enquiries wait or leak: after hours, missing documents, the unanswered inbox",
+    "The 3 admin jobs to hand to AI first",
+    "A Priority 1-2-3 plan with Rand pricing",
+    "A sample AI reply to one of your real enquiry types, in your tone",
+]
+BROKER_FAQ = [
+    ("Does it give financial advice?", "No. It collects information, answers only from wording you've approved and hands over to your licensed people."),
+    ("Do we have to change our quoting system?", "No. {p} prepares the details. Your team still quotes on the platforms you use now."),
+    ("Will clients know it's AI?", "Yes. It says so when it introduces itself and whenever a client asks."),
+    ("What about POPIA?", "You stay the responsible party. We act as your operator under a written agreement, and client data stays in your accounts."),
+    ("What does it cost?", "The audit is free. The Broker Client Team starts from R8,999/month excl. VAT, and you get a fixed Rand price on call 2 before you commit."),
+]
+BROKER_CSS = """
+  <style>
+    .brk-faq{display:grid;gap:10px;max-width:860px}
+    .brk-faq details{padding:16px 18px;border-radius:16px}
+    .brk-faq summary{cursor:pointer;font-weight:700;list-style:none}
+    .brk-faq summary::-webkit-details-marker{display:none}
+    .brk-faq summary::after{content:"+";float:right;opacity:.7}
+    .brk-faq details[open] summary::after{content:"\\2013"}
+    .brk-faq details p{margin-top:8px;color:var(--muted)}
+    .brk-legal{margin-top:18px;font-size:.84rem;color:var(--muted)}
+  </style>"""
+
+def brokers_page():
+    pl = "brokers"; p = PRODUCT
+    desc = (f"{p} answers quote requests in minutes, collects details and documents, and flags renewals for independent "
+            "short-term insurance brokers in Gauteng. Never gives advice. Free AI audit.")
+    ld = graph(dict(ORG), {
+        "@type": "Service", "@id": SITE + "/brokers/#service", "name": f"{p}: AI admin team for short-term insurance brokers",
+        "serviceType": "AI admin automation for insurance brokers", "description": desc, "url": SITE + "/brokers/",
+        "areaServed": AREAS, "provider": PROVIDER, "audience": {"@type": "BusinessAudience", "audienceType": "Independent short-term insurance brokers"},
+        "offers": {"@type": "Offer", "priceCurrency": "ZAR", "price": "0", "description": "Free AI audit (30-minute Google Meet)"},
+    }, {"@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a.format(p=p)}} for q, a in BROKER_FAQ]},
+       crumbs_ld([("Home", "/"), ("Insurance brokers", "/brokers/")]))
+    pains = "".join(f'<li class="who glass violet reveal"><h3>{ic(i)}{escape(t)}</h3><p>{escape(d)}</p></li>' for i, t, d in BROKER_PAINS)
+    agents = "".join(f'<li class="member glass{" violet" if k % 2 else ""} reveal"><span class="ico">{ic(i)}</span><div><h3>{escape(n)}</h3><p>{escape(d)}</p></div></li>' for k, (i, n, d) in enumerate(BROKER_AGENTS))
+    steps = "".join(f'<li><span class="num">0{k+1}</span><div><b>{escape(t)}</b><p>{escape(d)}</p></div></li>' for k, (t, d) in enumerate(BROKER_STEPS))
+    trust = "".join(f'<li>{ic("check")}<span>{t.format(p=p)}</span></li>' for t in BROKER_TRUST)
+    gets = "".join(f'<li>{ic("check")}<span>{escape(g)}</span></li>' for g in BROKER_AUDIT_GETS)
+    faq = "".join(f'<details class="glass"><summary>{escape(q)}</summary><p>{escape(a.format(p=p))}</p></details>' for q, a in BROKER_FAQ)
+    return head(
+        "AI admin team for short-term insurance brokers in Gauteng | AI AutoTech",
+        desc, "/brokers/", og_title=f"{p} for short-term insurance brokers | AI AutoTech", jsonld=ld, extra=BROKER_CSS,
+    ) + nav() + f'''  <main id="main">
+  <section class="svc-hero" aria-labelledby="brk-h1">
+    <div class="wrap">
+      <div>
+        <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <span>Insurance brokers</span></nav>
+        <div class="hero-badge" style="margin-top:14px">{flag()}For independent short-term insurance brokers · Gauteng</div>
+        <h1 id="brk-h1">Quote requests answered in minutes, <span class="grad">not tomorrow morning.</span></h1>
+        <p class="lead">{p} is an AI admin team for your brokerage. It captures quote details, chases documents and flags renewals on WhatsApp, email and your website. It hands every client to your licensed people. <b>It never gives advice.</b></p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="{book(pl)}">Book a free AI audit {ic("arrow")}</a>
+          <a class="btn btn-ghost" href="{wa(BROKER_WA)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>WhatsApp Billy</a>
+        </div>
+        <p class="cta-note">Free · 30-min Google Meet · no obligation · Benoni-based</p>
+      </div>
+      <div class="mock glass reveal">
+        <div class="mock-label"><b>Your broker admin team</b><span class="tag">Illustrative example</span></div>
+        {"".join(f'<div class="row"><span class="av">{ic(i)}</span><span><b>{escape(n)}</b><br>{escape(d.split(".")[0])}</span><span class="st{" v" if k % 2 else ""}">On duty</span></div>' for k, (i, n, d) in enumerate(BROKER_AGENTS))}
+        <p class="note">Sample team. Every client is handed to a licensed person for advice.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:34px" aria-labelledby="pain-title">
+    <div class="wrap">
+      <h2 class="section-title reveal" id="pain-title" style="font-size:clamp(1.5rem,4.6vw,2.2rem)">Sound familiar?</h2>
+      <p class="section-sub reveal" style="margin-bottom:22px">Independent brokerages win on service. These are the places where service quietly slips.</p>
+      <ul class="who-grid">{pains}</ul>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px" aria-labelledby="team-title">
+    <div class="wrap">
+      <h2 class="section-title reveal" id="team-title" style="font-size:clamp(1.5rem,4.6vw,2.2rem)">What {p} does in your brokerage</h2>
+      <p class="section-sub reveal" style="margin-bottom:22px">Each AI employee has one clear admin job. Anything that needs advice goes to your people.</p>
+      <ul class="member-grid">{agents}</ul>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px" aria-label="Free audit and how it works">
+    <div class="wrap two">
+      <div class="box glass reveal">
+        <h2>{ic("star")}The free AI audit</h2>
+        <p class="lead" style="margin:6px 0 12px">A 30-minute Google Meet with Billy. We follow one quote request through your brokerage, from first message to policy issued.</p>
+        <ul class="gains">{gets}</ul>
+        <p class="note" style="margin-top:12px;color:var(--muted);font-size:.84rem">Free, no obligation. You keep the plan either way.</p>
+      </div>
+      <div class="box glass violet reveal"><h2>{ic("layers")}How it works</h2><ol class="steps">{steps}</ol></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px" aria-labelledby="trust-title">
+    <div class="wrap">
+      <div class="box glass reveal">
+        <h2 id="trust-title">{ic("broker")}Built for FAIS, the FSCA and POPIA</h2>
+        <ul class="gains">{trust}</ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px" aria-labelledby="faq-title">
+    <div class="wrap">
+      <h2 class="section-title reveal" id="faq-title" style="font-size:clamp(1.5rem,4.6vw,2.2rem)">Questions brokers ask</h2>
+      <div class="brk-faq">{faq}</div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:10px" aria-labelledby="cta-title">
+    <div class="wrap">
+      <div class="cta-band reveal">
+        <p class="eyebrow">Start here</p>
+        <h2 id="cta-title">See where your quote requests get stuck</h2>
+        <p>30 minutes, free, no obligation. You leave with a Priority 1-2-3 plan whether you work with us or not.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="{book(pl + "_band")}">Book a free AI audit {ic("arrow")}</a>
+          <a class="btn btn-ghost" href="{wa(BROKER_WA)}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>WhatsApp Billy</a>
+        </div>
+        <a class="book-link" href="{audit(pl + "_band")}" style="margin-top:16px">{ic("star")}<span>Prefer to start online? <b>Take the 5-minute AI audit</b></span>{ic("arrow")}</a>
+        <p class="brk-legal">{p} is software and admin support from AI AutoTech (Pty) Ltd, Benoni. AI AutoTech is not a financial services provider and does not give financial advice.</p>
+      </div>
+    </div>
+  </section>
+  </main>
+''' + footer() + sticky(pl + "_sticky", BROKER_WA) + TAIL
+
 def main():
     with open(os.path.join(ROOT, "index.html"), "w", encoding="utf-8") as f:
         f.write(home())
@@ -1180,6 +1343,9 @@ def main():
     os.makedirs(os.path.join(ROOT, "ai-agency-johannesburg"), exist_ok=True)
     with open(os.path.join(ROOT, "ai-agency-johannesburg", "index.html"), "w", encoding="utf-8") as f:
         f.write(johannesburg_page())
+    os.makedirs(os.path.join(ROOT, "brokers"), exist_ok=True)
+    with open(os.path.join(ROOT, "brokers", "index.html"), "w", encoding="utf-8") as f:
+        f.write(brokers_page())
     with open(os.path.join(ROOT, "sitemap.xml"), "w", encoding="utf-8") as f:
         f.write(sitemap())
     with open(os.path.join(ROOT, "site.webmanifest"), "w", encoding="utf-8") as f:
