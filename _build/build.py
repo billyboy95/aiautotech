@@ -98,12 +98,12 @@ AREAS = [{"@type":"City","name":"Benoni"},{"@type":"AdministrativeArea","name":"
 ORG_ID = SITE + "/#organization"
 ORG = {"@type":["ProfessionalService","LocalBusiness"],"@id":ORG_ID,"name":"AI AutoTech","legalName":"AI AutoTech (Pty) Ltd","url":SITE+"/",
        "logo":{"@type":"ImageObject","url":SITE+"/assets/logo.png","width":967,"height":746},"image":OG_IMG,
-       "email":"billyfaber06@gmail.com","telephone":"+27646863803","areaServed":AREAS,"priceRange":"ZAR",
+       "email":"Willem@aiautotech.co.za","telephone":"+27646863803","areaServed":AREAS,"priceRange":"ZAR",
        "address":{"@type":"PostalAddress","addressLocality":"Benoni","addressRegion":"Gauteng","addressCountry":"ZA"},
        "founder":{"@type":"Person","name":"Billy Faber","alternateName":"Willem Faber","jobTitle":"Founder and Managing Director"},
        "description":"AI AutoTech builds AI employees, WhatsApp automation, AI voice agents, CRM pipelines and websites for South African businesses.",
-       "contactPoint":{"@type":"ContactPoint","contactType":"sales","telephone":"+27646863803","email":"billyfaber06@gmail.com","areaServed":"ZA","availableLanguage":["en"]}}
-PROVIDER = {"@type":"ProfessionalService","@id":ORG_ID,"name":"AI AutoTech","url":SITE+"/","telephone":"+27646863803","email":"billyfaber06@gmail.com","areaServed":AREAS}
+       "contactPoint":{"@type":"ContactPoint","contactType":"sales","telephone":"+27646863803","email":"Willem@aiautotech.co.za","areaServed":"ZA","availableLanguage":["en"]}}
+PROVIDER = {"@type":"ProfessionalService","@id":ORG_ID,"name":"AI AutoTech","url":SITE+"/","telephone":"+27646863803","email":"Willem@aiautotech.co.za","areaServed":AREAS}
 
 def crumbs_ld(items):
     return {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":k+1,"name":n,"item":SITE+u} for k,(n,u) in enumerate(items)]}
@@ -191,7 +191,7 @@ def footer():
         <a href="/" aria-label="AI AutoTech home"><img class="flogo" src="/assets/redesign/logo-footer.webp" alt="AI AutoTech" width="160" height="123" loading="lazy" decoding="async" /></a>
         <p style="margin-top:12px">AI employees, automation, websites and CRM for South African businesses. Benoni, Gauteng.</p>
         <p style="margin-top:8px;font-weight:700;letter-spacing:.02em">Automate · Innovate · Elevate.</p>
-        <p style="margin-top:8px"><a href="tel:0646863803" style="color:inherit">064 686 3803</a> · <a href="mailto:billyfaber06@gmail.com" style="color:inherit">billyfaber06@gmail.com</a></p>
+        <p style="margin-top:8px"><a href="tel:0646863803" style="color:inherit">064 686 3803</a> · <a href="mailto:Willem@aiautotech.co.za" style="color:inherit">Willem@aiautotech.co.za</a></p>
       </div>
       <div><h2>Services</h2><ul>{li(SERVICES[:half])}</ul></div>
       <div><h2 class="blank" aria-hidden="true">&nbsp;</h2><ul>{li(SERVICES[half:])}</ul></div>
@@ -506,7 +506,7 @@ def home():
         <ul class="contact-list">
           <li><a href="{book("contact")}">{ic("calendar")}Book a 30-min Google Meet</a></li>
           <li><a href="tel:0646863803">{ic("phone")}064 686 3803</a></li>
-          <li><a href="mailto:billyfaber06@gmail.com">{ic("mail")}billyfaber06@gmail.com</a></li>
+          <li><a href="mailto:Willem@aiautotech.co.za">{ic("mail")}Willem@aiautotech.co.za</a></li>
           <li><a href="{wa(wa_home)}" target="_blank" rel="noopener">{ic("whatsapp")}WhatsApp us</a></li>
           <li><a href="/about.html">{ic("pin")}Benoni, Gauteng · About us</a></li>
         </ul>
@@ -893,7 +893,7 @@ def about_page():
           <div><dt>Based in</dt><dd>Benoni, Gauteng, South Africa. Service-area business with no walk-in office.</dd></div>
           <div><dt>Areas served</dt><dd>Benoni, Ekurhuleni, Johannesburg and Gauteng. Meetings on Google Meet, WhatsApp or phone.</dd></div>
           <div><dt>Phone / WhatsApp</dt><dd><a href="tel:+27646863803">064 686 3803</a></dd></div>
-          <div><dt>Email</dt><dd><a href="mailto:billyfaber06@gmail.com">billyfaber06@gmail.com</a></dd></div>
+          <div><dt>Email</dt><dd><a href="mailto:Willem@aiautotech.co.za">Willem@aiautotech.co.za</a></dd></div>
         </dl>
       </div>
     </div>
@@ -910,7 +910,7 @@ def about_page():
 
 PRIVACY_SECTIONS = [
  ("Who we are", '''<p>AI AutoTech (Pty) Ltd (“AI AutoTech”, “we”, “us”) is a South African company based in Benoni, Gauteng. This notice explains how we handle personal information when you use aiautotech.co.za or contact us, in line with the Protection of Personal Information Act (POPIA).</p>
-<p><b>Responsible party:</b> AI AutoTech (Pty) Ltd, Benoni, Gauteng, South Africa. Contact: Willem (Billy) Faber, Founder and Managing Director, <a href="mailto:billyfaber06@gmail.com">billyfaber06@gmail.com</a>, <a href="tel:+27646863803">064 686 3803</a> (phone / WhatsApp).</p>'''),
+<p><b>Responsible party:</b> AI AutoTech (Pty) Ltd, Benoni, Gauteng, South Africa. Contact: Willem (Billy) Faber, Founder and Managing Director, <a href="mailto:Willem@aiautotech.co.za">Willem@aiautotech.co.za</a>, <a href="tel:+27646863803">064 686 3803</a> (phone / WhatsApp).</p>'''),
  ("What we collect", '''<ul>
 <li><b>Contact form:</b> your name, email address, and optionally your business name and phone number, plus your message. We also record the page you sent it from, the referring page and campaign tags (UTM) in the link you used.</li>
 <li><b>Free AI Business Audit</b> (<a href="/audit/?utm_source=website&amp;utm_medium=privacy_text&amp;utm_campaign=free_ai_audit">/audit/</a>): your first name, surname, business name, email, mobile / WhatsApp number, your role, your answers to the audit questions, how you found us (for example an event QR code or campaign link) and your consent to be contacted.</li>
@@ -934,7 +934,7 @@ PRIVACY_SECTIONS = [
 <p>The audit saves your progress and your results in your browser's local storage, on your own device, so you can continue where you left off. Campaign tags from the link you used may also be kept there so we know how you found us. You can clear this at any time in your browser settings.</p>
 <p>The Google Map on our home page and the Google Calendar booking page are loaded from Google. When they load, Google may set cookies or collect technical data under <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's privacy policy</a>.</p>'''),
  ("How long we keep it and how we protect it", '''<p>We keep enquiry and audit records for as long as needed to finish the conversation and any work that follows, and as required by law, then delete or anonymise them. We take reasonable technical and organisational steps to protect information in our control, but no internet transmission is completely secure.</p>'''),
- ("Your rights", '''<p>You may ask us whether we hold your personal information, ask for a copy, ask us to correct or delete it, or object to us using it. Email <a href="mailto:billyfaber06@gmail.com">billyfaber06@gmail.com</a>. You may also lodge a complaint with the Information Regulator (South Africa) at <a href="https://inforegulator.org.za/" target="_blank" rel="noopener">inforegulator.org.za</a>.</p>'''),
+ ("Your rights", '''<p>You may ask us whether we hold your personal information, ask for a copy, ask us to correct or delete it, or object to us using it. Email <a href="mailto:Willem@aiautotech.co.za">Willem@aiautotech.co.za</a>. You may also lodge a complaint with the Information Regulator (South Africa) at <a href="https://inforegulator.org.za/" target="_blank" rel="noopener">inforegulator.org.za</a>.</p>'''),
  ("Changes to this notice", '''<p>We may update this notice when our services or providers change. The date at the top shows the latest version.</p>'''),
 ]
 
