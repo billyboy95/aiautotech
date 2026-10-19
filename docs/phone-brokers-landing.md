@@ -17,7 +17,7 @@ The front matter `published: false` tells GitHub Pages not to serve this file as
 | Address | Role on this visit |
 | --- | --- |
 | `Willem@aiautotech.co.za` | The only From for AI AutoTech business email. Not used on this page. Do not send. |
-| `billyfaber06@gmail.com` | On the site footer and the page schema. Never a From for a send from this visit. |
+| `Willem@aiautotech.co.za` | On the site footer and the page schema. Never a From for a send from this visit. |
 | `billy@aiautotech.co.za` | Old example. Do not use it. |
 
 ## Order
