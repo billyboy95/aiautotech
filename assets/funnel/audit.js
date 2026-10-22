@@ -1,7 +1,7 @@
 /* AI AutoTech — Free AI Business Audit (static, no secrets). */
 (function () {
   "use strict";
-  var FORMSUBMIT_AJAX = "https://formsubmit.co/ajax/4b43618c4f12b0258208d17e157896bb";
+  var FORMSUBMIT_AJAX = "https://formsubmit.co/ajax/Willem@aiautotech.co.za";
   var CFG = window.AAT_CONFIG, A = window.AAT;
   var STORE = "aat_audit_v1", RESULT = "aat_audit_result_v1";
   var CONSENT_TEXT = "I agree that AI AutoTech Pty Ltd may contact me by phone, WhatsApp or email about my AI business audit and recommendations. I can ask to be removed at any time.";

@@ -3,7 +3,7 @@
 (function () {
   "use strict";
   var CRM_URL = "https://ai-autotech-crm.vercel.app/api/public/contact";
-  var FORMSUBMIT_AJAX = "https://formsubmit.co/ajax/4b43618c4f12b0258208d17e157896bb";
+  var FORMSUBMIT_AJAX = "https://formsubmit.co/ajax/Willem@aiautotech.co.za";
   var THANKS_URL = "/thanks.html";
   var form = document.querySelector("form.contact-form");
   if (!form || !window.fetch) return;

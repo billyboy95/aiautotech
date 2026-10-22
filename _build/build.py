@@ -575,7 +575,7 @@ def home():
         <p class="audit-hint">Not sure what to automate first? <a href="{audit("contact")}">Take the free AI audit →</a></p>
       </div>
       <div class="contact-card glass violet reveal">
-        <form class="contact-form" action="https://formsubmit.co/4b43618c4f12b0258208d17e157896bb" method="POST">
+        <form class="contact-form" action="https://formsubmit.co/Willem@aiautotech.co.za" method="POST">
           <input type="hidden" name="_next" value="https://aiautotech.co.za/thanks.html" />
           <input type="hidden" name="_subject" value="New enquiry from aiautotech.co.za" />
           <input type="hidden" name="_template" value="table" />

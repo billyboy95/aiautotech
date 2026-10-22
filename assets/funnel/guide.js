@@ -1,7 +1,7 @@
 /* Lead magnet: name, business, email, WhatsApp -> CRM audit endpoint, source=lead_magnet. */
 (function () {
   "use strict";
-  var FORMSUBMIT_AJAX = "https://formsubmit.co/ajax/4b43618c4f12b0258208d17e157896bb";
+  var FORMSUBMIT_AJAX = "https://formsubmit.co/ajax/Willem@aiautotech.co.za";
   var CFG = window.AAT_CONFIG, A = window.AAT;
   var form = document.getElementById("guide-form");
   if (!form || !CFG || !A) return;
