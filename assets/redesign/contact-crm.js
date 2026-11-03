@@ -91,7 +91,7 @@
     }).catch(function () {
       if (btn) { btn.disabled = false; btn.innerHTML = btnHtml; }
       show('Sorry, your message could not be sent. Please try again, or ' +
-        '<a href="https://wa.me/27646863803?text=' + encodeURIComponent("Hi Billy, I tried the contact form on aiautotech.co.za: " + lead.message.slice(0, 300)) + '" target="_blank" rel="noopener">WhatsApp us</a>' +
+        '<a href="https://wa.me/27721171661?text=' + encodeURIComponent("Hi Billy, I tried the contact form on aiautotech.co.za: " + lead.message.slice(0, 300)) + '" target="_blank" rel="noopener">WhatsApp us</a>' +
         ' / email <a href="mailto:Willem@aiautotech.co.za">Willem@aiautotech.co.za</a>.', "err");
     });
   });

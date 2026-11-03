@@ -1,7 +1,7 @@
 /* AI AutoTech event funnel config. Public values only: never put secrets here. */
 window.AAT_CONFIG = {
   apiUrl: "https://ai-autotech-crm.vercel.app/api/public/audit",
-  whatsappNumber: "27646863803",
+  whatsappNumber: "27721171661",
   // Set to a booking page (e.g. Calendly / Google Calendar appointment link) when ready.
   // While empty, "Book my AI strategy session" opens WhatsApp with a pre-filled booking message.
   // Branded booking page that embeds the Google Calendar appointment schedule; audit adds ?ref=<reference>.

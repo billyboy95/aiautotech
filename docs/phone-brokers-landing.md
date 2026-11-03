@@ -76,7 +76,7 @@ Run this only after section 3 showed the live page. Tap the link, confirm the de
 
 1. **Audit.** On the page, open **Take the 5-minute AI audit**. That href is `/audit/?utm_source=website&utm_medium=brokers_band&utm_campaign=free_ai_audit`. Pass: https://aiautotech.co.za/audit/ loads. The sticky **Book a free AI audit** link uses `utm_medium=brokers_sticky` and lands on the same audit page. Do not submit the audit form. Submitting emails Billy.
 2. **Guide.** In the footer, open **Free AI guide** (`/guide/`). Pass: https://aiautotech.co.za/guide/ loads. Do not submit the guide form. Submitting emails Billy.
-3. **WhatsApp.** The band button **WhatsApp Billy** is `https://wa.me/27646863803?text=Hi%20Billy%2C%20I%20run%20a%20short-term%20insurance%20brokerage%20and%20I%27d%20like%20the%20free%20AI%20audit.` Pass: WhatsApp opens a compose to +27 64 686 3803 with that text. Do not press send. Leave the chat. The green WhatsApp button uses the general site text. Do not send that one either.
+3. **WhatsApp.** The band button **WhatsApp Billy** is `https://wa.me/27721171661?text=Hi%20Billy%2C%20I%20run%20a%20short-term%20insurance%20brokerage%20and%20I%27d%20like%20the%20free%20AI%20audit.` Pass: WhatsApp opens a compose to +27 72 117 1661 with that text. Do not press send. Leave the chat. The green WhatsApp button uses the general site text. Do not send that one either.
 
 A pass is the three destinations. It is not a lead. It is not a message sent.
 

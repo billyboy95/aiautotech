@@ -12,7 +12,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 V = "20260927a"
 LASTMOD = "2026-09-27"
 SITE = "https://aiautotech.co.za"
-WA_NUM = "27646863803"
+WA_NUM = "27721171661"
 
 def load_pricing():
     path = os.path.join(ROOT, "assets", "pricing.js")
@@ -134,12 +134,12 @@ AREAS = [{"@type":"City","name":"Benoni"},{"@type":"AdministrativeArea","name":"
 ORG_ID = SITE + "/#organization"
 ORG = {"@type":["ProfessionalService","LocalBusiness"],"@id":ORG_ID,"name":"AI AutoTech","legalName":"AI AutoTech (Pty) Ltd","url":SITE+"/",
        "logo":{"@type":"ImageObject","url":SITE+"/assets/logo.png","width":967,"height":746},"image":OG_IMG,
-       "email":"Willem@aiautotech.co.za","telephone":"+27646863803","areaServed":AREAS,"priceRange":"R" + P["platform"]["amount"] + "+",
+       "email":"Willem@aiautotech.co.za","telephone":"+27721171661","areaServed":AREAS,"priceRange":"R" + P["platform"]["amount"] + "+",
        "address":{"@type":"PostalAddress","addressLocality":"Benoni","addressRegion":"Gauteng","addressCountry":"ZA"},
        "founder":{"@type":"Person","name":"Billy Faber","alternateName":"Willem Faber","jobTitle":"Founder and Managing Director"},
        "description":"AI AutoTech builds AI employees, WhatsApp automation, AI voice agents, CRM pipelines and websites for South African businesses.",
-       "contactPoint":{"@type":"ContactPoint","contactType":"sales","telephone":"+27646863803","email":"Willem@aiautotech.co.za","areaServed":"ZA","availableLanguage":["en"]}}
-PROVIDER = {"@type":"ProfessionalService","@id":ORG_ID,"name":"AI AutoTech","url":SITE+"/","telephone":"+27646863803","email":"Willem@aiautotech.co.za","areaServed":AREAS}
+       "contactPoint":{"@type":"ContactPoint","contactType":"sales","telephone":"+27721171661","email":"Willem@aiautotech.co.za","areaServed":"ZA","availableLanguage":["en"]}}
+PROVIDER = {"@type":"ProfessionalService","@id":ORG_ID,"name":"AI AutoTech","url":SITE+"/","telephone":"+27721171661","email":"Willem@aiautotech.co.za","areaServed":AREAS}
 
 def crumbs_ld(items):
     return {"@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":k+1,"name":n,"item":SITE+u} for k,(n,u) in enumerate(items)]}
@@ -227,7 +227,7 @@ def footer():
         <a href="/" aria-label="AI AutoTech home"><img class="flogo" src="/assets/redesign/logo-footer.webp" alt="AI AutoTech" width="160" height="123" loading="lazy" decoding="async" /></a>
         <p style="margin-top:12px">AI employees, automation, websites and CRM for South African businesses. Benoni, Gauteng.</p>
         <p style="margin-top:8px;font-weight:700;letter-spacing:.02em">Automate · Innovate · Elevate.</p>
-        <p style="margin-top:8px"><a href="tel:0646863803" style="color:inherit">064 686 3803</a> · <a href="mailto:Willem@aiautotech.co.za" style="color:inherit">Willem@aiautotech.co.za</a></p>
+        <p style="margin-top:8px"><a href="tel:0721171661" style="color:inherit">072 117 1661</a> · <a href="mailto:Willem@aiautotech.co.za" style="color:inherit">Willem@aiautotech.co.za</a></p>
       </div>
       <div><h2>Services</h2><ul>{li(SERVICES[:half])}</ul></div>
       <div><h2 class="blank" aria-hidden="true">&nbsp;</h2><ul>{li(SERVICES[half:])}</ul></div>
@@ -254,7 +254,7 @@ def sticky(placement, wa_text):
 '''
 
 def wa_fab(text="Hi Billy, I saw the AI AutoTech website and would like to chat about AI for my business."):
-    return f'''  <a class="wa-fab" href="{wa(text)}" target="_blank" rel="noopener" aria-label="WhatsApp AI AutoTech on +27 64 686 3803">{ic("whatsapp")}</a>
+    return f'''  <a class="wa-fab" href="{wa(text)}" target="_blank" rel="noopener" aria-label="WhatsApp AI AutoTech on +27 72 117 1661">{ic("whatsapp")}</a>
 '''
 
 TAIL = f'''  <script src="/assets/pricing.js?v={V}" defer></script>
@@ -468,7 +468,7 @@ def home():
       <ul>
         <li><b>AI AutoTech (Pty) Ltd</b><span>AI automation from Benoni, South Africa</span></li>
         <li><b>Billy Faber</b><span>Founder and Managing Director</span></li>
-        <li><b><a href="tel:+27646863803">+27 64 686 3803</a></b><span>WhatsApp and phone</span></li>
+        <li><b><a href="tel:+27721171661">+27 72 117 1661</a></b><span>WhatsApp and phone</span></li>
         <li><a class="trust-card" href="/#work"><b>Live work</b><span>EASTC Holdings sites on .co.za</span></a></li>
       </ul>
     </div>
@@ -567,7 +567,7 @@ def home():
         <p style="color:var(--sub)">No hard sell and no jargon. Just a straight conversation about what AI can do for your business.</p>
         <ul class="contact-list">
           <li><a href="{book("contact")}">{ic("calendar")}Book a 30-min Google Meet</a></li>
-          <li><a href="tel:0646863803">{ic("phone")}064 686 3803</a></li>
+          <li><a href="tel:0721171661">{ic("phone")}072 117 1661</a></li>
           <li><a href="mailto:Willem@aiautotech.co.za">{ic("mail")}Willem@aiautotech.co.za</a></li>
           <li><a href="{wa(wa_home)}" target="_blank" rel="noopener">{ic("whatsapp")}WhatsApp us</a></li>
           <li><a href="/about.html">{ic("pin")}Benoni, Gauteng · About us</a></li>
@@ -954,7 +954,7 @@ def about_page():
           <div><dt>Founder &amp; Managing Director</dt><dd>Willem (Billy) Faber</dd></div>
           <div><dt>Based in</dt><dd>Benoni, Gauteng, South Africa. Service-area business with no walk-in office.</dd></div>
           <div><dt>Areas served</dt><dd>Benoni, Ekurhuleni, Johannesburg and Gauteng. Meetings on Google Meet, WhatsApp or phone.</dd></div>
-          <div><dt>Phone / WhatsApp</dt><dd><a href="tel:+27646863803">064 686 3803</a></dd></div>
+          <div><dt>Phone / WhatsApp</dt><dd><a href="tel:+27721171661">072 117 1661</a></dd></div>
           <div><dt>Email</dt><dd><a href="mailto:Willem@aiautotech.co.za">Willem@aiautotech.co.za</a></dd></div>
         </dl>
       </div>
@@ -972,7 +972,7 @@ def about_page():
 
 PRIVACY_SECTIONS = [
  ("Who we are", '''<p>AI AutoTech (Pty) Ltd (“AI AutoTech”, “we”, “us”) is a South African company based in Benoni, Gauteng. This notice explains how we handle personal information when you use aiautotech.co.za or contact us, in line with the Protection of Personal Information Act (POPIA).</p>
-<p><b>Responsible party:</b> AI AutoTech (Pty) Ltd, Benoni, Gauteng, South Africa. Contact: Willem (Billy) Faber, Founder and Managing Director, <a href="mailto:Willem@aiautotech.co.za">Willem@aiautotech.co.za</a>, <a href="tel:+27646863803">064 686 3803</a> (phone / WhatsApp).</p>'''),
+<p><b>Responsible party:</b> AI AutoTech (Pty) Ltd, Benoni, Gauteng, South Africa. Contact: Willem (Billy) Faber, Founder and Managing Director, <a href="mailto:Willem@aiautotech.co.za">Willem@aiautotech.co.za</a>, <a href="tel:+27721171661">072 117 1661</a> (phone / WhatsApp).</p>'''),
  ("What we collect", '''<ul>
 <li><b>Contact form:</b> your name, email address, and optionally your business name and phone number, plus your message. We also record the page you sent it from, the referring page and campaign tags (UTM) in the link you used.</li>
 <li><b>Free AI Business Audit</b> (<a href="/audit/?utm_source=website&amp;utm_medium=privacy_text&amp;utm_campaign=free_ai_audit">/audit/</a>): your first name, surname, business name, email, mobile / WhatsApp number, your role, your answers to the audit questions, how you found us (for example an event QR code or campaign link) and your consent to be contacted.</li>
@@ -1047,9 +1047,9 @@ def simple_page(title, desc, path, h1, sub, body_html, pl, robots=None, canonica
 
 def thanks_page():
     return simple_page("Message received | AI AutoTech",
-        "Thanks for contacting AI AutoTech. Billy will get back to you shortly. Urgent? WhatsApp 064 686 3803, or take the free AI audit while you wait.",
+        "Thanks for contacting AI AutoTech. Billy will get back to you shortly. Urgent? WhatsApp 072 117 1661, or take the free AI audit while you wait.",
         "/thanks.html", 'Message <span class="grad">received</span>',
-        'Thanks for getting in touch. Billy will get back to you shortly. If it\'s urgent, WhatsApp <a href="https://wa.me/27646863803" target="_blank" rel="noopener">064 686 3803</a>. While you wait, you can take the free AI audit (about 5 minutes) or book a call.',
+        'Thanks for getting in touch. Billy will get back to you shortly. If it\'s urgent, WhatsApp <a href="https://wa.me/27721171661" target="_blank" rel="noopener">072 117 1661</a>. While you wait, you can take the free AI audit (about 5 minutes) or book a call.',
         (f'<span class="status-ico ok">{ic("check")}</span>', '<p class="back-links"><a href="/">Back to aiautotech.co.za</a></p>'),
         "thanks_page", robots="noindex, follow")
 
@@ -1144,7 +1144,7 @@ def guide_page():
           <a class="btn btn-primary" href="/guide/ai-guide.pdf">Download the guide {ic("arrow")}</a>
           <p class="cta-note"><a href="{audit("guide_thanks")}">Book a free AI audit</a></p>
         </div>
-        <p class="cta-note" style="margin-top:14px">Rather talk first? <a href="{wa("Hi Billy, I would like the free AI AutoTech guide and a chat about AI for my business.")}" target="_blank" rel="noopener">WhatsApp +27 64 686 3803</a></p>
+        <p class="cta-note" style="margin-top:14px">Rather talk first? <a href="{wa("Hi Billy, I would like the free AI AutoTech guide and a chat about AI for my business.")}" target="_blank" rel="noopener">WhatsApp +27 72 117 1661</a></p>
       </div>
     </div>
   </section>
@@ -1153,7 +1153,7 @@ def guide_page():
       <ul>
         <li><b>AI AutoTech (Pty) Ltd</b><span>Benoni, Gauteng</span></li>
         <li><b>Billy Faber</b><span>Founder and Managing Director</span></li>
-        <li><b><a href="tel:+27646863803">+27 64 686 3803</a></b><span>WhatsApp and phone</span></li>
+        <li><b><a href="tel:+27721171661">+27 72 117 1661</a></b><span>WhatsApp and phone</span></li>
         <li><a class="trust-card" href="/#work"><b>Live work</b><span>EASTC Holdings sites</span></a></li>
       </ul>
     </div>
@@ -1191,7 +1191,7 @@ def johannesburg_page():
         <p class="lead">AI AutoTech (Pty) Ltd is an AI automation company based in Benoni. We work with businesses in Johannesburg, Ekurhuleni and Gauteng. There is no walk-in office. You deal with Billy Faber, founder and managing director, on Google Meet, WhatsApp or phone.</p>
         <div class="cta-row">
           <a class="btn btn-primary" href="{audit("johannesburg")}">Book a free AI audit {ic("arrow")}</a>
-          <a class="btn btn-ghost" href="{wa("Hi Billy, I am in Johannesburg and I would like to talk about AI for my business.")}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>WhatsApp +27 64 686 3803</a>
+          <a class="btn btn-ghost" href="{wa("Hi Billy, I am in Johannesburg and I would like to talk about AI for my business.")}" target="_blank" rel="noopener"><span class="wa">{ic("whatsapp")}</span>WhatsApp +27 72 117 1661</a>
         </div>
         <p class="cta-note">Free AI Business Audit · about 5 minutes · no obligation</p>
         <p class="guide-link"><a href="/guide/">Or get the free guide: The 10 jobs your business should hand to AI this year (South African edition, 2026)</a></p>
@@ -1211,7 +1211,7 @@ def johannesburg_page():
       <ul>
         <li><b>Based in Benoni</b><span>Service area includes Johannesburg</span></li>
         <li><b>Billy Faber</b><span>Founder and Managing Director</span></li>
-        <li><b><a href="tel:+27646863803">+27 64 686 3803</a></b><span>WhatsApp and phone</span></li>
+        <li><b><a href="tel:+27721171661">+27 72 117 1661</a></b><span>WhatsApp and phone</span></li>
         <li><a class="trust-card" href="/#work"><b>Live work</b><span>EASTC Holdings sites on .co.za</span></a></li>
       </ul>
     </div>

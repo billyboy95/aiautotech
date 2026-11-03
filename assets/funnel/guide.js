@@ -139,7 +139,7 @@
           if (btn) { btn.disabled = false; btn.innerHTML = btnHtml; }
           var wa = A.wa("Hi Billy, I tried to get the free AI guide on aiautotech.co.za and the form did not go through. My name is " + name + ".");
           show((err && err.name === "AbortError" ? "The connection timed out." : (err && err.message) || "Network error.") +
-            ' Please try again, or <a href="' + wa + '" target="_blank" rel="noopener">WhatsApp +27 64 686 3803</a>.', "err");
+            ' Please try again, or <a href="' + wa + '" target="_blank" rel="noopener">WhatsApp +27 72 117 1661</a>.', "err");
         });
       }, wait);
     }
