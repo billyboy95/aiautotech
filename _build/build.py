@@ -908,6 +908,7 @@ FOUNDER_IMAGE = "/assets/redesign/billy-faber-office.webp"
 def founder_page():
     url = SITE + FOUNDER_PATH
     title = FOUNDER_NAME + " | Founder of AI AutoTech"
+    linkedin = "https://za.linkedin.com/in/willem-faber-15b99b40b"
     desc = "Meet Willem Frederik (Billy) Faber, founder and managing director of AI AutoTech, building AI automation for South African businesses from Benoni, Gauteng."
     person = {
         "@type": "Person",
@@ -916,6 +917,7 @@ def founder_page():
         "alternateName": ["Billy Faber", "Willem Faber", "Willem Frederik Faber"],
         "url": url,
         "image": SITE + FOUNDER_IMAGE,
+        "sameAs": [linkedin],
         "jobTitle": "Founder and Managing Director",
         "worksFor": {"@id": ORG_ID},
     }
@@ -936,6 +938,7 @@ def founder_page():
           <div class="cta-row">
             <a class="btn btn-primary" href="{book("founder_profile")}">Book a conversation {ic("arrow")}</a>
             <a class="btn btn-ghost" href="/#work">See AI AutoTech's work</a>
+            <a class="btn btn-ghost" href="{linkedin}">LinkedIn profile</a>
           </div>
         </div>
         <figure class="sa-photo about-photo">
@@ -948,7 +951,7 @@ def founder_page():
         <article class="box glass">
           <h2>How he works</h2>
           <p>Billy starts with the daily tasks that take up staff time. His team then connects automation to the tools a business already uses, with a handover to staff when a customer needs personal help.</p>
-          <p>Based in Benoni, he works with South African businesses and training institutions on customer service, sales and admissions.</p>
+          <p>He also leads product strategy and workflow design for AI AutoTech OS, which brings AI assistants, lead capture, booking, and reporting into one platform.</p>
         </article>
         <article class="box glass">
           <h2>Selected work</h2>
