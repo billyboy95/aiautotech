@@ -147,7 +147,8 @@ def crumbs_ld(items):
 def graph(*nodes):
     return {"@context":"https://schema.org","@graph":list(nodes)}
 
-def head(title, desc, path, og_title=None, jsonld=None, robots=None, canonical=True, extra=""):
+def head(title, desc, path, og_title=None, jsonld=None, robots=None, canonical=True, extra="", social_image=None):
+    image, width, height, image_alt = social_image or (OG_IMG, 1200, 630, "AI AutoTech: Your Business, Powered by AI Employees")
     url = SITE + path
     rob = f'\n  <meta name="robots" content="{robots}" />' if robots else ""
     can = f'\n  <link rel="canonical" href="{url}" />' if canonical else ""
@@ -171,16 +172,16 @@ def head(title, desc, path, og_title=None, jsonld=None, robots=None, canonical=T
   <meta property="og:url" content="{url}" />
   <meta property="og:title" content="{ogt}" />
   <meta property="og:description" content="{escape(desc)}" />
-  <meta property="og:image" content="{OG_IMG}" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-  <meta property="og:image:alt" content="AI AutoTech: Your Business, Powered by AI Employees. aiautotech.co.za" />
+  <meta property="og:image" content="{image}" />
+  <meta property="og:image:width" content="{width}" />
+  <meta property="og:image:height" content="{height}" />
+  <meta property="og:image:alt" content="{escape(image_alt if social_image else image_alt + ". aiautotech.co.za")}" />
   <meta property="og:locale" content="en_ZA" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="{ogt}" />
   <meta name="twitter:description" content="{escape(desc)}" />
-  <meta name="twitter:image" content="{OG_IMG}" />
-  <meta name="twitter:image:alt" content="AI AutoTech: Your Business, Powered by AI Employees" />{ld}
+  <meta name="twitter:image" content="{image}" />
+  <meta name="twitter:image:alt" content="{escape(image_alt)}" />{ld}
   {FONTS}
   <link rel="stylesheet" href="/assets/redesign/site.css?v={V}" />{extra}
 </head>
@@ -898,6 +899,68 @@ def cta_band(pl, title, text):
   </section>
 '''
 
+FOUNDER_PATH = "/willem-faber/"
+FOUNDER_LASTMOD = "2026-11-24"
+FOUNDER_NAME = "Willem Frederik (Billy) Faber"
+FOUNDER_IMAGE = "/assets/redesign/billy-faber-office.webp"
+
+
+def founder_page():
+    url = SITE + FOUNDER_PATH
+    title = FOUNDER_NAME + " | Founder of AI AutoTech"
+    desc = "Meet Willem Frederik (Billy) Faber, founder and managing director of AI AutoTech, building AI automation for South African businesses from Benoni, Gauteng."
+    person = {
+        "@type": "Person",
+        "@id": url + "#person",
+        "name": FOUNDER_NAME,
+        "alternateName": ["Billy Faber", "Willem Faber", "Willem Frederik Faber"],
+        "url": url,
+        "image": SITE + FOUNDER_IMAGE,
+        "jobTitle": "Founder and Managing Director",
+        "worksFor": {"@id": ORG_ID},
+    }
+    profile = {"@type": "ProfilePage", "@id": url + "#page", "url": url,
+               "name": title, "description": desc, "mainEntity": person, "inLanguage": "en-ZA"}
+    organisation = dict(ORG, founder={"@id": person["@id"]})
+    ld = graph(profile, organisation, crumbs_ld([("Home", "/"), ("About", "/about.html"), (FOUNDER_NAME, FOUNDER_PATH)]))
+    return head(title, desc, FOUNDER_PATH, jsonld=ld,
+                social_image=(SITE + FOUNDER_IMAGE, 560, 732, FOUNDER_NAME)) + nav() + f'''  <main id="main">
+    <section class="svc-hero about-hero" aria-labelledby="founder-name">
+      <div class="wrap">
+        <div>
+          <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a> / <a href="/about.html">About</a> / <span>Founder</span></nav>
+          <div class="hero-badge">{flag()}Benoni, Gauteng, South Africa</div>
+          <h1 id="founder-name">{FOUNDER_NAME}</h1>
+          <p class="sub">Founder &amp; Managing Director, AI AutoTech</p>
+          <p class="lead">Billy Faber leads AI AutoTech, a South African company that builds AI receptionists, WhatsApp automation and CRM systems. His work focuses on helping teams answer enquiries faster, follow up with leads and book appointments.</p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="{book("founder_profile")}">Book a conversation {ic("arrow")}</a>
+            <a class="btn btn-ghost" href="/#work">See AI AutoTech's work</a>
+          </div>
+        </div>
+        <figure class="sa-photo about-photo">
+          <img src="{FOUNDER_IMAGE}" alt="{FOUNDER_NAME}, founder of AI AutoTech" width="560" height="732" fetchpriority="high" decoding="async" />
+        </figure>
+      </div>
+    </section>
+    <section class="section" aria-label="Founder biography and selected work">
+      <div class="wrap two">
+        <article class="box glass">
+          <h2>How he works</h2>
+          <p>Billy starts with the daily tasks that take up staff time. His team then connects automation to the tools a business already uses, with a handover to staff when a customer needs personal help.</p>
+          <p>Based in Benoni, he works with South African businesses and training institutions on customer service, sales and admissions.</p>
+        </article>
+        <article class="box glass">
+          <h2>Selected work</h2>
+          <p>AI AutoTech's published education projects include websites for EASTC Holdings, EASTC Foundation NPC and EASTECH Institute. These sites help visitors find programmes, admissions information and scholarship opportunities.</p>
+          <a class="book-link" href="/#work">Explore the published projects {ic("arrow")}</a>
+        </article>
+      </div>
+    </section>
+  </main>
+''' + footer() + sticky("about_sticky", WA_GENERAL) + TAIL
+
+
 def about_page():
     ld = graph(dict(ORG), {"@type":"AboutPage","@id":SITE+"/about.html#page","url":SITE+"/about.html","name":"About AI AutoTech","about":{"@id":ORG_ID},"inLanguage":"en-ZA"},
                crumbs_ld([("Home","/"),("About","/about.html")]))
@@ -951,7 +1014,7 @@ def about_page():
         <h2 id="facts-title">{ic("layers")}Company details</h2>
         <dl class="facts-list">
           <div><dt>Company</dt><dd>AI AutoTech (Pty) Ltd</dd></div>
-          <div><dt>Founder &amp; Managing Director</dt><dd>Willem (Billy) Faber</dd></div>
+          <div><dt>Founder &amp; Managing Director</dt><dd><a href="{FOUNDER_PATH}">{FOUNDER_NAME}</a></dd></div>
           <div><dt>Based in</dt><dd>Benoni, Gauteng, South Africa. Service-area business with no walk-in office.</dd></div>
           <div><dt>Areas served</dt><dd>Benoni, Ekurhuleni, Johannesburg and Gauteng. Meetings on Google Meet, WhatsApp or phone.</dd></div>
           <div><dt>Phone / WhatsApp</dt><dd><a href="tel:+27646863803">064 686 3803</a></dd></div>
@@ -1066,8 +1129,8 @@ def sitemap():
     urls = [("/", "weekly", "1.0"), ("/audit/", "monthly", "0.9"), ("/guide/", "monthly", "0.9"), ("/book/", "monthly", "0.7"), ("/ai-agency-johannesburg/", "monthly", "0.7"), ("/brokers/", "monthly", "0.8")]
     urls += [(f"/services/{s['slug']}/", "monthly", "0.8") for s in SERVICES]
     urls += [(f"/teams/{t['slug']}/", "monthly", "0.7") for t in TEAMS]
-    urls += [("/about.html", "yearly", "0.6"), ("/privacy.html", "yearly", "0.3")]
-    body = "".join(f"  <url>\n    <loc>{SITE}{u}</loc>\n    <lastmod>{LASTMOD}</lastmod>\n    <changefreq>{c}</changefreq>\n    <priority>{p}</priority>\n  </url>\n" for u, c, p in urls)
+    urls += [(FOUNDER_PATH, "yearly", "0.7"), ("/about.html", "yearly", "0.6"), ("/privacy.html", "yearly", "0.3")]
+    body = "".join(f"  <url>\n    <loc>{SITE}{u}</loc>\n    <lastmod>{FOUNDER_LASTMOD if u == FOUNDER_PATH else LASTMOD}</lastmod>\n    <changefreq>{c}</changefreq>\n    <priority>{p}</priority>\n  </url>\n" for u, c, p in urls)
     return f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n{body}</urlset>\n'
 
 MANIFEST = {"name":"AI AutoTech","short_name":"AI AutoTech","description":"AI employees, WhatsApp automation, voice agents, CRM and websites for South African businesses.",
@@ -1399,6 +1462,9 @@ def main():
     for name, fn in [("about.html", about_page), ("privacy.html", privacy_page), ("thanks.html", thanks_page), ("404.html", notfound_page)]:
         with open(os.path.join(ROOT, name), "w", encoding="utf-8") as f:
             f.write(fn())
+    os.makedirs(os.path.join(ROOT, "willem-faber"), exist_ok=True)
+    with open(os.path.join(ROOT, "willem-faber", "index.html"), "w", encoding="utf-8") as f:
+        f.write(founder_page())
     os.makedirs(os.path.join(ROOT, "guide"), exist_ok=True)
     with open(os.path.join(ROOT, "guide", "index.html"), "w", encoding="utf-8") as f:
         f.write(guide_page())
